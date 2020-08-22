@@ -27,7 +27,7 @@ int _numI = 200, _numC = 200, _pMin = 1, _pMax = 2, _ld = 2, timeLimit = oo;
 string method = "ELS";
 bool _bi = true;
 int main(int argc, char* argv[]) {    
-    for (int i = 1; i < argc; ++i) {        
+    /*for (int i = 1; i < argc; ++i) {        
         if (string(argv[i]) == "-method") {            
             method = argv[i + 1];
         }
@@ -52,16 +52,14 @@ int main(int argc, char* argv[]) {
         if (string(argv[i]) == "-TL") {
             timeLimit = atoi(argv[i + 1]);
         }
-    }
+    }*/
     cin.tie(0); cout.tie(0);
     ios::sync_with_stdio(0);
     string pathIn, pathOut;    
     pathIn = "instances\\instance_0-triangle.vrp";
     //pathOut = "solution_"+ to_string(idSed)+"\\" + typeIns[idType] + "\\" + "sol_" + to_string(idx) + ".txt";
     //cin >> pathIn;
-    Param* pr = read_Ins(pathIn);
-    //pr->cap = 10000000;
-    //pr->start = start;
+    Param* pr = read_Ins(pathIn);    
     //set up param for algo:
     pr->nI = _numI;
     pr->nC = _numC;
@@ -70,9 +68,10 @@ int main(int argc, char* argv[]) {
     pr->lambda = _ld;
     pr->bi = _bi;                
     //pr->maxE *= 10;             
-    init(pr);
+    //init(pr);
     //pr->fileOut.open(pathOut);
     cout.precision(6);                   
+    ckData(pr);
     //Solution bestSol(pr);                       
     //bestSol.ELS();
     ////cout << Util::round2num(bestSol.cost) << endl;    

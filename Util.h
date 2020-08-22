@@ -22,6 +22,7 @@ namespace Util {
 		}
 		res.push_back(s.substr(previous, current - previous));
 		for (int i = 0; i < res.size(); ++i)removeSpaceAround(res[i]);
+		if (res.back() == "")res.pop_back();
 		return res;
 	}
 	//Convert a string into number

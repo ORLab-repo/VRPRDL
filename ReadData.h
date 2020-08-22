@@ -37,6 +37,7 @@ Param* read_Ins(string path){
         }
         if (lineCont[0] == "NUM_CUSTOMERS:") {            
             pr->numClient = stoi(lineCont[1]);
+            pr->listCL.resize(pr->numClient);
             continue;
         }
         //1 NODE
@@ -70,10 +71,11 @@ Param* read_Ins(string path){
             continue;
         }
         //7 DEPOT
-       /* if (lineCont[0] == "DEPOT_SECTION") {
+        if (lineCont[0] == "DEPOT_SECTION") {
             countLine++;
             continue;
-        }*/
+        }
+
         //get coordinate:
         if(countLine == 1){                        
             pr->listLoc.push_back(Location(stod(lineCont[1]),
@@ -81,14 +83,17 @@ Param* read_Ins(string path){
                               )
                        );
          }
+
         //get distance:
         if(countLine == 2){
+            cout << size(lineCont) << "\n";
             assert(size(lineCont) == pr->numLoc);
             pr->costs.push_back(vector<int>(pr->numLoc));            
             for (int i = 0; i < pr->numLoc; ++i) {
                 pr->costs.back()[i] = stoi(lineCont[i]);                
             }
         }
+
         //get travel time        
         if (countLine == 3) {
             assert(size(lineCont) == pr->numLoc);
@@ -97,11 +102,13 @@ Param* read_Ins(string path){
                 pr->times.back()[i] = stoi(lineCont[i]);
             }
         }
+
         //get TW:
         if (countLine == 4) {
             pr->listLoc[stoi(lineCont[0]) - 1].stTime = stoi(lineCont[1]);
             pr->listLoc[stoi(lineCont[0]) - 1].enTime = stoi(lineCont[2]);
         }
+
         //get cluster:
         if (countLine == 5) {
             int idx = stoi(lineCont[0]) - 1;
@@ -111,18 +118,52 @@ Param* read_Ins(string path){
 
             }
         }
+
         //get demand:
         if (countLine == 6) {
-
+            pr->listCL[stoi(lineCont[0]) - 1].demand = stoi(lineCont[1]);
         }
-        //if(ck_depot){
-        //    swap(pr->listCL[0], pr->listCL[Util::convertStringToNum(lineCont[0])-1]);
-        //}
+
+        ///uncomment if index of depot is not one
+        /*if(countLine == 7){
+            swap(pr->listCL[0], pr->listCL[stoi(lineCont[0])-1]);
+        }*/
+
         if (lineCont[0] == "EOF")break;      
-    }
+    }     
     return pr;
 }
 
+void ckData(Param* pr) {
+    cout << "Number of clients: " << pr->numClient << "\n";
+    cout << "Number of locations: " << pr->numLoc << "\n";
+    cout << "Capacity: " << pr->Q << "\n";
+    cout << "Time horizon" << pr->T << "\n";
+    //locations:
+    cout << "List of locations:\n";
+    for (auto val : pr->listLoc) {
+        cout <<"Coordinate: "<< val.x << " " << val.y << endl;
+        cout << "TW: " << val.stTime << " " << val.enTime << endl;
+    }
+    cout << "List of clients:\n";
+    for (auto val : pr->listCL) {
+        cout << "demand: " << val.demand << "\n";
+        cout << "locations: ";
+        for (auto loc : val.listLoc)cout << loc << " ";
+        cout << "\n";
+        assert(val.demand != -1);
+    }
+    cout << "costs:\n";
+    for (int i = 0; i < pr->numLoc; ++i) {
+        for (int j = 0; j < pr->numLoc; ++j)cout << pr->costs[i][j] << " ";
+        cout << "\n";
+    }
+    cout << "times: \n";
+    for (int i = 0; i < pr->numLoc; ++i) {
+        for (int j = 0; j < pr->numLoc; ++j)cout << pr->times[i][j] << " ";
+        cout << "\n";
+    }
+}
 void init(Param* pr) {
     //init
     /*pr->Costs.resize(pr->numClient);
