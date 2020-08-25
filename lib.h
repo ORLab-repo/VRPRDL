@@ -12,6 +12,7 @@
 #include <set>
 #include <map>
 #include <queue>
+#include <cstdlib>      
 //#include "Param.h"
 #include "Util.h"
 #include "Client.h"
@@ -28,9 +29,19 @@
 //using namespace std;
 
 typedef pair<int,int> II;
+typedef pair<II, int> III;
 typedef pair<double,double> DD;
 typedef pair<double, int> DI;
 typedef pair<double, II> DII;
 typedef IloArray<IloNumVarArray> IloNumVarArray2;//2D
 typedef IloArray<IloNumVarArray2> IloNumVarArray3;//3D
 typedef IloArray<IloNumVarArray3> IloNumVarArray4;//4D
+bool compareIIForward(II i1, II i2)
+{
+    return (i1.first <= i2.first && i1.second <= i2.second);
+}
+
+bool compareIIBackward(II i1, II i2)
+{
+    return (i1.first >= i2.first && i1.second >= i2.second);
+}

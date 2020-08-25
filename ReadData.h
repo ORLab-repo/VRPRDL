@@ -166,17 +166,52 @@ void ckData(Param* pr) {
 }
 void init(Param* pr) {
     //init
-    /*pr->Costs.resize(pr->numClient);
-    pr->Slopes.resize(pr->numClient);
-    for (int i = 0; i < pr->numClient; ++i) {
-        pr->Costs[i] = vector<double>(pr->numClient);
-        pr->Slopes[i] = vector<double>(pr->numClient);
+    //preprocessing:
+    //eliminate nodes:    
+    for (int i = 1; i <= pr->numLoc; ++i) {
+        int val = pr->listLoc[0].stTime + pr->times[0][i];//e0+t0i
+        if (val > pr->listLoc[i].enTime //li
+            || max(val, pr->listLoc[i].stTime) + pr->times[i][0] > pr->T
+            ) 
+        {
+            for (int j = 0; j <= pr->numLoc; ++j) {
+                pr->costs[i][j] = oo;
+                pr->costs[j][i] = oo;
+            }
+        }//eliminate arcs
+        else {
+            for (int j = 1; j <= pr->numLoc; ++j)if (j != i) {
+                if (pr->listLoc[i].stTime + pr->times[i][j] > pr->listLoc[j].enTime //ei+tij>lj
+                    || max(val, pr->listLoc[i].stTime) + pr->times[i][j] > pr->listLoc[j].enTime //0-i-j-0
+                    || max(max(val, pr->listLoc[i].stTime), pr->listLoc[j].stTime) + pr->times[j][0] > pr->T
+                    ) pr->costs[i][j] = oo;
+            }
+        }
     }
-
-    for (int i = 0; i < pr->numClient; ++i)
-        for (int j = 0; j < pr->numClient; ++j) {
-            pr->Costs[i][j] = pr->listCL[i].countDis(pr->listCL[j]);
-            if (i != j)pr->Slopes[i][j] = pr->listCL[i].calSlope(pr->listCL[j]);
-            else pr->Slopes[i][j] = 0;
-        }*/
+    //tighten TW:
+    while (true)
+    {
+        bool flag = true;// can't reduce
+        for (int i = 1; i <= pr->numLoc; ++i)if (pr->costs[i][0] != oo) {//not a eliminated node
+            int valMinIJ = oo,valMinJI = oo;
+            int valMaxIJ = -oo, valMaxJI = -oo;
+            for (int j = 1; j <= pr->numLoc; ++j)if (pr->costs[i][j] != oo && j!=i) {//not a eliminated arc                
+                valMinIJ = min(valMinIJ, pr->listLoc[j].stTime - pr->times[i][j]);
+                valMinJI = min(valMinJI, pr->listLoc[j].stTime + pr->times[j][i]);
+                valMaxJI = max(valMaxIJ, pr->listLoc[j].enTime + pr->times[j][i]);
+                valMaxIJ = max(valMaxIJ, pr->listLoc[j].enTime - pr->times[i][j]);
+            }
+            valMinIJ = min(valMinIJ, valMinJI);
+            if (pr->listLoc[i].stTime < min(valMinIJ, pr->listLoc[i].enTime)) {
+                pr->listLoc[i].stTime = min(valMinIJ, pr->listLoc[i].enTime);
+                flag = false;
+            }
+            valMaxIJ = max(valMaxIJ, valMaxJI);
+            if (pr->listLoc[i].enTime > max(valMaxIJ,pr->listLoc[i].stTime)) {
+                pr->listLoc[i].stTime = max(valMaxIJ, pr->listLoc[i].stTime);
+                flag = false;
+            }
+        }
+        if (flag)break;
+    }
 }
