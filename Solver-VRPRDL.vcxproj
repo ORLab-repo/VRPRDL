@@ -146,13 +146,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Route.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h" />
     <ClInclude Include="lib.h" />
     <ClInclude Include="Location.h" />
+    <ClInclude Include="Node.h" />
     <ClInclude Include="Param.h" />
     <ClInclude Include="ReadData.h" />
+    <ClInclude Include="Route.h" />
+    <ClInclude Include="SeqData.h" />
+    <ClInclude Include="Solution.h" />
     <ClInclude Include="Util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

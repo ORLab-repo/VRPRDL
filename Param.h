@@ -11,12 +11,13 @@ public:
 	ofstream fileOut;
 	int Q;// capacity
 	int T;// time horizon	
-	int numVeh = oo;// number of vehicle
+	int numVeh = int(1e9);// number of vehicle
 	int numClient;//number of client	
 	int numLoc;// number of node
 	vector<Client> listCL;
 	vector<Location> listLoc;
 	vector<vector<int> > costs;// distance	
+	vector<vector<int> > new_costs;// distance	
 	vector<vector<int> > times;// distance			
 	bool isDebug = false;
 	int lambda = 2;

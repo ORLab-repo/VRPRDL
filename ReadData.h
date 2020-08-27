@@ -33,6 +33,7 @@ Param* read_Ins(string path){
         }
         if (lineCont[0] == "TIME_HORIZON:") {            
             pr->T = stoi(lineCont[1]);
+            cout << pr->T << endl;
             continue;
         }
         if (lineCont[0] == "NUM_CUSTOMERS:") {            
@@ -77,7 +78,7 @@ Param* read_Ins(string path){
         }
 
         //get coordinate:
-        if(countLine == 1){                        
+        if(countLine == 1){                                    
             pr->listLoc.push_back(Location(stod(lineCont[1]),
                               stod(lineCont[2])                                                            
                               )
@@ -85,8 +86,7 @@ Param* read_Ins(string path){
          }
 
         //get distance:
-        if(countLine == 2){
-            cout << size(lineCont) << "\n";
+        if(countLine == 2){            
             assert(size(lineCont) == pr->numLoc);
             pr->costs.push_back(vector<int>(pr->numLoc));            
             for (int i = 0; i < pr->numLoc; ++i) {
@@ -131,6 +131,7 @@ Param* read_Ins(string path){
 
         if (lineCont[0] == "EOF")break;      
     }     
+    filein.close();
     return pr;
 }
 
@@ -142,7 +143,7 @@ void ckData(Param* pr) {
     //locations:
     cout << "List of locations:\n";
     for (auto val : pr->listLoc) {
-        cout <<"Coordinate: "<< val.x << " " << val.y << endl;
+        cout << fixed << "Coordinate: " << val.x << " " << val.y << endl;
         cout << "TW: " << val.stTime << " " << val.enTime << endl;
     }
     cout << "List of clients:\n";
@@ -167,35 +168,55 @@ void ckData(Param* pr) {
 void init(Param* pr) {
     //init
     //preprocessing:
-    //eliminate nodes:    
-    for (int i = 1; i <= pr->numLoc; ++i) {
+    //eliminate nodes:          
+    /*for (int i = 0; i < pr->numLoc; ++i) {
+        pr->new_costs.push_back(vector<int>(pr->numLoc));
+    }
+    for (int i = 0; i < pr->numLoc; ++i)
+        for (int j = 0; j < pr->numLoc; ++j) {
+            pr->new_costs[i][j] = pr->listLoc[i].calDis(pr->listLoc[j]);
+        }
+    for (int k = 0; k < pr->numLoc; ++k)
+        for (int i = 0; i < pr->numLoc; ++i)
+            for (int j = 0; j < pr->numLoc; ++j)pr->new_costs[i][j] = min(pr->new_costs[i][j], pr->new_costs[i][k] + pr->new_costs[k][j]);    
+
+    //<- Compute cost
+    int num_reduced = 0;
+    for (int i = 1; i < pr->numLoc; ++i) {
         int val = pr->listLoc[0].stTime + pr->times[0][i];//e0+t0i
         if (val > pr->listLoc[i].enTime //li
             || max(val, pr->listLoc[i].stTime) + pr->times[i][0] > pr->T
             ) 
         {
-            for (int j = 0; j <= pr->numLoc; ++j) {
+            for (int j = 0; j < pr->numLoc; ++j) {
                 pr->costs[i][j] = oo;
                 pr->costs[j][i] = oo;
             }
+            num_reduced++;
         }//eliminate arcs
         else {
-            for (int j = 1; j <= pr->numLoc; ++j)if (j != i) {
+            for (int j = 1; j < pr->numLoc; ++j)if (j != i) {
+                int eStime = max(val, pr->listLoc[i].stTime);
                 if (pr->listLoc[i].stTime + pr->times[i][j] > pr->listLoc[j].enTime //ei+tij>lj
-                    || max(val, pr->listLoc[i].stTime) + pr->times[i][j] > pr->listLoc[j].enTime //0-i-j-0
-                    || max(max(val, pr->listLoc[i].stTime), pr->listLoc[j].stTime) + pr->times[j][0] > pr->T
-                    ) pr->costs[i][j] = oo;
+                    || eStime + pr->times[i][j] > pr->listLoc[j].enTime //0-i-j-0
+                    || max(eStime + pr->times[i][j], pr->listLoc[j].stTime) + pr->times[j][0] > pr->T
+                    ) {
+                    pr->costs[i][j] = oo; 
+                    num_reduced++;
+                }
             }
         }
     }
+    cout << num_reduced << endl;
     //tighten TW:
+    num_reduced = 0;
     while (true)
     {
         bool flag = true;// can't reduce
-        for (int i = 1; i <= pr->numLoc; ++i)if (pr->costs[i][0] != oo) {//not a eliminated node
+        for (int i = 1; i < pr->numLoc; ++i)if (pr->costs[i][0] != oo) {//not a eliminated node
             int valMinIJ = oo,valMinJI = oo;
             int valMaxIJ = -oo, valMaxJI = -oo;
-            for (int j = 1; j <= pr->numLoc; ++j)if (pr->costs[i][j] != oo && j!=i) {//not a eliminated arc                
+            for (int j = 0; j < pr->numLoc; ++j)if (pr->costs[i][j] != oo && j!=i) {//not a eliminated arc                
                 valMinIJ = min(valMinIJ, pr->listLoc[j].stTime - pr->times[i][j]);
                 valMinJI = min(valMinJI, pr->listLoc[j].stTime + pr->times[j][i]);
                 valMaxJI = max(valMaxIJ, pr->listLoc[j].enTime + pr->times[j][i]);
@@ -205,13 +226,18 @@ void init(Param* pr) {
             if (pr->listLoc[i].stTime < min(valMinIJ, pr->listLoc[i].enTime)) {
                 pr->listLoc[i].stTime = min(valMinIJ, pr->listLoc[i].enTime);
                 flag = false;
+                num_reduced++;
             }
             valMaxIJ = max(valMaxIJ, valMaxJI);
             if (pr->listLoc[i].enTime > max(valMaxIJ,pr->listLoc[i].stTime)) {
-                pr->listLoc[i].stTime = max(valMaxIJ, pr->listLoc[i].stTime);
+                pr->listLoc[i].enTime = max(valMaxIJ, pr->listLoc[i].stTime);
                 flag = false;
+                num_reduced++;
             }
         }
+        cout << num_reduced << endl;
+        cout << flag << endl;
         if (flag)break;
     }
+    */
 }

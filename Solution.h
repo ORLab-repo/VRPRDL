@@ -1,15 +1,38 @@
 #pragma once
 #include "lib.h"
-#include "Param.h"
 #include "Node.h"
 #include "Route.h"
+
+bool notDominatePop(II &label, II &labelA, II &labelB, II &labelC)
+{
+    if (label.first >= labelA.first && label.second >= labelA.second)
+        if (label.first != labelA.first || label.second != labelA.second) return false;
+    if (label.first >= labelB.first && label.second >= labelB.second)
+        if (label.first != labelB.first || label.second != labelB.second) return false;
+    if (label.first >= labelC.first && label.second >= labelC.second)
+        if (label.first != labelC.first || label.second != labelC.second) return false;
+    return true;
+}
+bool notDominatePush(II &label, II &labelA, II &labelB, II &labelC)
+{
+    if (label.first >= labelA.first && label.second >= labelA.second) return false;
+    if (label.first >= labelB.first && label.second >= labelB.second) return false;
+    if (label.first >= labelC.first && label.second >= labelC.second) return false;
+    return true;
+}
+void updateLabel(II label, II& labelA, II& labelB, II& labelC)
+{
+    if (label.first <= labelA.first && label.second <= labelA.second) labelA = label;
+    if (label.first < labelB.first) labelB = label;
+    if (label.second < labelC.second) labelC = label;
+}
 
 class Solution {
 public:
     vector<int> giantT;// giant tour
     vector<int> solT;// solution tour
     vector<Node*> nodes;// for nodes
-    vector<Route*> setR;// for set Route  
+    vector<Route*> setR;// for set Route      
     Param* pr;
     int cost;// objective
     int n;// number of customer
@@ -28,7 +51,7 @@ public:
         if (pr->numVeh != oo)m = pr->numVeh;
         else m = n;
         // create giant tour
-        for (int i = 1; i <= n + 1; ++i)giantT.pb(0);//indexing from 1
+        for (int i = 1; i <= n + 1; ++i)giantT.pb(0);//indexing from 1        
         //create node        
         /*
         * indexing from 1
@@ -61,11 +84,12 @@ public:
         }*/
 
         //for route
+        /*
         for (int i = 1; i <= m + 1; ++i)setR.pb(new Route(pr));
         for (int i = 1; i <= m; ++i) {
             setR[i]->depot = nodes[i + n];            
         }
-        
+        */
         //for split:
         /*
         F = new double* [m + 1];
@@ -210,34 +234,33 @@ public:
     //    }        
     //    solT[0] = solT[m + n];
     //    solT[m + n + 1] = solT[1];        
-    //}
+    //}       
 
-    
     // split without limit number of vehicles
-    void Split() {        
-        //make set of dominance label:
-        bool(*cmp1)(II, II) = compareIIForward;
-        set<II, bool(*)(II, II)> setDomiance(cmp1);
-        //make set of dominated label:
-        bool(*cmp2)(II, II) = compareIIBackward;
-        set<II, bool(*)(II, II)> setDomianated(cmp2);        
-        vector<III> lstLabel;
-
+    void Split() {                
+        /*
+        * (cost, time)
+        * idx of location
+        */        
+        vector<III> lstLabel; //((cost, time), loc)
+        vector<III> curLabel; //((cost, time), prv)
+        vector<int> prvIdLb; //previous label in vector
         //the index that cannot exceed in a route due to the capacity.
         int* maxIdx = new int[n + 1];
         int curLoad = 0;
-        maxIdx[0] = 0;
+        maxIdx[0] = 0;       
         for (int i = 1; i <= n; ++i) {
-            maxIdx[i] = i;
-            curLoad -= pr->listCL[i - 1].demand;
-            if (maxIdx[i - 1] < i)curLoad += pr->listCL[i].demand;
-            if (maxIdx[i - 1] == n) {
+            maxIdx[i] = max(maxIdx[i - 1], i);
+            int prvIdx = giantT[i - 1];
+            curLoad -= pr->listCL[prvIdx].demand;            
+            if (maxIdx[i - 1] < i)curLoad = pr->listCL[giantT[i]].demand;            
+            if (maxIdx[i - 1] == n){
                 maxIdx[i] = n;
                 continue;
             }
             for (int j = max(i + 1, maxIdx[i - 1] + 1); j <= n; ++j) {
-                if (curLoad + pr->listCL[j].demand <= pr->Q) {
-                    curLoad += pr->listCL[j].demand;
+                if (curLoad + pr->listCL[giantT[j]].demand <= pr->Q) {
+                    curLoad += pr->listCL[giantT[j]].demand;
                     maxIdx[i] = j;
                 }
                 else {
@@ -250,19 +273,75 @@ public:
             F[i] = oo;
             pred[i] = -1;
         }        
-        
-        for (int st = 1; st <= n; st++) {
-            lstLabel.clear();
-            lstLabel.push_back(III(II(0, 0), 0));
-            for (auto lb : lstLabel) {
-                int costU = lb.ft.ft;
-                int timeU = lb.ft.sc;
-                int idxLocU = lb.sc;
-                if(timeU)
+        F[0] = 0;
+        pred[0] = -1;
+        int stLb = -1, enLb = -1;
+        III lbU, lbV;
+        II label1, label2, label3;
+        int idCus, costU, timeU, idLocU;
+        int timeV, costV;
+        for (int st = 1; st <= n; st++) {          
+            //init first label:            
+            lstLabel.pb(III(II(0, 0), 0));
+            prvIdLb.pb(pred[st - 1]);
+            stLb = lstLabel.size() - 1;
+            enLb = lstLabel.size() - 1;
+            for (int v = st; v <= maxIdx[st]; ++v) {
+                int idCus = giantT[v];                
+                for (auto idLocV : pr->listCL[idCus].listLoc) {
+                    label1 = II(oo, oo);
+                    label2 = II(oo, 0);
+                    label3 = II(0, oo);
+                    curLabel.clear();
+                    if (pr->costs[0][idLocV] == oo) {//eliminated node:
+                        continue;
+                    }
+                    //construct label of next layer
+                    for (int i = stLb; i <= enLb; ++i) {
+                        III lbU = lstLabel[i];
+                        costU = lbU.ft.ft;
+                        timeU = lbU.ft.sc;
+                        idLocU = lbU.sc;
+                        timeV = max(timeU + pr->times[idLocU][idLocV], pr->listLoc[idLocV].stTime);                        
+                        if (timeV > pr->listLoc[idLocV].enTime
+                            || timeV + pr->times[idLocV][0] > pr->T // only true when travel times satisfy triangle inequality 
+                            ) {
+                            continue;
+                        }
+                        costV = costU + pr->costs[idLocU][idLocV];
+                        lbV = III(II(costV, timeV), i);
+                        if (notDominatePush(lbV.first, label1, label2, label3)) {
+                            updateLabel(lbV.first, label1, label2, label3);
+                            curLabel.pb(lbV);
+                        }                        
+                    }                    
+                    //dominate label
+                    sort(curLabel.begin(), curLabel.end());                    
+                    int minT = oo;
+                    //for (auto val : curLabel) {
+                    for(int i=0;i<curLabel.size();++i){
+                        III val = curLabel[i];
+                        if (val.ft.sc < minT)
+                        {
+                            minT = val.ft.sc;
+                            lstLabel.pb(III(val.ft, idLocV));
+                            prvIdLb.pb(val.sc);
+                            //update F function
+                            if (//val.ft.sc + pr->times[idLocV][0] < pr->T // uncomment when travel times does not satisfy triangle inequality
+                                F[v] > val.ft.ft + pr->costs[idLocV][0] + F[st - 1]) {
+                                F[v] = val.ft.ft + pr->costs[idLocV][0] + F[st - 1];
+                                pred[v] = lstLabel.size() - 1;                                
+                            }                            
+                        }                        
+                    }
+                }
+                stLb = enLb + 1;
+                enLb = lstLabel.size() - 1;
+                if (stLb > enLb)break;
             }
-        }
-        F[0] = 0;        
-        if (cost == oo)return;
+        }        
+        cout << F[n] << "\n";
+        /*if (cost == oo)return;
         int st, en = n;
         //reset:
         for (int i = 1; i <= m; ++i) {
@@ -284,7 +363,7 @@ public:
             setR[i]->updateRoute();
             //setR[i]->showR();
         }
-        cvSolT();       
+        cvSolT();*/
     }
    
 //    void initSol() {
@@ -1318,10 +1397,10 @@ public:
 //
 //    //deconstructor:
     ~Solution(){        
-        for (int k = 0; k <= m; ++k) {
+        /*for (int k = 0; k <= m; ++k) {
             delete[] F[k];
             delete[] pred[k];
-        }
+        }*/
         delete[] F;
         delete[] pred;
         giantT.clear();

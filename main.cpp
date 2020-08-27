@@ -1,11 +1,11 @@
 #include "lib.h"
 #include "ReadData.h"
-//#include "Solution.h"
+#include "Solution.h"
 
 using namespace std;
 
 int arr[] = {
-    0, 8, 10, 2, 4, 6, 3, 5, 1, 9, 7,
+    0, 59, 9, 51, 39, 66, 35, 108, 96, 52, 49, 74, 79, 27, 95, 53, 57, 43, 29, 94, 46, 101, 42, 8, 73, 22, 16, 44, 87, 31, 88, 37, 25, 13, 3, 115, 70, 5, 107, 81, 92, 77, 83, 86, 45, 34, 54, 91, 17, 14, 15, 119, 71, 55, 100, 41, 80, 93, 36, 103, 110, 82, 72, 63, 67, 98, 24, 50, 89, 114, 68, 1, 7, 105, 60, 65, 85, 12, 97, 40, 69, 109, 84, 21, 75, 48, 58, 62, 118, 19, 120, 2, 78, 56, 32, 38, 6, 111, 61, 20, 4, 76, 26, 18, 23, 102, 117, 33, 116, 113, 28, 10, 11, 104, 64, 90, 112, 47, 99, 106, 30
 };
 
 int seed[] = {
@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
     cin.tie(0); cout.tie(0);
     ios::sync_with_stdio(0);
     string pathIn, pathOut;    
-    pathIn = "instances\\instance_0-triangle.vrp";
+    pathIn = "instances\\instance_30-triangle.vrp";
     //pathOut = "solution_"+ to_string(idSed)+"\\" + typeIns[idType] + "\\" + "sol_" + to_string(idx) + ".txt";
     //cin >> pathIn;
     Param* pr = read_Ins(pathIn);    
@@ -71,8 +71,21 @@ int main(int argc, char* argv[]) {
     //init(pr);
     //pr->fileOut.open(pathOut);
     cout.precision(6);                   
-    ckData(pr);
-    //Solution bestSol(pr);                       
+    //ckData(pr);
+    init(pr);
+    Solution bestSol(pr);     
+    for (int i = 1; i <= bestSol.n; ++i)bestSol.giantT[i] = arr[i];   
+    bestSol.Split();
+    /*bestSol.solT.clear();
+    for (int i = 0; i < sizeof(arr) / sizeof(int); ++i)bestSol.solT.push_back(arr[i]);    
+    int ckCosts = 0;    
+    for (int i = 1; i < bestSol.solT.size(); ++i) {
+        cout<<bestSol.solT[i - 1]<<" "<<bestSol.solT[i]<<" "<< pr->costs[bestSol.solT[i - 1]][bestSol.solT[i]]<<"\n";
+        ckCosts += pr->costs[bestSol.solT[i - 1]][bestSol.solT[i]];
+    }
+    cout << ckCosts << endl;*/
+    //for (int i = 0; i <= bestSol.n; i++)bestSol.giantT[i] = arr[i];
+    //bestSol.Split();
     //bestSol.ELS();
     ////cout << Util::round2num(bestSol.cost) << endl;    
     //cout << (clock()-start) / CLOCKS_PER_SEC << endl;

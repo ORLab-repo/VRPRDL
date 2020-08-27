@@ -1,23 +1,20 @@
 #pragma once
-#include "lib.h"
+#include<vector>
+
+using namespace std;
 
 class Client
 {
 public:
 	vector<int> listLoc;
 	int demand = -1;
-	Client();
-	~Client();
 
-private:
+	Client()
+	{
+	}
 
+	~Client()
+	{
+		listLoc.clear();
+	}
 };
-
-Client::Client()
-{
-}
-
-Client::~Client()
-{
-	listLoc.clear();
-}

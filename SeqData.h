@@ -10,17 +10,10 @@ public:
 	int E;//earliest time completion
 	int L;//latest starting time
 	int T;//sum of travel and service time
-	SeqData();
-	~SeqData();
+	bool F;//check feasibility;
+	SeqData() {};
+	~SeqData() {};
 
 private:
 
 };
-
-SeqData::SeqData()
-{
-}
-
-SeqData::~SeqData()
-{
-}

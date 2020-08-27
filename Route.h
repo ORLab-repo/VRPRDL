@@ -1,5 +1,4 @@
 #pragma once
-#include "Param.h"
 #include "Node.h"
 
 using namespace std;
@@ -23,11 +22,7 @@ public:
     void clearRouteFrom(Node* u);
     void clearRouteFromRev(Node* u);
     double caculateDis();
-    void updateRoute();
-    double calAInRan(int u, int v);
-    int calQInRan(int u, int v);
-    double calBInRan(int u, int v);
-    double calEInRan(int u, int v);
+    void updateRoute();    
     void showR();
     void showR_rev();
     void reverse1Dep();

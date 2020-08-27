@@ -13,7 +13,7 @@
 #include <map>
 #include <queue>
 #include <cstdlib>      
-//#include "Param.h"
+#include "Param.h"
 #include "Util.h"
 #include "Client.h"
 #include "Location.h"
@@ -36,12 +36,3 @@ typedef pair<double, II> DII;
 typedef IloArray<IloNumVarArray> IloNumVarArray2;//2D
 typedef IloArray<IloNumVarArray2> IloNumVarArray3;//3D
 typedef IloArray<IloNumVarArray3> IloNumVarArray4;//4D
-bool compareIIForward(II i1, II i2)
-{
-    return (i1.first <= i2.first && i1.second <= i2.second);
-}
-
-bool compareIIBackward(II i1, II i2)
-{
-    return (i1.first >= i2.first && i1.second >= i2.second);
-}

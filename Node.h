@@ -3,7 +3,7 @@
 #include "SeqData.h"
 #include <vector>
 
-//class Route;
+class Route;
 using namespace std;
 
 class Node{
