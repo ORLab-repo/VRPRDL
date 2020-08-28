@@ -19,9 +19,7 @@ public:
     SeqData* seqi_n;
     SeqData* seqn_i;
     vector <SeqData*> seqi_j; // data for (i,j) with j > i
-    vector <SeqData*> seqj_i; // data for (j,i) (for the same subsequence as i_j, but reversed)
-    int stTime;//stating time
-    int enTime;//ending time
+    vector <SeqData*> seqj_i; // data for (j,i) (for the same subsequence as i_j, but reversed)    
     int demand;
     vector<int> moves; //init based on correlation measure
     int idxClient = -1;

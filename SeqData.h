@@ -3,8 +3,8 @@
 class SeqData
 {
 public:
-	int firstnode;
-	int lastnode;
+	int firstnode;//index location
+	int lastnode;//index location
 	int cost;
 	int load;
 	int E;//earliest time completion

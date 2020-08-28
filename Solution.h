@@ -30,7 +30,7 @@ void updateLabel(II label, II& labelA, II& labelB, II& labelC)
 class Solution {
 public:
     vector<int> giantT;// giant tour
-    vector<int> solT;// solution tour
+    vector<int> solT;// solution tour (contains index of clients)
     vector<Node*> nodes;// for nodes
     vector<Route*> setR;// for set Route      
     Param* pr;
@@ -61,37 +61,35 @@ public:
         //for customer        
         for (int i = 1; i <= n; ++i)nodes[i]->idxClient = i;
         //for depot
-        for (int i = n + 1; i <= 2 * m + n; ++i)nodes[i]->idxClient = 0;
+        for (int i = n + 1; i <= 2 * m + n; ++i)nodes[i]->idxClient = 0;        
         //init neibor list:
 
-        /*solT.push_back(0);
+        solT.push_back(0);
         set<DI> sDis;
         for (int i = 1; i <= m + n; ++i) {
             solT.push_back(0);
-            sDis.clear();
+            /*sDis.clear();
             for (int j = 1; j <= m + n; ++j)if (i != j) {
                 sDis.insert(DI(pr->costs[nodes[i]->idxClient][nodes[j]->idxClient], j));
             }
             for (auto val : sDis) {
                 nodes[i]->moves.push_back(val.second);
-            }
+            }*/
         }
-        solT.push_back(0);*/
+        solT.push_back(0);
 
-        /*for(int i=n+1; i<= m+n; ++i){
+        for(int i=n+1; i<= m+n; ++i){
             nodes[i]->pred = nodes[i+m];
             nodes[i+m]->suc = nodes[i];
-        }*/
+        }
 
-        //for route
-        /*
-        for (int i = 1; i <= m + 1; ++i)setR.pb(new Route(pr));
+        //for route        
+        for (int i = 1; i <= m; ++i)setR.pb(new Route(pr));
         for (int i = 1; i <= m; ++i) {
             setR[i]->depot = nodes[i + n];            
-        }
-        */
+        }       
         //for split:
-        /*
+        /* using when num of vehicles is limit.
         F = new double* [m + 1];
         pred = new int* [m + 1];
         for (int k = 0; k <= m; ++k) {
@@ -101,6 +99,11 @@ public:
         */
         F = new int[n + 1];
         pred = new int[n + 1];
+    }
+
+    void genGiantT() {
+        for (int i = 1; i <= n; ++i)giantT[i] = i;
+        random_shuffle(giantT.begin() + 1, giantT.end());
     }
 
     void cvGiantT() {
@@ -340,8 +343,15 @@ public:
                 if (stLb > enLb)break;
             }
         }        
-        cout << F[n] << "\n";
-        /*if (cost == oo)return;
+        //cout << F[n] << "\n";
+        cost = F[n];
+        if (cost == oo)return;
+        int indexLb = pred[n];
+        ///construct soluton
+        while (true)
+        {
+            
+        }
         int st, en = n;
         //reset:
         for (int i = 1; i <= m; ++i) {
@@ -363,7 +373,8 @@ public:
             setR[i]->updateRoute();
             //setR[i]->showR();
         }
-        cvSolT();*/
+        cvSolT();
+        delete[] maxIdx;
     }
    
 //    void initSol() {

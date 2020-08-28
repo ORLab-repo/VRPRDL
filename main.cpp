@@ -5,7 +5,7 @@
 using namespace std;
 
 int arr[] = {
-    0, 59, 9, 51, 39, 66, 35, 108, 96, 52, 49, 74, 79, 27, 95, 53, 57, 43, 29, 94, 46, 101, 42, 8, 73, 22, 16, 44, 87, 31, 88, 37, 25, 13, 3, 115, 70, 5, 107, 81, 92, 77, 83, 86, 45, 34, 54, 91, 17, 14, 15, 119, 71, 55, 100, 41, 80, 93, 36, 103, 110, 82, 72, 63, 67, 98, 24, 50, 89, 114, 68, 1, 7, 105, 60, 65, 85, 12, 97, 40, 69, 109, 84, 21, 75, 48, 58, 62, 118, 19, 120, 2, 78, 56, 32, 38, 6, 111, 61, 20, 4, 76, 26, 18, 23, 102, 117, 33, 116, 113, 28, 10, 11, 104, 64, 90, 112, 47, 99, 106, 30
+    0, 29, 73, 87, 35, 86, 84, 114, 53, 88, 100, 28, 66, 102, 106, 36, 94, 5, 12, 45, 104, 39, 77, 117, 67, 26, 81, 95, 1, 7, 97, 103, 16, 11, 69, 80, 57, 33, 89, 43, 79, 50, 24, 109, 85, 99, 40, 115, 25, 30, 2, 47, 14, 13, 51, 56, 112, 71, 91, 83, 70, 60, 37, 116, 96, 46, 68, 17, 108, 31, 18, 54, 101, 8, 21, 9, 32, 75, 119, 110, 27, 55, 52, 93, 49, 62, 41, 92, 78, 64, 58, 6, 98, 61, 59, 34, 65, 107, 120, 4, 74, 90, 10, 63, 76, 105, 19, 118, 72, 48, 3, 113, 23, 38, 22, 15, 111, 44, 20, 82, 42
 };
 
 int seed[] = {
@@ -21,12 +21,30 @@ int seed[] = {
     10415237,
 };
 
+vector<vector<int>> samArr;
+void getSamples() {
+    ifstream fileIn("samples.txt");
+    vector<string> lineCont;// content of Line
+    while (fileIn)
+    {
+        string line;
+        getline(fileIn, line);        
+        lineCont = Util::splitString(line, ",");
+        if (lineCont.size() != 120)break;
+        samArr.push_back(vector<int>(120));
+        for (int i = 0; i < 120; ++i){
+            samArr.back()[i] = stoi(lineCont[i]);
+        }
+    }
+    fileIn.close();
+}
 //exe -ni -nc -pmin -pmax -ld - bi -TL -method
 string typeIns[] = { "C", "R", "RC" };
 int _numI = 200, _numC = 200, _pMin = 1, _pMax = 2, _ld = 2, timeLimit = oo;
 string method = "ELS";
 bool _bi = true;
-int main(int argc, char* argv[]) {    
+int main(int argc, char* argv[]) {        
+    srand(18319894);
     /*for (int i = 1; i < argc; ++i) {        
         if (string(argv[i]) == "-method") {            
             method = argv[i + 1];
@@ -53,10 +71,11 @@ int main(int argc, char* argv[]) {
             timeLimit = atoi(argv[i + 1]);
         }
     }*/
-    cin.tie(0); cout.tie(0);
+    //cin.tie(0); cout.tie(0);
     ios::sync_with_stdio(0);
     string pathIn, pathOut;    
     pathIn = "instances\\instance_30-triangle.vrp";
+    getSamples();    
     //pathOut = "solution_"+ to_string(idSed)+"\\" + typeIns[idType] + "\\" + "sol_" + to_string(idx) + ".txt";
     //cin >> pathIn;
     Param* pr = read_Ins(pathIn);    
@@ -73,9 +92,27 @@ int main(int argc, char* argv[]) {
     cout.precision(6);                   
     //ckData(pr);
     init(pr);
-    Solution bestSol(pr);     
-    for (int i = 1; i <= bestSol.n; ++i)bestSol.giantT[i] = arr[i];   
+    Solution bestSol(pr);    
+    ///check solution
+    /*
+    ofstream fl("ckSol.txt");  
+    std::chrono::time_point<std::chrono::system_clock> start, end;
+    start = std::chrono::system_clock::now();
+    for (int i = 1; i <= 100000; ++i) {        
+        for (int j = 1; j <= bestSol.n; ++j)bestSol.giantT[j] = samArr[i - 1][j - 1];
+        bestSol.Split();            
+        fl << bestSol.cost << ", ";
+    }    
+    end = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed_seconds = end - start;
+    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+
+    std::cout << "elapsed time: " << elapsed_seconds.count() << "s\n";
+    fl.close();
+    */
+    /*for (int i = 1; i <= bestSol.n; ++i)bestSol.giantT[i] = arr[i];   
     bestSol.Split();
+    cout << bestSol.cost << "\n";*/
     /*bestSol.solT.clear();
     for (int i = 0; i < sizeof(arr) / sizeof(int); ++i)bestSol.solT.push_back(arr[i]);    
     int ckCosts = 0;    
