@@ -22,6 +22,8 @@ public:
 	bool isDebug = false;
 	int lambda = 2;
 	clock_t start;
+	int maxNeibor = 40;
+	int sizeSub = 10;
 	int TL = -1;// time limit
 	bool bi = true;//cheking best improvement
 	int nI = 200;

@@ -114,14 +114,14 @@ Param* read_Ins(string path){
             int idx = stoi(lineCont[0]) - 1;
             for (int i = 1; i < lineCont.size(); i++) {
                 pr->listCL[idx].listLoc.pb(stoi(lineCont[i]) - 1);
-                pr->listLoc[stoi(lineCont[i]) - 1].idxClient = idx;
+                pr->listLoc[stoi(lineCont[i]) - 1].idxClient = idx;                
 
             }
         }
 
         //get demand:
         if (countLine == 6) {
-            pr->listCL[stoi(lineCont[0]) - 1].demand = stoi(lineCont[1]);
+            pr->listCL[stoi(lineCont[0]) - 1].demand = stoi(lineCont[1]);            
         }
 
         ///uncomment if index of depot is not one
@@ -167,6 +167,11 @@ void ckData(Param* pr) {
 }
 void init(Param* pr) {
     //init
+    for (int i = 0; i < pr->listCL.size(); ++i) {
+        for (auto idxLoc : pr->listCL[i].listLoc) {
+            pr->listLoc[idxLoc].demand = pr->listCL[i].demand;
+        }
+    }
     //preprocessing:
     //eliminate nodes:          
     /*for (int i = 0; i < pr->numLoc; ++i) {

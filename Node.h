@@ -21,7 +21,9 @@ public:
     vector <SeqData*> seqi_j; // data for (i,j) with j > i
     vector <SeqData*> seqj_i; // data for (j,i) (for the same subsequence as i_j, but reversed)    
     int demand;
-    vector<int> moves; //init based on correlation measure
+    vector<int> movesClu; //init based on correlation measure for cluster
+    vector<int> movesLoc; //init based on correlation measure for locations (still contain the index of customer)
+    vector<int> idxLocMoves; //index of locations that correspond to the index of customer (-1 if not exist).
     int idxClient = -1;
     int idxLoc = -1;
 

@@ -7,37 +7,68 @@ double Route::caculateDis() {
     Node* valSuc = this->depot->suc;
     do
     {
-        res += pr->costs[valSuc->idxClient][val->idxClient];
+        res += pr->costs[valSuc->idxLoc][val->idxLoc];
         val = valSuc;
         valSuc = valSuc->suc;
-    } while (val ->idxClient);
+    } while (val ->idxLoc);
     return res;
 }
 
 Route::~Route(void) {        
+    isNodeTested.clear();
 }               
 void Route::updateRoute() {    
     length = 0;
     Node* val = depot;
+    val->seq0_i->init(0);
+    val->seqi_0->init(0);
     val->rou = this;
     int u, v;
+    //update seqdata (0->i, i->0):
     for (int i = 1;; ++i) {
-        u = val->idxClient;
+        u = val->idxLoc;
         val = val->suc;
         val->rou = this;
-        v = val->idxClient;        
+        v = val->idxLoc;
+        val->seq0_i->concatOneAfter(val->pred->seq0_i, v);
+        val->seqi_0->concatOneBefore(val->pred->seqi_0, v);
         length = i;
         //if(pr->isDebug)cout << v << " " << E[i] << endl;
         if (v == 0)break;
         val->posInRoute = i;
     }    
+    //update seqdata(i->n, n->i):
     val = depot->pred;
-    for (int i = length-1; i >= 0; --i) {
-        u = val->idxClient;
+    assert(val->idxLoc == 0);
+    val->seqi_n->init(0);
+    val->seqn_i->init(0);
+    while (true)
+    {
         val = val->pred;
-        v = val->idxClient;        
+        v = val->idxLoc;
+        val->seqn_i->concatOneAfter(val->suc->seqn_i, v);
+        val->seqi_n->concatOneBefore(val->suc->seqi_n, v);
         if (v == 0)break;
     }
+
+    //update seqdata(i->j)(j->i) 
+    //|i-j| < pr->sizeSub (i and j is not a depot).
+    val = depot->suc;
+    Node* curNode = val;
+    while (true)
+    {
+        if (curNode->idxLoc == 0)break;
+        curNode->seqi_j[0]->init(val->idxLoc);
+        curNode->seqj_i[0]->init(val->idxLoc);
+        val = curNode->suc;
+        for (int i = 1; i < pr->sizeSub; ++i) {            
+            if (val->idxLoc == 0)break;
+            curNode->seqi_j[i]->concatOneAfter(curNode->seqi_j[i - 1], val->idxLoc);
+            curNode->seqj_i[i]->concatOneBefore(curNode->seqj_i[i - 1], val->idxLoc);
+            val = val->suc;
+        }
+        curNode = curNode->suc;
+    }        
 }
 
 void Route::showR() {
@@ -116,4 +147,3 @@ void Route::insertToRouPrev(Node* u) {
     u->suc = nxtDepot;
     nxtDepot->pred = u;
 }
-

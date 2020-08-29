@@ -12,11 +12,13 @@ public:
     int length = 0;// number of client plus depot on route
     //int posInSet;// position in set of route (using for update LS)
     Param* pr;
+    vector<bool> isNodeTested;// true if all move with this node are tested on this route
     Route(){}
     Route(Param* _pr) {
-        pr = _pr;        
+        pr = _pr;   
+        for (int i = 1; i <= pr->numClient; ++i)isNodeTested.push_back(false);
     }
-
+    
     void insertToRou(Node* u);
     void insertToRouPrev(Node* u);
     void clearRouteFrom(Node* u);

@@ -5,7 +5,7 @@
 using namespace std;
 
 int arr[] = {
-    0, 29, 73, 87, 35, 86, 84, 114, 53, 88, 100, 28, 66, 102, 106, 36, 94, 5, 12, 45, 104, 39, 77, 117, 67, 26, 81, 95, 1, 7, 97, 103, 16, 11, 69, 80, 57, 33, 89, 43, 79, 50, 24, 109, 85, 99, 40, 115, 25, 30, 2, 47, 14, 13, 51, 56, 112, 71, 91, 83, 70, 60, 37, 116, 96, 46, 68, 17, 108, 31, 18, 54, 101, 8, 21, 9, 32, 75, 119, 110, 27, 55, 52, 93, 49, 62, 41, 92, 78, 64, 58, 6, 98, 61, 59, 34, 65, 107, 120, 4, 74, 90, 10, 63, 76, 105, 19, 118, 72, 48, 3, 113, 23, 38, 22, 15, 111, 44, 20, 82, 42
+    0, 55, 76, 23, 14, 15, 119, 71, 19, 59, 9, 51, 39, 66, 35, 81, 107, 92, 77, 83, 86, 45, 34, 54, 91, 68, 25, 37, 13, 3, 115, 70, 5, 28, 52, 49, 74, 79, 27, 40, 17, 26, 18, 1, 7, 102, 117, 105, 33, 116, 113, 10, 11, 104, 64, 90, 101, 42, 8, 73, 60, 65, 85, 12, 97, 46, 95, 53, 57, 43, 29, 94, 120, 2, 78, 56, 32, 38, 6, 111, 61, 20, 4, 30, 106, 99, 112, 47, 108, 96, 16, 87, 44, 31, 88, 100, 41, 80, 93, 36, 103, 110, 22, 82, 72, 63, 67, 98, 24, 50, 89, 114, 69, 109, 84, 21, 75, 48, 58, 62, 118
 };
 
 int seed[] = {
@@ -43,8 +43,7 @@ string typeIns[] = { "C", "R", "RC" };
 int _numI = 200, _numC = 200, _pMin = 1, _pMax = 2, _ld = 2, timeLimit = oo;
 string method = "ELS";
 bool _bi = true;
-int main(int argc, char* argv[]) {        
-    srand(18319894);
+int main(int argc, char* argv[]) {            
     /*for (int i = 1; i < argc; ++i) {        
         if (string(argv[i]) == "-method") {            
             method = argv[i + 1];
@@ -75,7 +74,7 @@ int main(int argc, char* argv[]) {
     ios::sync_with_stdio(0);
     string pathIn, pathOut;    
     pathIn = "instances\\instance_30-triangle.vrp";
-    getSamples();    
+    //getSamples();    
     //pathOut = "solution_"+ to_string(idSed)+"\\" + typeIns[idType] + "\\" + "sol_" + to_string(idx) + ".txt";
     //cin >> pathIn;
     Param* pr = read_Ins(pathIn);    
@@ -109,10 +108,10 @@ int main(int argc, char* argv[]) {
 
     std::cout << "elapsed time: " << elapsed_seconds.count() << "s\n";
     fl.close();
-    */
-    /*for (int i = 1; i <= bestSol.n; ++i)bestSol.giantT[i] = arr[i];   
+    */    
+    for (int i = 1; i <= bestSol.n; ++i)bestSol.giantT[i] = arr[i];   
     bestSol.Split();
-    cout << bestSol.cost << "\n";*/
+    cout << bestSol.cost << "\n";
     /*bestSol.solT.clear();
     for (int i = 0; i < sizeof(arr) / sizeof(int); ++i)bestSol.solT.push_back(arr[i]);    
     int ckCosts = 0;    

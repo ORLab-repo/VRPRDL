@@ -10,6 +10,7 @@ public:
 	double y;
 	int stTime;//stating time
 	int enTime;//ending time
+	int demand;
 	int idxClient = -1;
 	vector<int> moves;
 

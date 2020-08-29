@@ -61,7 +61,10 @@ public:
         //for customer        
         for (int i = 1; i <= n; ++i)nodes[i]->idxClient = i;
         //for depot
-        for (int i = n + 1; i <= 2 * m + n; ++i)nodes[i]->idxClient = 0;        
+        for (int i = n + 1; i <= 2 * m + n; ++i) {
+            nodes[i]->idxClient = 0;
+            nodes[i]->idxLoc = 0;
+        }
         //init neibor list:
 
         solT.push_back(0);
@@ -78,13 +81,15 @@ public:
         }
         solT.push_back(0);
 
-        for(int i=n+1; i<= m+n; ++i){
-            nodes[i]->pred = nodes[i+m];
-            nodes[i+m]->suc = nodes[i];
+        for (int i = n + 1; i <= m + n; ++i) {
+            nodes[i]->pred = nodes[i + m];
+            nodes[i]->suc = nodes[i + m];
+            nodes[i + m]->suc = nodes[i];
+            nodes[i + m]->pred = nodes[i];
         }
 
         //for route        
-        for (int i = 1; i <= m; ++i)setR.pb(new Route(pr));
+        for (int i = 1; i <= m + 1; ++i)setR.pb(new Route(pr));
         for (int i = 1; i <= m; ++i) {
             setR[i]->depot = nodes[i + n];            
         }       
@@ -346,34 +351,36 @@ public:
         //cout << F[n] << "\n";
         cost = F[n];
         if (cost == oo)return;
-        int indexLb = pred[n];
-        ///construct soluton
-        while (true)
-        {
-            
+        int indexLb = pred[n];// index of last label.
+        ///construct solution
+        vector<int> tourLoc;        
+        int numVeh = 0;
+        while (indexLb != -1)
+        {                        
+            tourLoc.pb(lstLabel[indexLb].second);
+            if (lstLabel[indexLb].second == 0)numVeh++;
+            indexLb = prvIdLb[indexLb];
         }
-        int st, en = n;
-        //reset:
-        for (int i = 1; i <= m; ++i) {
-            setR[i]->depot = nodes[i + n];
-            nodes[i + n]->pred = nodes[i + n + m];
-            nodes[i + n + m]->suc = nodes[i + n];
-            nodes[i + n]->suc = nodes[i + n + m];
-            nodes[i + n + m]->pred = nodes[i + n];
-        }
-
-        for (int i = numVeh; i >= 1; --i) {
-            st = pred[i][en] + 1;
-            for (int j = st; j <= en; ++j) {
-                setR[i]->insertToRou(nodes[giantT[j]]);
+        m = numVeh;// adding one more vehicle for doing LS()
+        assert(tourLoc.size() == m + n);
+        reverse(tourLoc.begin(), tourLoc.end());        
+        numVeh = 0;
+        for (auto val : tourLoc) {
+            if (val == 0) {
+                numVeh++;                
             }
-            en = st - 1;
-        }
+            else {                
+                idCus = pr->listLoc[val].idxClient;
+                nodes[idCus]->idxClient = idCus;
+                nodes[idCus]->idxLoc = val;
+                setR[numVeh]->insertToRou(nodes[idCus]);
+            }
+        }        
         for (int i = 1; i <= m; ++i) {            
             setR[i]->updateRoute();
             //setR[i]->showR();
         }
-        cvSolT();
+        //cvSolT(); // uncomment when need tracking the specific postion in solution (used in sequential search)
         delete[] maxIdx;
     }
    
