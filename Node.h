@@ -35,5 +35,8 @@ public:
         return (pred->idxClient == 0 || suc->idxClient == 0);
     }  
     ~Node() {
+        movesClu.clear();
+        movesLoc.clear();
+        idxLocMoves.clear();
     };    
 };

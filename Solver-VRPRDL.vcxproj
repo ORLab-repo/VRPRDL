@@ -155,6 +155,7 @@
     <ClInclude Include="Node.h" />
     <ClInclude Include="Param.h" />
     <ClInclude Include="ReadData.h" />
+    <ClInclude Include="Rng.h" />
     <ClInclude Include="Route.h" />
     <ClInclude Include="SeqData.h" />
     <ClInclude Include="Solution.h" />

@@ -70,8 +70,9 @@ int main(int argc, char* argv[]) {
             timeLimit = atoi(argv[i + 1]);
         }
     }*/
-    //cin.tie(0); cout.tie(0);
+    //cin.tie(0); cout.tie(0);    
     ios::sync_with_stdio(0);
+    Rng::config(seed[0]);
     string pathIn, pathOut;    
     pathIn = "instances\\instance_30-triangle.vrp";
     //getSamples();    

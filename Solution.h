@@ -33,6 +33,8 @@ public:
     vector<int> solT;// solution tour (contains index of clients)
     vector<Node*> nodes;// for nodes
     vector<Route*> setR;// for set Route      
+    vector<SeqData*> myseqs;// for concatenation in LS
+    SeqData* seqSet;// init sequences for each node.
     Param* pr;
     int cost;// objective
     int n;// number of customer
@@ -102,6 +104,8 @@ public:
             pred[k] = new int[n + 1];                       
         }
         */
+        //for LS
+
         F = new int[n + 1];
         pred = new int[n + 1];
     }
@@ -446,49 +450,46 @@ public:
 //        for (int i = 1; i <= n; ++i)delete setOfR[i];
 //        Split();        
 //    }
-//
-//    int randPos() {
-//        return rand() % n + 1;
-//    }
-//    void exchange() {
-//        int posU = randPos();
-//        int posV = randPos();
-//        while (posU == posV)
-//        {
-//            posV = randPos();
-//        }
-//        swap(giantT[posU], giantT[posV]);
-//    }
-//
-//    void interchange() {
-//        int posU = randPos();
-//        int posV = randPos();
-//        while (posU == posV)
-//        {
-//            posV = randPos();
-//        }
-//        if (posU < posV) {
-//            for (int i = posU + 1; i <= posV; ++i) {
-//                swap(giantT[i], giantT[i - 1]);
-//            }
-//        }
-//        else {
-//            for (int i = posU - 1; i >= posV; --i) {
-//                swap(giantT[i], giantT[i + 1]);
-//            }
-//        }
-//    }
-//
-//    void mutate(int numP) {
-//        for (int i = 1; i <= numP; ++i) {
-//            if (rand() % 2 == 0) {
-//                exchange();
-//            }
-//            else {
-//                interchange();
-//            }
-//        }
-//    }
+//    
+    void exchange() {
+        int posU = Rng::getNumInRan(1, n);
+        int posV = Rng::getNumInRan(1, n);
+        while (posU == posV)
+        {
+            posV = Rng::getNumInRan(1, n);
+        }
+        swap(giantT[posU], giantT[posV]);
+    }
+
+    void interchange() {
+        int posU = Rng::getNumInRan(1, n);
+        int posV = Rng::getNumInRan(1, n);
+        while (posU == posV)
+        {
+            posV = Rng::getNumInRan(1, n);
+        }
+        if (posU < posV) {
+            for (int i = posU + 1; i <= posV; ++i) {
+                swap(giantT[i], giantT[i - 1]);
+            }
+        }
+        else {
+            for (int i = posU - 1; i >= posV; --i) {
+                swap(giantT[i], giantT[i + 1]);
+            }
+        }
+    }
+
+    void mutate(int numP) {
+        for (int i = 1; i <= numP; ++i) {
+            if (Rng::generator() % 2 == 0) {
+                exchange();
+            }
+            else {
+                interchange();
+            }
+        }
+    }
 //
 //    //Local Search:
 //    bool localSearch() {
@@ -1338,82 +1339,83 @@ public:
 //        return (bestG != 0.0);        
 //    }
 //
-//    //ELSALGO:
-//    void ELS() {
-//        initSol();
-//        int* resGiantT = new int[n + 1];        
-//        int* curGiantT = new int[n + 1];
-//        for (int i = 1; i <= n; ++i) {
-//            curGiantT[i] = giantT[i];
-//            resGiantT[i] = giantT[i];
-//            //cout << giantT[i] << " " << endl;
-//        }        
-//        double bestObj=cost;
-//        cout << cost << endl;
-//        double curObj;
-//        int curP = pr->pMin;
-//        for (int i = 1; i <= pr->nI; ++i) {
-//            curObj = bestObj;
-//            for (int j = 1; j <= pr->nC; ++j) {                
-//                for (int i1 = 1; i1 <= n; ++i1)giantT[i1] = curGiantT[i1];
-//                mutate(curP);                
-//                Split();                
-//                if (cost == oo)continue;                
-//                try {
-//                    updateObj();
-//                }
-//                catch (...) {
-//                    cout << "bug here\n";
-//                    for (auto val : giantT)cout << val << ", ";
-//                    cout << endl;
-//                    system("pause");
-//                    exit(0);
-//                }
-//                if (cost + EP < curObj) {
-//                    curObj = cost;
-//                    for (int i1 = 1; i1 <= n; ++i1)resGiantT[i1] = giantT[i1];
-//                    curP = pr->pMin;
-//                }
-//                else {
-//                    curP = min(pr->pMax, curP + 1);
-//                }
-//
-//                /*if ((clock() - pr->start) / CLOCKS_PER_SEC >= pr->TL) {
-//                    if (curObj + EP < bestObj) {
-//                        bestObj = curObj;
-//                        goto thispro;
-//                    }
-//                }*/
-//                //cout << i << " " << j << "\n";
-//            } 
-//            //cout << i << endl;
-//            if (curObj + EP < bestObj) {
-//                bestObj = curObj;
-//                for (int i1 = 1; i1 <= n; ++i1)curGiantT[i1] = resGiantT[i1];
-//            }
-//        }        
-//        //thispro:
-//        cout << "best found obj: " << Util::round2num(bestObj) << endl;
-//        pr->fileOut<< "best found obj: " << Util::round2num(bestObj) << endl;
-//        //if (pr->debugLS) {            
-//            for (int i = 1; i <= n; ++i)giantT[i] = resGiantT[i];
-//            Split();            
-//            if (cost != oo && cost - bestObj > EP) {
-//                cout << "bug here\n";
-//                system("pause");
-//                exit(0);
-//            }
-//            cout << Util::round2num(cost) << endl;
-//            pr->fileOut << "Giant Tour:\n";
-//            for (int i = 1; i <= n; ++i)pr->fileOut << giantT[i] << ", ";
-//            pr->fileOut << "\n";
-//            pr->fileOut<<"cost split: " << Util::round2num(cost) << endl;
-//        //}
-//        delete[] resGiantT;
-//        delete[] curGiantT;
-//    }
-//
-//    //deconstructor:
+    //ELSALGO:
+    void ELS() {
+        //initSol();
+        int* resGiantT = new int[n + 1];        
+        int* curGiantT = new int[n + 1];
+        for (int i = 1; i <= n; ++i) {
+            curGiantT[i] = giantT[i];
+            resGiantT[i] = giantT[i];
+            //cout << giantT[i] << " " << endl;
+        }        
+        double bestObj=cost;
+        cout << cost << endl;
+        double curObj;
+        int curP = pr->pMin;
+        for (int i = 1; i <= pr->nI; ++i) {
+            curObj = bestObj;
+            for (int j = 1; j <= pr->nC; ++j) {                
+                for (int i1 = 1; i1 <= n; ++i1)giantT[i1] = curGiantT[i1];
+                mutate(curP);                
+                Split();                
+                if (cost == oo)continue;                
+                try {
+                    //updateObj();
+                    continue;
+                }
+                catch (...) {
+                    cout << "bug here\n";
+                    for (auto val : giantT)cout << val << ", ";
+                    cout << endl;
+                    system("pause");
+                    exit(0);
+                }
+                if (cost + EP < curObj) {
+                    curObj = cost;
+                    for (int i1 = 1; i1 <= n; ++i1)resGiantT[i1] = giantT[i1];
+                    curP = pr->pMin;
+                }
+                else {
+                    curP = min(pr->pMax, curP + 1);
+                }
+
+                /*if ((clock() - pr->start) / CLOCKS_PER_SEC >= pr->TL) {
+                    if (curObj + EP < bestObj) {
+                        bestObj = curObj;
+                        goto thispro;
+                    }
+                }*/
+                //cout << i << " " << j << "\n";
+            } 
+            //cout << i << endl;
+            if (curObj + EP < bestObj) {
+                bestObj = curObj;
+                for (int i1 = 1; i1 <= n; ++i1)curGiantT[i1] = resGiantT[i1];
+            }
+        }        
+        //thispro:
+        cout << "best found obj: " << Util::round2num(bestObj) << endl;
+        pr->fileOut<< "best found obj: " << Util::round2num(bestObj) << endl;
+        //if (pr->debugLS) {            
+            for (int i = 1; i <= n; ++i)giantT[i] = resGiantT[i];
+            Split();            
+            if (cost != oo && cost - bestObj > EP) {
+                cout << "bug here\n";
+                system("pause");
+                exit(0);
+            }
+            cout << Util::round2num(cost) << endl;
+            pr->fileOut << "Giant Tour:\n";
+            for (int i = 1; i <= n; ++i)pr->fileOut << giantT[i] << ", ";
+            pr->fileOut << "\n";
+            pr->fileOut<<"cost split: " << Util::round2num(cost) << endl;
+        //}
+        delete[] resGiantT;
+        delete[] curGiantT;
+    }
+
+    //deconstructor:
     ~Solution(){        
         /*for (int k = 0; k <= m; ++k) {
             delete[] F[k];

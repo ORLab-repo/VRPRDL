@@ -12,7 +12,7 @@ public:
 	int Q;// capacity
 	int T;// time horizon	
 	int numVeh = int(1e9);// number of vehicle
-	int numClient;//number of client	
+	int numClient;//number of client (containing depot)	
 	int numLoc;// number of node
 	vector<Client> listCL;
 	vector<Location> listLoc;
@@ -20,10 +20,10 @@ public:
 	vector<vector<int> > new_costs;// distance	
 	vector<vector<int> > times;// distance			
 	bool isDebug = false;
-	int lambda = 2;
+	int lambda = 2;	
 	clock_t start;
-	int maxNeibor = 40;
-	int sizeSub = 10;
+	int maxNeibor = 40;// max size of neigbor vertex set for granular search (can be used for dynamically sertification).
+	int sizeSub = 10;// max size of subsequence for using concatenation
 	int TL = -1;// time limit
 	bool bi = true;//cheking best improvement
 	int nI = 200;
