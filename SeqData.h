@@ -45,7 +45,8 @@ public:
 	void concatOneAfter(SeqData* seq, int idxLoc) {
 		F = seq->F;
 		
-		if (seq->E + pr->times[seq->lastnode][idxLoc] > pr->listLoc[idxLoc].enTime) {
+		int t_12 = pr->times[seq->lastnode][idxLoc];
+		if (seq->E + t_12 > pr->listLoc[idxLoc].enTime) {
 			F = false;
 		}
 		if (seq->load + pr->listLoc[idxLoc].demand > pr->Q) {
@@ -53,9 +54,9 @@ public:
 		}
 		cost = seq->cost + pr->costs[seq->lastnode][idxLoc];		
 		load = seq->load + pr->listLoc[idxLoc].demand;
-		E = max(seq->E + pr->times[seq->lastnode][idxLoc], pr->listLoc[idxLoc].enTime);
-		L = min(seq->L, pr->listLoc[idxLoc].enTime - pr->times[seq->lastnode][idxLoc] - seq->T);
-		T = seq->T + pr->times[seq->lastnode][idxLoc];
+		E = max(seq->E + t_12, pr->listLoc[idxLoc].stTime);
+		L = min(seq->L, pr->listLoc[idxLoc].enTime - t_12 - seq->T);
+		T = seq->T + t_12;
 		lastnode = idxLoc;
 		firstnode = seq->firstnode;
 	}
@@ -63,7 +64,8 @@ public:
 	void concatOneBefore(SeqData* seq, int idxLoc) {
 		F = seq->F;
 
-		if (pr->listLoc[idxLoc].stTime + pr->times[idxLoc][seq->firstnode] > seq->L) {
+		int t_12 = pr->times[idxLoc][seq->firstnode];
+		if (pr->listLoc[idxLoc].stTime + t_12> seq->L) {
 			F = false;
 		}
 		if (seq->load + pr->listLoc[idxLoc].demand > pr->Q) {
@@ -71,9 +73,9 @@ public:
 		}
 		cost = seq->cost + pr->costs[idxLoc][seq->lastnode];
 		load = seq->load + pr->listLoc[idxLoc].demand;
-		E = max(pr->listLoc[idxLoc].stTime + pr->times[idxLoc][seq->firstnode] + seq->T, seq->E);
-		L = min(pr->listLoc[idxLoc].enTime, seq->L - pr->times[idxLoc][seq->firstnode]);
-		T = seq->T + pr->times[idxLoc][seq->firstnode];
+		E = max(pr->listLoc[idxLoc].stTime + t_12 + seq->T, seq->E);
+		L = min(pr->listLoc[idxLoc].enTime, seq->L - t_12);
+		T = seq->T + t_12;
 		firstnode = idxLoc;
 		lastnode = seq->lastnode;
 	}

@@ -19,6 +19,7 @@ public:
         for (int i = 1; i <= pr->numClient; ++i)isNodeTested.push_back(false);
     }
     
+    void ckRoute();
     void insertToRou(Node* u);
     void insertToRouPrev(Node* u);
     void clearRouteFrom(Node* u);

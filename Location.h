@@ -12,7 +12,7 @@ public:
 	int enTime;//ending time
 	int demand;
 	int idxClient = -1;
-	vector<int> moves;
+	vector<int> moves;// preprocessing for cluster.
 
 	Location()
 	{
@@ -26,7 +26,7 @@ public:
 	int calDis(Location& val) {
 		return round(sqrt((x - val.x) * (x - val.x) + (y - val.y) * (y - val.y)));
 	}
-
+	
 	~Location()
 	{
 		moves.clear();

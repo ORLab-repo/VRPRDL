@@ -20,6 +20,7 @@ Route::~Route(void) {
 void Route::updateRoute() {    
     length = 0;
     Node* val = depot;
+    int ckstg = 0;
     val->seq0_i->init(0);
     val->seqi_0->init(0);
     val->rou = this;
@@ -68,7 +69,9 @@ void Route::updateRoute() {
             val = val->suc;
         }
         curNode = curNode->suc;
-    }        
+    }
+    //reset nodes tested:
+    for (int i = 1; i < pr->numClient; ++i)isNodeTested[i] = false;
 }
 
 void Route::showR() {
@@ -117,12 +120,38 @@ void Route::reverse1Dep() {
         valV = nxt;
     } while (true);
 }
+
 void Route::clearRouteFrom(Node* val) {
     if (val->rou != this) {
         throw "Wrong here";
     }    
     val->suc = this->depot->pred;
     this->depot->pred->pred = val;
+}
+
+void Route::ckRoute()
+{
+    //assert(depot->pred->seq0_i->F == true);
+    int cost = 0;
+    int time = 0;
+    int load = 0;
+    Node* val = this->depot;
+    Node* valSuc = this->depot->suc;
+    int u, v;
+    do
+    {
+        u = val->idxLoc;
+        v = valSuc->idxLoc;
+        cost += pr->costs[u][v];
+        time += pr->times[u][v];
+        time = max(time, pr->listLoc[v].stTime);
+        assert(time <= pr->listLoc[v].enTime);
+        val = valSuc;
+        load += val->demand;
+        valSuc = valSuc->suc;
+    } while (val->idxLoc);
+    assert(cost == depot->pred->seq0_i->cost);
+    assert(load == depot->pred->seq0_i->load);
 }
 
 void Route::insertToRou(Node* u) {

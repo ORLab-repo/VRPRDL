@@ -23,7 +23,8 @@ public:
     int demand;
     vector<int> movesClu; //init based on correlation measure for cluster
     vector<int> movesLoc; //init based on correlation measure for locations (still contain the index of customer)
-    vector<int> idxLocMoves; //index of locations that correspond to the index of customer (-1 if not exist).
+    vector<bool> idxLocMoves; //index of locations that correspond to the index of customer (-1 if not exist).
+    vector<bool> idxCluMoves; //index of locations that correspond to the index of customer (-1 if not exist).
     int idxClient = -1;
     int idxLoc = -1;
 

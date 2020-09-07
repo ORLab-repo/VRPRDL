@@ -1,5 +1,6 @@
 #pragma once
 #include "lib.h"
+#include "Rng.h"
 #include "Node.h"
 #include "Route.h"
 
@@ -61,10 +62,14 @@ public:
         */
         for (int i = 1; i <= n + 2 * m + 1; ++i)nodes.pb(new Node());
         //for customer        
-        for (int i = 1; i <= n; ++i)nodes[i]->idxClient = i;
+        for (int i = 1; i <= n; ++i) {
+            nodes[i]->idxClient = i;
+            nodes[i]->demand = pr->listCL[i].demand;
+        }
         //for depot
         for (int i = n + 1; i <= 2 * m + n; ++i) {
             nodes[i]->idxClient = 0;
+            nodes[i]->demand = 0;
             nodes[i]->idxLoc = 0;
         }
         //init neibor list:
@@ -105,7 +110,54 @@ public:
         }
         */
         //for LS
+        /*
+        * init seqdata for each node
+        */    
+        int maxSizeSeq = (pr->sizeSub * 2 + 4) * n + 2 * m * 4;
+        SeqData* myseqDatas = new SeqData[maxSizeSeq];
+        for (int i = 0; i < maxSizeSeq; ++i)myseqDatas[i].pr = _pr;
+        seqSet = myseqDatas;
+        int posSeq = 0;
 
+        //for client
+        for (int i = 1; i <= n; ++i) {
+            nodes[i]->seq0_i = &myseqDatas[posSeq];
+            nodes[i]->seqi_0 = &myseqDatas[posSeq + 1];
+            nodes[i]->seqi_n = &myseqDatas[posSeq + 2];
+            nodes[i]->seqn_i = &myseqDatas[posSeq + 3];
+            for (int j = 0; j < pr->sizeSub; ++j) {
+                nodes[i]->seqi_j.push_back(&myseqDatas[posSeq + 4 + j]);
+            }
+            for (int j = 0; j < pr->sizeSub; ++j) {
+                nodes[i]->seqj_i.push_back(&myseqDatas[posSeq + 4 + pr->sizeSub + j]);
+            }
+            posSeq += 4 + 2 * pr->sizeSub;
+        }
+        //for depot:
+        for (int i = n + 1; i <= 2 * m + n; ++i) {
+            nodes[i]->seq0_i = &myseqDatas[posSeq];
+            nodes[i]->seqi_0 = &myseqDatas[posSeq + 1];
+            nodes[i]->seqi_n = &myseqDatas[posSeq + 2];
+            nodes[i]->seqn_i = &myseqDatas[posSeq + 3];
+            posSeq += 4;
+        }
+
+        /*
+        * init set of moves for each node
+        * fixed and flexible version.
+        */
+        for (int i = 1; i <= n; ++i) {            
+            nodes[i]->idxLocMoves.resize(n + 1, false);
+            nodes[i]->movesLoc.resize(pr->maxNeibor);
+            nodes[i]->idxCluMoves.resize(n + 1, false);            
+            nodes[i]->movesClu.resize(pr->maxNeibor);            
+            // preprocessing for cluster set:
+
+        }
+
+        /*
+        * init for split
+        */
         F = new int[n + 1];
         pred = new int[n + 1];
     }
@@ -139,19 +191,30 @@ public:
         }
     }
 
-    /*
-    bool ckSolT() {
+    
+    bool ckSol() {
+        vector<int> arrSol;
         int* dd = new int[n + 1];
         for (int i = 1; i <= n; ++i)dd[i] = 0;
-        for (auto val : solT) {
-            if(val <= n)dd[pr->listLoc[val]] = 1;
+        int totalCost = 0;
+        for (int i = 1; i <= m; ++i) {
+            setR[i]->showR();
+            Node* val = setR[i]->depot;
+            setR[i]->ckRoute();
+            while (true)
+            {
+                val = val->suc;
+                if (val->idxClient == 0)break;
+                dd[val->idxClient] = 1;                
+            }
+            totalCost += setR[i]->depot->pred->seq0_i->cost;
         }
         for (int i = 1; i <= n; ++i)if (dd[i] == 0) {
             throw "Wrong here";
         }
+        assert(totalCost == cost);
         delete [] dd;
-    }
-    */
+    }    
 
     //void cvSolT() {
     //    if (pr->isDebug) {
@@ -384,6 +447,7 @@ public:
             setR[i]->updateRoute();
             //setR[i]->showR();
         }
+        //ckSol();
         //cvSolT(); // uncomment when need tracking the specific postion in solution (used in sequential search)
         delete[] maxIdx;
     }
@@ -1421,11 +1485,12 @@ public:
             delete[] F[k];
             delete[] pred[k];
         }*/
+        delete[] seqSet;
         delete[] F;
         delete[] pred;
         giantT.clear();
         solT.clear();                
-        for (int i = 1; i <= n + m; ++i)nodes[i]->moves.clear();        
+        for (int i = 0; i < n + 2 * pr->numVeh + 1; ++i)delete nodes[i];
         for (int i = 1; i <= m; ++i)delete setR[i];
         delete pr;
     }

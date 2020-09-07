@@ -172,6 +172,32 @@ void init(Param* pr) {
             pr->listLoc[idxLoc].demand = pr->listCL[i].demand;
         }
     }
+    set<II> sDis;
+    for (int i = 0; i < pr->numLoc; ++i) {
+        pr->corDis[i].resize(pr->numLoc);
+        for (int j = 0; j < pr->numLoc; ++j) {
+            pr->corDis[i][j] = pr->costs[i][j]
+                + pr->ldTw * max(pr->listLoc[i].stTime + pr->times[i][j] - pr->listLoc[j].enTime, 0);
+        }
+        if (i == 0) continue;
+        // calculating correlation measure for each cluster
+        int valMin = oo;
+        sDis.clear();
+        for (int j = 1; j < pr->numClient; ++j)if (j != i) {
+            valMin = oo;
+            for (auto val : pr->listCL[j].listLoc) {
+                valMin = min(valMin, pr->corDis[i][val]);
+            }
+            sDis.insert(II(valMin, j));
+        }
+        // getting maxNeibor nearest cluster
+        pr->listLoc[i].moves.clear();
+        for (auto val : sDis) {
+            pr->listLoc[i].moves.pb(val.second);
+            if (pr->listLoc[i].moves.size() == pr->maxNeibor)break;
+        }
+    }
+
     //preprocessing:
     //eliminate nodes:          
     /*for (int i = 0; i < pr->numLoc; ++i) {
