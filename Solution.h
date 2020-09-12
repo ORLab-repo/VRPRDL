@@ -32,10 +32,28 @@ class Solution {
 public:
     vector<int> giantT;// giant tour
     vector<int> solT;// solution tour (contains index of clients)
+    vector<int> ordNodeLs; // using for LS
     vector<Node*> nodes;// for nodes
     vector<Route*> setR;// for set Route      
-    vector<SeqData*> myseqs;// for concatenation in LS
+    vector<SeqData*> myseqs;// for concatenation in LS    
+    vector<int>* lstNeig;// getting current list of neiborhood;
     SeqData* seqSet;// init sequences for each node.
+    /*
+    * Variables for dealing with LS
+    */
+    int resGenInMoves[4][4];//using for general insert
+    Node* nodeU;
+    Node* nodeUPred;
+    Node* x;
+    Node* nodeXSuiv;
+    Node* nodeV;
+    Node* nodeVPred;
+    Node* y;
+    Node* nodeYSuiv;
+    Route* routeU;
+    Route* routeV;
+    bool isFixed;// for identifying the type of LS;
+
     Param* pr;
     int cost;// objective
     int n;// number of customer
@@ -49,13 +67,18 @@ public:
     int* pred;
 
     Solution(Param* _pr) {
-        pr = _pr;
+        pr = _pr;        
         n = pr->numClient - 1;// not contain depot
+        if (pr->maxNeibor > n)pr->maxNeibor = n - 1;// deal with special case (exploring all neiborhood)
         if (pr->numVeh != oo)m = pr->numVeh;
         else m = n;
         m++;//do for initialization
-        // create giant tour
-        for (int i = 1; i <= n + 1; ++i)giantT.pb(0);//indexing from 1        
+        // create giant tour        
+        for (int i = 0; i <= n; ++i) {
+            giantT.pb(0);//indexing from 1        
+            ordNodeLs.push_back(i + 1);
+        }
+        ordNodeLs.pop_back();
         //create node        
         /*
         * indexing from 1
@@ -314,18 +337,22 @@ public:
     void reinitSingleMoveInRou(Route* r) {
         for (int i = 1; i <= n; ++i)r->isNodeTested[i] = false;
         for (Node* tempNode = r->depot->suc; tempNode->idxClient != 0; tempNode = tempNode->suc) {
-            for (int i = 1; i <= min(m + 1, pr->numVeh); ++i)setR[i]->isNodeTested[tempNode->idxClient] = false;
+            for (int i = 1; i <= min(m + 1, n); ++i)setR[i]->isNodeTested[tempNode->idxClient] = false;
         }
     }
 
     //reset all moves on all routes
     void reinitAllMovesInRou() {
-        for (int i = 1; i <= min(m + 1, pr->numVeh); ++i) {
+        for (int i = 1; i <= min(m + 1, n); ++i) {
             for (int j = 1; j <= n; ++j)setR[i]->isNodeTested[j] = false;
         }
     }
 
-    
+    //marked that node had tested on all routes:
+    void markNodeTested(Node* nod) {
+        for (int i = 1; i <= min(m + 1, n); ++i)setR[i]->isNodeTested[nod->idxClient] = true;
+    }
+
     //reset neigborhood cluster set (run when changing location)
     void reinitCluSet(Node* nod) {
         for (auto val : nod->movesClu) {
@@ -335,15 +362,15 @@ public:
     }
 
     //reset neigborhood set for each node
-    void reinitNegiborSet() {
+    void reinitNegiborSet(bool isConClu = true) {
         set<II> sDis;
         int u, v;
         for (int i = 1; i <= n; ++i) {
             u = nodes[i]->idxLoc;
             //cluster set:
-            reinitCluSet(nodes[i]);
+            if(isConClu)reinitCluSet(nodes[i]);
             //location set: 
-            /// (can update on the fly by using set but trading off when processing)
+            /// (can update on the fly by using data structure set but trading off when processing)
             //reset all existing index
             for (auto val : nodes[i]->movesLoc) {
                 nodes[i]->idxLocMoves[pr->listLoc[val].idxClient] = false;
@@ -577,8 +604,70 @@ public:
 //    }
 //    
     ///Local Search:
+    /// isFixed =  true if running fixed version LS
+    /// Otherwise if running flexible version LS
+    void updateObj() {
+        //shuffle the moves:
+        for (int i = 1; i <= n; ++i) {
+            shuffle(ordNodeLs.begin(), ordNodeLs.end(), Rng::generator);
+            shuffle(nodes[i]->movesClu.begin(), nodes[i]->movesClu.end(), Rng::generator);
+            shuffle(nodes[i]->movesLoc.begin(), nodes[i]->movesLoc.end(), Rng::generator);
+        }
+        //reset all moves on route:
+        reinitAllMovesInRou();
+        //checking move:
+        int isMoved = 0;
+        bool isMetEmpRou = false;
+        bool isEndSearch = false;
+        Node* tempNode;
+        while (!isEndSearch)
+        {
+            isEndSearch = true;
+            for (int posU = 0; posU < ordNodeLs.size(); ++posU) {
+                posU -= isMoved;
+                isMoved = 0;
+                isMetEmpRou = false;
+                nodeU = nodes[ordNodeLs[posU]];
+                routeU = nodeU->rou;
+                x = nodeU->suc;
+                if (isFixed)lstNeig = &nodeU->movesLoc;
+                else lstNeig = &nodeU->movesClu;
+                for (int posV = 0; posV < lstNeig->size() && isMoved == 0; ++posV) {
+                    nodeV = nodes[lstNeig->at(posV)];
+                    routeV = nodeV->rou;
+                    if (nodeV->rou->isNodeTested[nodeU->idxClient])continue;
+                    y = nodeV->suc;
+                    if (routeU != routeV) {
+                        //apply inter general insert:
+                        if (isMoved != 1) {
+                            tempNode = nodeV;
+                            nodeV = nodeV->suc;
+                            y = nodeV->suc;
+                            interRouteGeneralInsert();
+                        }
+                        //2-Opt*
 
+                        //2-Opt* Inverse
+                    }
+                    else {
+
+                    }
+                }
+
+
+                if (isMoved == 0) {
+                    markNodeTested(nodeU);                    
+                }
+                else {
+                    isEndSearch = false;
+                }
+            }
+        }
+    }    
     
+    void interRouteGeneralInsert() {
+
+    }
     ///ELSALGO:
     void exchange() {
         int posU = Rng::getNumInRan(1, n);
@@ -704,7 +793,8 @@ public:
         delete[] F;
         delete[] pred;
         giantT.clear();
-        solT.clear();                
+        solT.clear();  
+        ordNodeLs.clear();
         for (int i = 0; i < n + 2 * pr->numVeh + 1; ++i)delete nodes[i];
         for (int i = 1; i <= m; ++i)delete setR[i];
         delete pr;

@@ -19,7 +19,7 @@
 #include "Util.h"
 #include "Client.h"
 #include "Location.h"
-#include <ilcplex/ilocplex.h>
+//#include <ilcplex/ilocplex.h>
 
 #define pb push_back
 #define mp make_pair
@@ -35,6 +35,6 @@ typedef pair<II, int> III;
 typedef pair<double,double> DD;
 typedef pair<double, int> DI;
 typedef pair<double, II> DII;
-typedef IloArray<IloNumVarArray> IloNumVarArray2;//2D
-typedef IloArray<IloNumVarArray2> IloNumVarArray3;//3D
-typedef IloArray<IloNumVarArray3> IloNumVarArray4;//4D
+//typedef IloArray<IloNumVarArray> IloNumVarArray2;//2D
+//typedef IloArray<IloNumVarArray2> IloNumVarArray3;//3D
+//typedef IloArray<IloNumVarArray3> IloNumVarArray4;//4D
