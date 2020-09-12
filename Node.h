@@ -3,9 +3,9 @@
 #include "SeqData.h"
 #include <vector>
 
-class Route;
 using namespace std;
 
+class Route;
 class Node{
 public:
     bool isDepot;
@@ -23,18 +23,20 @@ public:
     int demand;
     vector<int> movesClu; //init based on correlation measure for cluster
     vector<int> movesLoc; //init based on correlation measure for locations (still contain the index of customer)
-    vector<bool> idxLocMoves; //index of locations that correspond to the index of customer (-1 if not exist).
-    vector<bool> idxCluMoves; //index of locations that correspond to the index of customer (-1 if not exist).
+    vector<bool> idxLocMoves; //true if index of customer is in the movesLoc (false if not exist).
+    vector<bool> idxCluMoves; //true if index of customer is in the movesClu (false if not exist).
     int idxClient = -1;
     int idxLoc = -1;
 
     Node() {        
-        isDepot = false;               
+        isDepot = false;           
+        rou = nullptr;
     }    
 
     bool ckNearDepot() {        
         return (pred->idxClient == 0 || suc->idxClient == 0);
     }  
+        
     ~Node() {
         movesClu.clear();
         movesLoc.clear();

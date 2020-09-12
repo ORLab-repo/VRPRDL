@@ -173,11 +173,12 @@ void init(Param* pr) {
         }
     }
     set<II> sDis;
+    pr->corDis.resize(pr->numLoc);
     for (int i = 0; i < pr->numLoc; ++i) {
         pr->corDis[i].resize(pr->numLoc);
-        for (int j = 0; j < pr->numLoc; ++j) {
-            pr->corDis[i][j] = pr->costs[i][j]
-                + pr->ldTw * max(pr->listLoc[i].stTime + pr->times[i][j] - pr->listLoc[j].enTime, 0);
+        for (int j = 0; j < pr->numLoc; ++j) {            
+            pr->corDis[i].push_back(pr->costs[i][j]
+                + pr->ldTw * max(pr->listLoc[i].stTime + pr->times[i][j] - pr->listLoc[j].enTime, 0));
         }
         if (i == 0) continue;
         // calculating correlation measure for each cluster
@@ -200,7 +201,7 @@ void init(Param* pr) {
 
     //preprocessing:
     //eliminate nodes:          
-    /*for (int i = 0; i < pr->numLoc; ++i) {
+    for (int i = 0; i < pr->numLoc; ++i) {
         pr->new_costs.push_back(vector<int>(pr->numLoc));
     }
     for (int i = 0; i < pr->numLoc; ++i)
@@ -269,6 +270,5 @@ void init(Param* pr) {
         cout << num_reduced << endl;
         cout << flag << endl;
         if (flag)break;
-    }
-    */
+    }    
 }
