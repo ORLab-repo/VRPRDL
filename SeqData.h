@@ -16,7 +16,7 @@ public:
 	int E;//earliest time completion
 	int L;//latest starting time
 	int T;//sum of travel and service time
-	bool F;//check feasibility;
+	int F;//check feasibility;
 	Param* pr;
 	
 	//constructor
@@ -71,7 +71,7 @@ public:
 		if (seq->load + pr->listLoc[idxLoc].demand > pr->Q) {
 			F = false;
 		}
-		cost = seq->cost + pr->costs[idxLoc][seq->lastnode];
+		cost = seq->cost + pr->costs[idxLoc][seq->firstnode];
 		load = seq->load + pr->listLoc[idxLoc].demand;
 		E = max(pr->listLoc[idxLoc].stTime + t_12 + seq->T, seq->E);
 		L = min(pr->listLoc[idxLoc].enTime, seq->L - t_12);
@@ -80,10 +80,10 @@ public:
 		lastnode = seq->lastnode;
 	}
 	/**/
-	int evaluation(vector<SeqData*> seqs) {
-		int costR = seqs[0]->cost;
+	int evaluation(vector<SeqData*> seqs) {		
+		int costR = seqs[0]->cost;		
 		int loadR = seqs[0]->load;
-		bool totalF = seqs[0]->F;
+		bool totalF = seqs[0]->F;				
 		int totalE = seqs[0]->E;
 		int totalL = seqs[0]->L;
 		int totalT = seqs[0]->T;
@@ -93,12 +93,12 @@ public:
 			v = seqs[i + 1]->firstnode;
 			costR += (pr->costs[u][v] + seqs[i + 1]->cost);
 			loadR += seqs[i + 1]->load;
-			totalF = (totalF ^ seqs[i]->F) ^ (totalE + pr->times[u][v] <= seqs[i + 1]->L);
+			totalF = (totalF & seqs[i]->F) & (totalE + pr->times[u][v] <= seqs[i + 1]->L) & (loadR <= pr->Q) &(costR < oo);
+			if (!totalF)return oo;// only use for checking feasible solution
 			totalE = max(totalE + pr->times[u][v] + seqs[i + 1]->T, seqs[i + 1]->E);
 			totalL = max(totalL, seqs[i + 1]->L - pr->times[u][v] - totalT);
 			totalT += pr->times[u][v] + seqs[i + 1]->T;			
 		}		
-		if (!totalF)return oo;
 		return costR;
 	}
 private:

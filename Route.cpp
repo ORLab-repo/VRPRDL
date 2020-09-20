@@ -1,13 +1,13 @@
 #include "lib.h"             
 #include "Route.h"
 
-double Route::caculateDis() {
-    double res = 0.0;
+int Route::caculateDis() {
+    int res = 0;
     Node* val = this->depot;
     Node* valSuc = this->depot->suc;
     do
     {
-        res += pr->costs[valSuc->idxLoc][val->idxLoc];
+        res += pr->costs[val->idxLoc][valSuc->idxLoc];
         val = valSuc;
         valSuc = valSuc->suc;
     } while (val ->idxLoc);
@@ -53,14 +53,14 @@ void Route::updateRoute() {
     }
 
     //update seqdata(i->j)(j->i) 
-    //|i-j| < pr->sizeSub (i and j is not a depot).
-    val = depot->suc;
-    Node* curNode = val;
+    //|i-j| < pr->sizeSub (i and j is not a depot).    
+    Node* curNode = depot->suc;
+    val = curNode;
     while (true)
     {
         if (curNode->idxLoc == 0)break;
-        curNode->seqi_j[0]->init(val->idxLoc);
-        curNode->seqj_i[0]->init(val->idxLoc);
+        curNode->seqi_j[0]->init(curNode->idxLoc);
+        curNode->seqj_i[0]->init(curNode->idxLoc);
         val = curNode->suc;
         for (int i = 1; i < pr->sizeSub; ++i) {            
             if (val->idxLoc == 0)break;
@@ -78,6 +78,16 @@ void Route::showR() {
     Node* val = this->depot;
     do {
         cout << val->idxClient << " ";
+        val = val->suc;
+    } while (val != this->depot);
+    cout << "\n";
+}
+
+void Route::showRLoc()
+{
+    Node* val = this->depot;
+    do {
+        cout << val->idxLoc << " ";
         val = val->suc;
     } while (val != this->depot);
     cout << "\n";
@@ -106,6 +116,12 @@ void Route::reverse() {
         valV = nxt;
     } while (true);
     //updateRoute();
+}
+
+void Route::clearNode()
+{
+    depot->suc = depot->pred;
+    depot->pred->pred = depot;
 }
 
 void Route::reverse1Dep() {
@@ -150,6 +166,7 @@ void Route::ckRoute()
         load += val->demand;
         valSuc = valSuc->suc;
     } while (val->idxLoc);
+    assert(depot->pred->seq0_i->cost == depot->seqi_n->cost);
     assert(cost == depot->pred->seq0_i->cost);
     assert(load == depot->pred->seq0_i->load);
 }

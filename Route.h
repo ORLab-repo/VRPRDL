@@ -20,15 +20,17 @@ public:
     }
     
     void ckRoute();
-    void insertToRou(Node* u);
+    void insertToRou(Node* u);    
     void insertToRouPrev(Node* u);
     void clearRouteFrom(Node* u);
     void clearRouteFromRev(Node* u);
-    double caculateDis();
+    int caculateDis();
     void updateRoute();    
     void showR();
+    void showRLoc();
     void showR_rev();
     void reverse1Dep();
     void reverse();
+    void clearNode();// remove all client in route
     ~Route();
 };

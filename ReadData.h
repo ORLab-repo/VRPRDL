@@ -176,32 +176,34 @@ void init(Param* pr) {
     pr->corDis.resize(pr->numLoc);
     for (int i = 0; i < pr->numLoc; ++i) {
         pr->corDis[i].resize(pr->numLoc);
-        for (int j = 0; j < pr->numLoc; ++j) {            
+        for (int j = 0; j < pr->numLoc; ++j) {
             pr->corDis[i].push_back(pr->costs[i][j]
                 + pr->ldTw * max(pr->listLoc[i].stTime + pr->times[i][j] - pr->listLoc[j].enTime, 0));
-        }
-        if (i == 0) continue;
+        }        
+    }
+    for (int i = 1; i < pr->numLoc; ++i) {
         // calculating correlation measure for each cluster
         int valMin = oo;
         sDis.clear();
-        for (int j = 1; j < pr->numClient; ++j)if (j != i) {
+        for (int j = 1; j < pr->numClient; ++j)if (j != pr->listLoc[i].idxClient) {
             valMin = oo;
-            for (auto val : pr->listCL[j].listLoc) {
-                valMin = min(valMin, pr->corDis[i][val]);
+            for (auto val : pr->listCL[j].listLoc) {               
+                valMin = min(valMin, pr->corDis[val][i]);
             }
             sDis.insert(II(valMin, j));
         }
         // getting maxNeibor nearest cluster
         pr->listLoc[i].moves.clear();
         for (auto val : sDis) {
+            if (val.first >= oo)continue;
             pr->listLoc[i].moves.pb(val.second);
             if (pr->listLoc[i].moves.size() == pr->maxNeibor)break;
         }
     }
 
-    //preprocessing:
-    //eliminate nodes:          
-    for (int i = 0; i < pr->numLoc; ++i) {
+    ///preprocessing:    
+    ///comment when travel time does not satisfy the triangle inequality
+    /*for (int i = 0; i < pr->numLoc; ++i) {
         pr->new_costs.push_back(vector<int>(pr->numLoc));
     }
     for (int i = 0; i < pr->numLoc; ++i)
@@ -210,9 +212,11 @@ void init(Param* pr) {
         }
     for (int k = 0; k < pr->numLoc; ++k)
         for (int i = 0; i < pr->numLoc; ++i)
-            for (int j = 0; j < pr->numLoc; ++j)pr->new_costs[i][j] = min(pr->new_costs[i][j], pr->new_costs[i][k] + pr->new_costs[k][j]);    
+            for (int j = 0; j < pr->numLoc; ++j)pr->new_costs[i][j] = min(pr->new_costs[i][j], pr->new_costs[i][k] + pr->new_costs[k][j]);
+    */
 
     //<- Compute cost
+    //eliminate nodes:          
     int num_reduced = 0;
     for (int i = 1; i < pr->numLoc; ++i) {
         int val = pr->listLoc[0].stTime + pr->times[0][i];//e0+t0i

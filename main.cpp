@@ -43,9 +43,9 @@ string typeIns[] = { "C", "R", "RC" };
 int _numI = 200, _numC = 200, _pMin = 1, _pMax = 2, _ld = 2, timeLimit = oo;
 string method = "ELS";
 bool _bi = true;
-int main(int argc, char* argv[]) {            
-    /*for (int i = 1; i < argc; ++i) {        
-        if (string(argv[i]) == "-method") {            
+int main(int argc, char* argv[]) {
+    /*for (int i = 1; i < argc; ++i) {
+        if (string(argv[i]) == "-method") {
             method = argv[i + 1];
         }
         if (string(argv[i]) == "-ni") {
@@ -72,47 +72,60 @@ int main(int argc, char* argv[]) {
     }*/
     //cin.tie(0); cout.tie(0);    
     ios::sync_with_stdio(0);
-    Rng::config(seed[0]);
-    string pathIn, pathOut;    
+    //Rng::config(seed[0]);
+    srand(seed[0]);
+    string pathIn, pathOut;
     pathIn = "instances\\instance_30-triangle.vrp";
     //getSamples();    
     //pathOut = "solution_"+ to_string(idSed)+"\\" + typeIns[idType] + "\\" + "sol_" + to_string(idx) + ".txt";
     //cin >> pathIn;
-    Param* pr = read_Ins(pathIn);    
+    Param* pr = read_Ins(pathIn);
     //set up param for algo:
     pr->nI = _numI;
     pr->nC = _numC;
     pr->pMin = _pMin;
     pr->pMax = _pMax;
     pr->lambda = _ld;
-    pr->bi = _bi;                
+    pr->bi = _bi;
     //pr->maxE *= 10;             
     //init(pr);
     //pr->fileOut.open(pathOut);
-    cout.precision(6);                   
+    cout.precision(6);
     //ckData(pr);
     init(pr);
-    Solution bestSol(pr);    
+    Solution bestSol(pr);
     ///check solution
     /*
-    ofstream fl("ckSol.txt");  
+    ofstream fl("ckSol.txt");
     std::chrono::time_point<std::chrono::system_clock> start, end;
     start = std::chrono::system_clock::now();
-    for (int i = 1; i <= 100000; ++i) {        
+    for (int i = 1; i <= 100000; ++i) {
         for (int j = 1; j <= bestSol.n; ++j)bestSol.giantT[j] = samArr[i - 1][j - 1];
-        bestSol.Split();            
+        bestSol.Split();
         fl << bestSol.cost << ", ";
-    }    
+    }
     end = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = end - start;
     std::time_t end_time = std::chrono::system_clock::to_time_t(end);
 
     std::cout << "elapsed time: " << elapsed_seconds.count() << "s\n";
     fl.close();
-    */    
-    for (int i = 1; i <= bestSol.n; ++i)bestSol.giantT[i] = arr[i];   
-    bestSol.Split();
-    cout << bestSol.cost << "\n";
+    */
+    //for (int i = 1; i <= bestSol.n; ++i)bestSol.giantT[i] = i;       
+    bestSol.isFixed = true;
+    int minCost = oo;
+    for (int i = 1; i <= 1; ++i) {
+        cout << i << "\n";        
+        bestSol.genGiantT();
+        bestSol.Split();
+        cout <<"initial: "<< bestSol.cost << "\n";
+        bestSol.updateObj();
+        bestSol.cvGiantT();
+        bestSol.Split();        
+        cout <<"improved: "<< bestSol.cost << "\n";
+        minCost = min(minCost, bestSol.cost);
+    }
+    cout << minCost << "\n";
     /*bestSol.solT.clear();
     for (int i = 0; i < sizeof(arr) / sizeof(int); ++i)bestSol.solT.push_back(arr[i]);    
     int ckCosts = 0;    
