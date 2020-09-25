@@ -20,6 +20,7 @@ Route::~Route(void) {
 void Route::updateRoute() {    
     length = 0;
     Node* val = depot;
+    val->posInRoute = 0;
     int ckstg = 0;
     val->seq0_i->init(0);
     val->seqi_0->init(0);
@@ -35,8 +36,8 @@ void Route::updateRoute() {
         val->seqi_0->concatOneBefore(val->pred->seqi_0, v);
         length = i;
         //if(pr->isDebug)cout << v << " " << E[i] << endl;
-        if (v == 0)break;
         val->posInRoute = i;
+        if (v == 0)break;        
     }    
     //update seqdata(i->n, n->i):
     val = depot->pred;
@@ -159,7 +160,7 @@ void Route::ckRoute()
         u = val->idxLoc;
         v = valSuc->idxLoc;
         cost += pr->costs[u][v];
-        time += pr->times[u][v];
+        time += pr->times[u][v];        
         time = max(time, pr->listLoc[v].stTime);
         assert(time <= pr->listLoc[v].enTime);
         val = valSuc;

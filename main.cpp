@@ -43,7 +43,11 @@ string typeIns[] = { "C", "R", "RC" };
 int _numI = 200, _numC = 200, _pMin = 1, _pMax = 2, _ld = 2, timeLimit = oo;
 string method = "ELS";
 bool _bi = true;
+void ckChanged(vector<int> arr) {
+    arr.push_back(0);
+}
 int main(int argc, char* argv[]) {
+    //freopen("log.txt", "w", stdout);
     /*for (int i = 1; i < argc; ++i) {
         if (string(argv[i]) == "-method") {
             method = argv[i + 1];
@@ -72,8 +76,8 @@ int main(int argc, char* argv[]) {
     }*/
     //cin.tie(0); cout.tie(0);    
     ios::sync_with_stdio(0);
-    //Rng::config(seed[0]);
-    srand(seed[0]);
+    Rng::config(seed[0]);
+    //srand(seed[0]);    
     string pathIn, pathOut;
     pathIn = "instances\\instance_30-triangle.vrp";
     //getSamples();    
@@ -111,17 +115,26 @@ int main(int argc, char* argv[]) {
     std::cout << "elapsed time: " << elapsed_seconds.count() << "s\n";
     fl.close();
     */
-    //for (int i = 1; i <= bestSol.n; ++i)bestSol.giantT[i] = i;       
-    bestSol.isFixed = true;
+    //for (int i = 1; i <= bestSol.n; ++i)bestSol.giantT[i] = i;                
+    bestSol.isFixed = false;//5751     
+    pr->isDebug = false;
     int minCost = oo;
+    int oldCost;
     for (int i = 1; i <= 1; ++i) {
         cout << i << "\n";        
         bestSol.genGiantT();
         bestSol.Split();
-        cout <<"initial: "<< bestSol.cost << "\n";
-        bestSol.updateObj();
-        bestSol.cvGiantT();
-        bestSol.Split();        
+        cout <<"initial: "<< bestSol.cost << "\n";       
+        while (true)
+        {                   
+            oldCost = bestSol.cost;
+            bestSol.updateObj();
+            bestSol.cvGiantT();
+            bestSol.Split();
+            assert(oldCost >= bestSol.cost);
+            if (oldCost == bestSol.cost)break;
+            bestSol.isFixed = !bestSol.isFixed;
+        }
         cout <<"improved: "<< bestSol.cost << "\n";
         minCost = min(minCost, bestSol.cost);
     }

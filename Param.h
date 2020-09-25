@@ -23,9 +23,9 @@ public:
 	bool isDebug = false;
 	int lambda = 2;	
 	clock_t start;
-	int ldTw = 0;// coff for TW
-	//int maxNeibor = 40;// max size of neigbor vertex set for granular search (can be used for dynamically sertification).
-	int maxNeibor = 150;// max size of neigbor vertex set for granular search (can be used for dynamically sertification).
+	int ldTw = 5;// coff for TW
+	int maxNeibor = 40;// max size of neigbor vertex set for granular search (can be used for dynamically sertification).
+	//int maxNeibor = 150;// max size of neigbor vertex set for granular search (can be used for dynamically sertification).
 	int sizeSub = 10;// max size of subsequence for using concatenation
 	int TL = -1;// time limit
 	bool bi = true;//cheking best improvement

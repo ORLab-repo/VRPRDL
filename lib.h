@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <stdio.h>
 #include <string>
+#include <stdio.h>
 #include <assert.h>
 #include <fstream>
 #include <sstream>

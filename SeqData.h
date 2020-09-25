@@ -43,6 +43,7 @@ public:
 
 	/**/
 	void concatOneAfter(SeqData* seq, int idxLoc) {
+		if (seq == NULL) init(idxLoc);
 		F = seq->F;
 		
 		int t_12 = pr->times[seq->lastnode][idxLoc];
@@ -62,6 +63,7 @@ public:
 	}
 	/**/
 	void concatOneBefore(SeqData* seq, int idxLoc) {
+		if (seq == NULL) init(idxLoc);
 		F = seq->F;
 
 		int t_12 = pr->times[idxLoc][seq->firstnode];
@@ -81,6 +83,8 @@ public:
 	}
 	/**/
 	int evaluation(vector<SeqData*> seqs) {		
+		if (seqs.front() == NULL)seqs.erase(seqs.begin());//remove null sequence
+		if (seqs.back() == NULL)seqs.pop_back();//remove null sequence
 		int costR = seqs[0]->cost;		
 		int loadR = seqs[0]->load;
 		bool totalF = seqs[0]->F;				
@@ -100,6 +104,7 @@ public:
 			totalT += pr->times[u][v] + seqs[i + 1]->T;			
 		}		
 		return costR;
-	}
+	}	
+
 private:
 };
