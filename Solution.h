@@ -1005,6 +1005,26 @@ public:
         //return 0;
     }
 
+    //when the size of sequence is bigger than sizeSub
+    //we need to add it in pieces
+    void addSeqInPieces(Node* st, Node* en, vector<SeqData*> &myseqs) {
+        //st and en are in the same route.        
+        if (st->posInRoute > en->posInRoute)return;
+        int disInR = -1;
+        Node* val = st;
+        while (true)
+        {
+            disInR = en->posInRoute - val->posInRoute;
+            if (disInR + 1 <= pr->sizeSub) {
+                myseqs.push_back(val->seqi_j[disInR]);
+                break;
+            }
+            SeqData* curSeq = val->seqi_j[pr->sizeSub - 1];
+            myseqs.push_back(curSeq);
+            val = nodes[pr->listLoc[curSeq->lastnode].idxClient]->suc;
+        }              
+    }
+
     int intraRouteGeneralInsert() {
         //nodeV in this case can be depot (arrival depot)
         int difDir = nodeV->posInRoute - nodeU->posInRoute;
@@ -1061,7 +1081,7 @@ public:
         }
         
         if (difDir == 2) {
-            //U X V Y 
+            //U X V Y
             //only consider 1-2, 3-2. the remain is useless or same as 2-opt.
             if (!isTurn) {
                 //1-2:
@@ -1111,8 +1131,14 @@ public:
                 */
             }
         }
-        else {
+        else {            
+            if (!isTurn) {
 
+            }
+            else
+            {
+                
+            }
         }
 
         line1:
