@@ -223,8 +223,8 @@ void init(Param* pr) {
         if (val > pr->listLoc[i].enTime //li
             || max(val, pr->listLoc[i].stTime) + pr->times[i][0] > pr->T
             ) 
-        {
-            for (int j = 0; j < pr->numLoc; ++j) {
+        {            
+            for (int j = 0; j < pr->numLoc; ++j) {                
                 pr->costs[i][j] = oo;
                 pr->costs[j][i] = oo;
             }
@@ -237,6 +237,11 @@ void init(Param* pr) {
                     || eStime + pr->times[i][j] > pr->listLoc[j].enTime //0-i-j-0
                     || max(eStime + pr->times[i][j], pr->listLoc[j].stTime) + pr->times[j][0] > pr->T
                     ) {
+                    /*if (i == 175 && j == 72) {
+                        cout << pr->listLoc[i].stTime + pr->times[i][j]<<"\n";
+                        cout << pr->listLoc[j].enTime << "\n";
+                        exit(0);
+                    }*/
                     pr->costs[i][j] = oo; 
                     num_reduced++;
                 }

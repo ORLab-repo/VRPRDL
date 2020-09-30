@@ -41,7 +41,9 @@ void Route::updateRoute() {
     }    
     //update seqdata(i->n, n->i):
     val = depot->pred;
-    assert(val->idxLoc == 0);
+    if (!(val->idxLoc == 0)) {
+        throw "bug update route";
+    }
     val->seqi_n->init(0);
     val->seqn_i->init(0);
     while (true)
@@ -148,7 +150,7 @@ void Route::clearRouteFrom(Node* val) {
 
 void Route::ckRoute()
 {
-    //assert(depot->pred->seq0_i->F == true);
+    //assert(depot->pred->seq0_i->F == true);    
     int cost = 0;
     int time = 0;
     int load = 0;
@@ -159,17 +161,29 @@ void Route::ckRoute()
     {
         u = val->idxLoc;
         v = valSuc->idxLoc;
-        cost += pr->costs[u][v];
+        cost += pr->costs[u][v];        
         time += pr->times[u][v];        
-        time = max(time, pr->listLoc[v].stTime);
-        assert(time <= pr->listLoc[v].enTime);
+        time = max(time, pr->listLoc[v].stTime);        
+        if (!(time <= pr->listLoc[v].enTime)) {
+            throw "bug TW ckRoute";
+        }
         val = valSuc;
         load += val->demand;
+        if (!(load <= pr->Q)) {
+            throw "bug capacity";
+        }
         valSuc = valSuc->suc;
     } while (val->idxLoc);
-    assert(depot->pred->seq0_i->cost == depot->seqi_n->cost);
-    assert(cost == depot->pred->seq0_i->cost);
-    assert(load == depot->pred->seq0_i->load);
+    //if (pr->debugLS)cout << cost << "\n";
+    if (!(depot->pred->seq0_i->cost == depot->seqi_n->cost)) {
+        throw "bug cost compare 1";
+    }
+    if (!(cost == depot->pred->seq0_i->cost)) {
+        throw "bug cost compare 2";
+    }
+    if (!(load == depot->pred->seq0_i->load)) {
+        throw "bug load compare";
+    }
 }
 
 void Route::insertToRou(Node* u) {

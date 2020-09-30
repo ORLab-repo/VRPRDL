@@ -3,3 +3,4143 @@ clear param
 98512
 0
 1
+1
+initial: 14227
+posU: 0
+improved: 14221
+posV: 1
+
+posU: 1
+improved: 14067
+posV: 10
+
+posU: 1
+improved: 14056
+posV: 20
+
+posU: 1
+improved: 14032
+posV: 2
+
+posU: 1
+improved: 13840
+posV: 10
+
+posU: 1
+
+posU: 1
+improved: 13620
+posV: 3
+
+posU: 2
+improved: 13603
+posV: 39
+
+posU: 2
+improved: 13401
+posV: 3
+
+posU: 2
+
+posU: 2
+improved: 13342
+posV: 13
+
+posU: 3
+improved: 13337
+posV: 15
+
+posU: 3
+improved: 13329
+posV: 20
+
+posU: 3
+improved: 13324
+posV: 25
+
+posU: 3
+improved: 13314
+posV: 30
+
+posU: 3
+improved: 13313
+posV: 24
+
+posU: 3
+improved: 13308
+posV: 34
+
+posU: 3
+improved: 13302
+posV: 20
+
+posU: 3
+improved: 13243
+posV: 39
+
+posU: 3
+
+posU: 3
+improved: 13187
+posV: 3
+
+posU: 4
+improved: 13128
+posV: 20
+
+posU: 4
+
+posU: 4
+improved: 13037
+posV: 1
+
+posU: 5
+improved: 13021
+posV: 13
+
+posU: 5
+improved: 13010
+posV: 23
+
+posU: 5
+improved: 13004
+posV: 1
+
+posU: 5
+improved: 12957
+posV: 24
+
+posU: 5
+improved: 12935
+posV: 39
+
+posU: 5
+improved: 12826
+posV: 12
+
+posU: 5
+improved: 12803
+posV: 1
+
+posU: 5
+improved: 12790
+posV: 24
+
+posU: 5
+
+posU: 5
+improved: 12771
+posV: 3
+
+posU: 6
+improved: 12767
+posV: 18
+
+posU: 6
+improved: 12750
+posV: 3
+
+posU: 6
+improved: 12749
+posV: 18
+
+posU: 6
+improved: 12744
+posV: 25
+
+posU: 6
+improved: 12739
+posV: 18
+
+posU: 6
+improved: 12733
+posV: 3
+
+posU: 6
+improved: 12702
+posV: 36
+
+posU: 6
+improved: 12685
+posV: 29
+
+posU: 6
+improved: 12683
+posV: 19
+
+posU: 6
+improved: 12682
+posV: 37
+
+posU: 6
+
+posU: 6
+improved: 12680
+posV: 28
+
+posU: 7
+
+posU: 7
+improved: 12360
+posV: 0
+
+posU: 8
+
+posU: 8
+improved: 12355
+posV: 5
+
+posU: 9
+
+posU: 9
+improved: 12311
+posV: 33
+
+posU: 10
+improved: 12307
+posV: 4
+
+posU: 10
+improved: 12288
+posV: 10
+
+posU: 10
+improved: 12269
+posV: 11
+
+posU: 10
+improved: 12267
+posV: 4
+
+posU: 10
+improved: 12253
+posV: 16
+
+posU: 10
+improved: 12236
+posV: 18
+
+posU: 10
+
+posU: 10
+
+posU: 11
+improved: 12223
+posV: 0
+
+posU: 12
+improved: 12217
+posV: 8
+
+posU: 12
+improved: 12208
+posV: 1
+
+posU: 12
+improved: 12201
+posV: 0
+
+posU: 12
+improved: 12200
+posV: 27
+
+posU: 12
+improved: 12198
+posV: 1
+
+posU: 12
+improved: 12195
+posV: 0
+
+posU: 12
+
+posU: 12
+
+posU: 13
+improved: 12194
+posV: 28
+
+posU: 14
+improved: 12182
+posV: 2
+
+posU: 14
+improved: 12180
+posV: 9
+
+posU: 14
+improved: 12179
+posV: 28
+
+posU: 14
+improved: 12177
+posV: 17
+
+posU: 14
+improved: 12169
+posV: 14
+
+posU: 14
+
+posU: 14
+improved: 12164
+posV: 10
+
+posU: 15
+improved: 12136
+posV: 12
+
+posU: 15
+
+posU: 15
+improved: 12119
+posV: 13
+
+posU: 16
+improved: 12117
+posV: 20
+
+posU: 16
+improved: 12084
+posV: 28
+
+posU: 16
+improved: 12049
+posV: 3
+
+posU: 16
+improved: 12036
+posV: 28
+
+posU: 16
+improved: 12032
+posV: 13
+
+posU: 16
+improved: 12017
+posV: 36
+
+posU: 16
+improved: 12009
+posV: 3
+
+posU: 16
+improved: 11986
+posV: 13
+
+posU: 16
+improved: 11878
+posV: 28
+
+posU: 16
+improved: 11874
+posV: 13
+
+posU: 16
+
+posU: 16
+
+posU: 17
+improved: 11705
+posV: 3
+
+posU: 18
+improved: 11661
+posV: 12
+
+posU: 18
+
+posU: 18
+
+posU: 19
+improved: 11589
+posV: 9
+
+posU: 20
+improved: 11552
+posV: 1
+
+posU: 20
+improved: 11550
+posV: 6
+
+posU: 20
+improved: 11545
+posV: 31
+
+posU: 20
+improved: 11537
+posV: 24
+
+posU: 20
+
+posU: 20
+improved: 11496
+posV: 24
+
+posU: 21
+improved: 11495
+posV: 11
+
+posU: 21
+
+posU: 21
+improved: 11492
+posV: 33
+
+posU: 22
+
+posU: 22
+improved: 11474
+posV: 0
+
+posU: 23
+improved: 11459
+posV: 6
+
+posU: 23
+
+posU: 23
+improved: 11385
+posV: 21
+
+posU: 24
+
+posU: 24
+improved: 11378
+posV: 15
+
+posU: 25
+
+posU: 25
+improved: 11312
+posV: 2
+
+posU: 26
+
+posU: 26
+improved: 11304
+posV: 19
+
+posU: 27
+
+posU: 27
+
+posU: 28
+
+posU: 29
+improved: 11293
+posV: 27
+
+posU: 30
+
+posU: 30
+
+posU: 31
+improved: 11292
+posV: 6
+
+posU: 32
+improved: 11291
+posV: 9
+
+posU: 32
+
+posU: 32
+improved: 11288
+posV: 4
+
+posU: 33
+improved: 11274
+posV: 16
+
+posU: 33
+
+posU: 33
+
+posU: 34
+
+posU: 35
+improved: 11194
+posV: 15
+
+posU: 36
+improved: 11171
+posV: 24
+
+posU: 36
+improved: 11154
+posV: 8
+
+posU: 36
+improved: 11152
+posV: 37
+
+posU: 36
+
+posU: 36
+
+posU: 37
+improved: 11150
+posV: 21
+
+posU: 38
+improved: 11129
+posV: 10
+
+posU: 38
+improved: 11114
+posV: 12
+
+posU: 38
+
+posU: 38
+improved: 11102
+posV: 24
+
+posU: 39
+
+posU: 39
+improved: 11070
+posV: 11
+
+posU: 40
+
+posU: 40
+improved: 11048
+posV: 34
+
+posU: 41
+improved: 11002
+posV: 39
+
+posU: 41
+improved: 11001
+posV: 25
+
+posU: 41
+improved: 11000
+posV: 34
+
+posU: 41
+
+posU: 41
+improved: 10983
+posV: 10
+
+posU: 42
+improved: 10981
+posV: 2
+
+posU: 42
+improved: 10972
+posV: 39
+
+posU: 42
+improved: 10967
+posV: 10
+
+posU: 42
+improved: 10843
+posV: 25
+
+posU: 42
+improved: 10831
+posV: 10
+
+posU: 42
+
+posU: 42
+
+posU: 43
+
+posU: 44
+improved: 10821
+posV: 33
+
+posU: 45
+improved: 10811
+posV: 34
+
+posU: 45
+
+posU: 45
+improved: 10809
+posV: 29
+
+posU: 46
+
+posU: 46
+improved: 10808
+posV: 27
+
+posU: 47
+
+posU: 47
+improved: 10797
+posV: 17
+
+posU: 48
+improved: 10794
+posV: 15
+
+posU: 48
+
+posU: 48
+
+posU: 49
+
+posU: 50
+improved: 10793
+posV: 1
+
+posU: 51
+improved: 10739
+posV: 23
+
+posU: 51
+
+posU: 51
+improved: 10735
+posV: 2
+
+posU: 52
+improved: 10732
+posV: 1
+
+posU: 52
+improved: 10659
+posV: 7
+
+posU: 52
+
+posU: 52
+
+posU: 53
+
+posU: 54
+improved: 10657
+posV: 8
+
+posU: 55
+improved: 10653
+posV: 13
+
+posU: 55
+improved: 10644
+posV: 16
+
+posU: 55
+improved: 10639
+posV: 8
+
+posU: 55
+
+posU: 55
+
+posU: 56
+improved: 10627
+posV: 30
+
+posU: 57
+
+posU: 57
+improved: 10532
+posV: 8
+
+posU: 58
+improved: 10472
+posV: 30
+
+posU: 58
+
+posU: 58
+
+posU: 59
+improved: 10468
+posV: 15
+
+posU: 60
+
+posU: 60
+improved: 10461
+posV: 4
+
+posU: 61
+
+posU: 61
+
+posU: 62
+improved: 10460
+posV: 10
+
+posU: 63
+
+posU: 63
+
+posU: 64
+improved: 10458
+posV: 19
+
+posU: 65
+
+posU: 65
+
+posU: 66
+improved: 10402
+posV: 13
+
+posU: 67
+improved: 10392
+posV: 18
+
+posU: 67
+
+posU: 67
+improved: 10266
+posV: 3
+
+posU: 68
+improved: 10253
+posV: 20
+
+posU: 68
+
+posU: 68
+improved: 10248
+posV: 0
+
+posU: 69
+improved: 10100
+posV: 19
+
+posU: 69
+
+posU: 69
+improved: 10088
+posV: 0
+
+posU: 70
+
+posU: 70
+improved: 10078
+posV: 27
+
+posU: 71
+improved: 10073
+posV: 18
+
+posU: 71
+
+posU: 71
+improved: 10022
+posV: 22
+
+posU: 72
+improved: 10017
+posV: 6
+
+posU: 72
+improved: 10010
+posV: 7
+
+posU: 72
+improved: 10006
+posV: 31
+
+posU: 72
+
+posU: 72
+improved: 9995
+posV: 0
+
+posU: 73
+improved: 9976
+posV: 14
+
+posU: 73
+
+posU: 73
+improved: 9929
+posV: 4
+
+posU: 74
+
+posU: 74
+improved: 9924
+posV: 1
+
+posU: 75
+improved: 9912
+posV: 31
+
+posU: 75
+improved: 9873
+posV: 1
+
+posU: 75
+
+posU: 75
+improved: 9745
+posV: 17
+
+posU: 76
+
+posU: 76
+
+posU: 77
+
+posU: 78
+improved: 9744
+posV: 38
+
+posU: 79
+
+posU: 79
+
+posU: 80
+
+posU: 81
+
+posU: 82
+
+posU: 83
+improved: 9556
+posV: 9
+
+posU: 84
+
+posU: 84
+
+posU: 85
+improved: 9545
+posV: 39
+
+posU: 86
+
+posU: 86
+improved: 9532
+posV: 2
+
+posU: 87
+improved: 9521
+posV: 17
+
+posU: 87
+improved: 9509
+posV: 25
+
+posU: 87
+improved: 9487
+posV: 24
+
+posU: 87
+improved: 9434
+posV: 29
+
+posU: 87
+
+posU: 87
+
+posU: 88
+improved: 9368
+posV: 0
+
+posU: 89
+improved: 9310
+posV: 13
+
+posU: 89
+
+posU: 89
+
+posU: 90
+
+posU: 91
+improved: 9292
+posV: 1
+
+posU: 92
+
+posU: 92
+improved: 9069
+posV: 19
+
+posU: 93
+
+posU: 93
+
+posU: 94
+
+posU: 95
+
+posU: 96
+improved: 9059
+posV: 1
+
+posU: 97
+improved: 9058
+posV: 16
+
+posU: 97
+
+posU: 97
+improved: 9002
+posV: 21
+
+posU: 98
+improved: 8994
+posV: 25
+
+posU: 98
+
+posU: 98
+
+posU: 99
+improved: 8925
+posV: 17
+
+posU: 100
+improved: 8866
+posV: 21
+
+posU: 100
+improved: 8862
+posV: 26
+
+posU: 100
+improved: 8843
+posV: 21
+
+posU: 100
+
+posU: 100
+
+posU: 101
+improved: 8837
+posV: 0
+
+posU: 102
+
+posU: 102
+
+posU: 103
+improved: 8830
+posV: 9
+
+posU: 104
+improved: 8822
+posV: 13
+
+posU: 104
+improved: 8817
+posV: 9
+
+posU: 104
+improved: 8797
+posV: 27
+
+posU: 104
+
+posU: 104
+
+posU: 105
+improved: 8786
+posV: 2
+
+posU: 106
+improved: 8750
+posV: 18
+
+posU: 106
+
+posU: 106
+
+posU: 107
+improved: 8737
+posV: 32
+
+posU: 108
+
+posU: 108
+improved: 8736
+posV: 30
+
+posU: 109
+improved: 8730
+posV: 36
+
+posU: 109
+
+posU: 109
+
+posU: 110
+
+posU: 111
+
+posU: 112
+
+posU: 113
+
+posU: 114
+
+posU: 115
+
+posU: 116
+improved: 8723
+posV: 11
+
+posU: 117
+improved: 8716
+posV: 20
+
+posU: 117
+improved: 8712
+posV: 39
+
+posU: 117
+
+posU: 117
+improved: 8709
+posV: 32
+
+posU: 118
+improved: 8706
+posV: 28
+
+posU: 118
+improved: 8702
+posV: 27
+
+posU: 118
+improved: 8695
+posV: 28
+
+posU: 118
+improved: 8693
+posV: 32
+
+posU: 118
+
+posU: 118
+improved: 8691
+posV: 4
+
+posU: 119
+
+posU: 119
+improved: 8675
+posV: 16
+
+posU: 0
+improved: 8658
+posV: 22
+
+posU: 1
+
+posU: 1
+
+posU: 2
+
+posU: 3
+
+posU: 4
+
+posU: 5
+
+posU: 6
+improved: 8653
+posV: 37
+
+posU: 7
+
+posU: 7
+
+posU: 8
+improved: 8652
+posV: 17
+
+posU: 9
+improved: 8645
+posV: 25
+
+posU: 9
+
+posU: 9
+
+posU: 10
+
+posU: 11
+improved: 8638
+posV: 3
+
+posU: 12
+improved: 8636
+posV: 8
+
+posU: 12
+improved: 8632
+posV: 9
+
+posU: 12
+improved: 8625
+posV: 16
+
+posU: 12
+improved: 8623
+posV: 25
+
+posU: 12
+
+posU: 12
+
+posU: 13
+improved: 8619
+posV: 2
+
+posU: 14
+
+posU: 14
+
+posU: 15
+
+posU: 16
+
+posU: 17
+improved: 8617
+posV: 32
+
+posU: 18
+
+posU: 18
+improved: 8612
+posV: 32
+
+posU: 19
+
+posU: 19
+improved: 8577
+posV: 9
+
+posU: 20
+
+posU: 20
+
+posU: 21
+improved: 8560
+posV: 24
+
+posU: 22
+
+posU: 22
+
+posU: 23
+improved: 8545
+posV: 23
+
+posU: 24
+
+posU: 24
+improved: 8538
+posV: 15
+
+posU: 25
+
+posU: 25
+improved: 8521
+posV: 30
+
+posU: 26
+
+posU: 26
+improved: 8520
+posV: 2
+
+posU: 27
+
+posU: 27
+
+posU: 28
+improved: 8519
+posV: 5
+
+posU: 29
+
+posU: 29
+improved: 8509
+posV: 27
+
+posU: 30
+
+posU: 30
+improved: 8447
+posV: 26
+
+posU: 31
+
+posU: 31
+
+posU: 32
+
+posU: 33
+improved: 8446
+posV: 9
+
+posU: 34
+
+posU: 34
+improved: 8438
+posV: 27
+
+posU: 35
+improved: 8435
+posV: 10
+
+posU: 35
+
+posU: 35
+
+posU: 36
+improved: 8386
+posV: 9
+
+posU: 37
+
+posU: 37
+
+posU: 38
+
+posU: 39
+improved: 8379
+posV: 11
+
+posU: 40
+improved: 8373
+posV: 25
+
+posU: 40
+improved: 8372
+posV: 33
+
+posU: 40
+
+posU: 40
+
+posU: 41
+
+posU: 42
+
+posU: 43
+
+posU: 44
+
+posU: 45
+
+posU: 46
+
+posU: 47
+
+posU: 48
+
+posU: 49
+
+posU: 50
+
+posU: 51
+improved: 8301
+posV: 1
+
+posU: 52
+
+posU: 52
+
+posU: 53
+
+posU: 54
+
+posU: 55
+
+posU: 56
+improved: 8300
+posV: 30
+
+posU: 57
+
+posU: 57
+
+posU: 58
+
+posU: 59
+
+posU: 60
+
+posU: 61
+
+posU: 62
+
+posU: 63
+
+posU: 64
+
+posU: 65
+
+posU: 66
+improved: 8297
+posV: 18
+
+posU: 67
+
+posU: 67
+
+posU: 68
+
+posU: 69
+
+posU: 70
+
+posU: 71
+improved: 8232
+posV: 1
+
+posU: 72
+improved: 8220
+posV: 28
+
+posU: 72
+improved: 8215
+posV: 31
+
+posU: 72
+
+posU: 72
+improved: 8203
+posV: 20
+
+posU: 73
+
+posU: 73
+
+posU: 74
+
+posU: 75
+improved: 8029
+posV: 39
+
+posU: 76
+
+posU: 76
+
+posU: 77
+
+posU: 78
+
+posU: 79
+
+posU: 80
+
+posU: 81
+improved: 8016
+posV: 5
+
+posU: 82
+
+posU: 82
+
+posU: 83
+improved: 8013
+posV: 9
+
+posU: 84
+
+posU: 84
+
+posU: 85
+
+posU: 86
+
+posU: 87
+
+posU: 88
+improved: 7972
+posV: 13
+
+posU: 89
+
+posU: 89
+
+posU: 90
+improved: 7946
+posV: 37
+
+posU: 91
+
+posU: 91
+
+posU: 92
+
+posU: 93
+
+posU: 94
+
+posU: 95
+
+posU: 96
+improved: 7944
+posV: 16
+
+posU: 97
+
+posU: 97
+improved: 7879
+posV: 25
+
+posU: 98
+
+posU: 98
+
+posU: 99
+
+posU: 100
+
+posU: 101
+improved: 7878
+posV: 34
+
+posU: 102
+
+posU: 102
+
+posU: 103
+
+posU: 104
+
+posU: 105
+
+posU: 106
+
+posU: 107
+
+posU: 108
+
+posU: 109
+
+posU: 110
+
+posU: 111
+
+posU: 112
+
+posU: 113
+
+posU: 114
+
+posU: 115
+
+posU: 116
+
+posU: 117
+improved: 7800
+posV: 28
+
+posU: 118
+
+posU: 118
+improved: 7797
+posV: 33
+
+posU: 119
+
+posU: 119
+
+posU: 0
+
+posU: 1
+
+posU: 2
+
+posU: 3
+
+posU: 4
+
+posU: 5
+
+posU: 6
+
+posU: 7
+
+posU: 8
+
+posU: 9
+
+posU: 10
+
+posU: 11
+
+posU: 12
+
+posU: 13
+
+posU: 14
+improved: 7761
+posV: 38
+
+posU: 15
+
+posU: 15
+
+posU: 16
+
+posU: 17
+
+posU: 18
+
+posU: 19
+
+posU: 20
+
+posU: 21
+
+posU: 22
+
+posU: 23
+
+posU: 24
+
+posU: 25
+
+posU: 26
+
+posU: 27
+
+posU: 28
+
+posU: 29
+
+posU: 30
+
+posU: 31
+
+posU: 32
+
+posU: 33
+
+posU: 34
+
+posU: 35
+improved: 7757
+posV: 37
+
+posU: 36
+
+posU: 36
+
+posU: 37
+
+posU: 38
+
+posU: 39
+
+posU: 40
+
+posU: 41
+improved: 7754
+posV: 25
+
+posU: 42
+
+posU: 42
+
+posU: 43
+
+posU: 44
+
+posU: 45
+
+posU: 46
+
+posU: 47
+
+posU: 48
+
+posU: 49
+
+posU: 50
+
+posU: 51
+improved: 7742
+posV: 7
+
+posU: 52
+
+posU: 52
+improved: 7739
+posV: 20
+
+posU: 53
+
+posU: 53
+
+posU: 54
+
+posU: 55
+
+posU: 56
+
+posU: 57
+
+posU: 58
+
+posU: 59
+
+posU: 60
+
+posU: 61
+
+posU: 62
+
+posU: 63
+
+posU: 64
+
+posU: 65
+
+posU: 66
+
+posU: 67
+
+posU: 68
+
+posU: 69
+
+posU: 70
+
+posU: 71
+
+posU: 72
+
+posU: 73
+
+posU: 74
+
+posU: 75
+
+posU: 76
+
+posU: 77
+
+posU: 78
+
+posU: 79
+
+posU: 80
+
+posU: 81
+
+posU: 82
+
+posU: 83
+
+posU: 84
+
+posU: 85
+improved: 7738
+posV: 39
+
+posU: 86
+
+posU: 86
+
+posU: 87
+
+posU: 88
+
+posU: 89
+
+posU: 90
+
+posU: 91
+
+posU: 92
+
+posU: 93
+
+posU: 94
+
+posU: 95
+
+posU: 96
+improved: 7736
+posV: 16
+
+posU: 97
+improved: 7735
+posV: 18
+
+posU: 97
+
+posU: 97
+
+posU: 98
+
+posU: 99
+
+posU: 100
+
+posU: 101
+
+posU: 102
+
+posU: 103
+
+posU: 104
+
+posU: 105
+improved: 7730
+posV: 24
+
+posU: 106
+
+posU: 106
+
+posU: 107
+
+posU: 108
+
+posU: 109
+
+posU: 110
+
+posU: 111
+
+posU: 112
+
+posU: 113
+
+posU: 114
+
+posU: 115
+
+posU: 116
+
+posU: 117
+improved: 7725
+posV: 28
+
+posU: 118
+
+posU: 118
+
+posU: 119
+
+posU: 0
+
+posU: 1
+
+posU: 2
+
+posU: 3
+
+posU: 4
+
+posU: 5
+
+posU: 6
+
+posU: 7
+
+posU: 8
+
+posU: 9
+
+posU: 10
+
+posU: 11
+
+posU: 12
+
+posU: 13
+
+posU: 14
+
+posU: 15
+
+posU: 16
+
+posU: 17
+
+posU: 18
+
+posU: 19
+
+posU: 20
+
+posU: 21
+
+posU: 22
+
+posU: 23
+
+posU: 24
+
+posU: 25
+
+posU: 26
+
+posU: 27
+
+posU: 28
+
+posU: 29
+
+posU: 30
+
+posU: 31
+
+posU: 32
+
+posU: 33
+
+posU: 34
+
+posU: 35
+
+posU: 36
+
+posU: 37
+
+posU: 38
+
+posU: 39
+
+posU: 40
+
+posU: 41
+
+posU: 42
+
+posU: 43
+
+posU: 44
+
+posU: 45
+
+posU: 46
+
+posU: 47
+
+posU: 48
+
+posU: 49
+
+posU: 50
+
+posU: 51
+
+posU: 52
+
+posU: 53
+
+posU: 54
+
+posU: 55
+
+posU: 56
+
+posU: 57
+
+posU: 58
+
+posU: 59
+
+posU: 60
+
+posU: 61
+
+posU: 62
+
+posU: 63
+
+posU: 64
+
+posU: 65
+
+posU: 66
+
+posU: 67
+
+posU: 68
+
+posU: 69
+
+posU: 70
+
+posU: 71
+
+posU: 72
+
+posU: 73
+
+posU: 74
+
+posU: 75
+
+posU: 76
+
+posU: 77
+
+posU: 78
+improved: 7724
+posV: 38
+
+posU: 79
+
+posU: 79
+
+posU: 80
+
+posU: 81
+
+posU: 82
+
+posU: 83
+improved: 7549
+posV: 38
+
+posU: 84
+
+posU: 84
+
+posU: 85
+
+posU: 86
+
+posU: 87
+
+posU: 88
+
+posU: 89
+
+posU: 90
+
+posU: 91
+
+posU: 92
+
+posU: 93
+
+posU: 94
+
+posU: 95
+
+posU: 96
+
+posU: 97
+
+posU: 98
+
+posU: 99
+
+posU: 100
+
+posU: 101
+
+posU: 102
+
+posU: 103
+
+posU: 104
+
+posU: 105
+
+posU: 106
+
+posU: 107
+
+posU: 108
+
+posU: 109
+
+posU: 110
+
+posU: 111
+
+posU: 112
+
+posU: 113
+
+posU: 114
+
+posU: 115
+
+posU: 116
+
+posU: 117
+
+posU: 118
+
+posU: 119
+
+posU: 0
+
+posU: 1
+
+posU: 2
+
+posU: 3
+
+posU: 4
+
+posU: 5
+
+posU: 6
+
+posU: 7
+
+posU: 8
+
+posU: 9
+
+posU: 10
+
+posU: 11
+
+posU: 12
+
+posU: 13
+improved: 7541
+posV: 2
+
+posU: 14
+
+posU: 14
+
+posU: 15
+
+posU: 16
+
+posU: 17
+
+posU: 18
+
+posU: 19
+
+posU: 20
+
+posU: 21
+
+posU: 22
+
+posU: 23
+
+posU: 24
+
+posU: 25
+
+posU: 26
+
+posU: 27
+
+posU: 28
+
+posU: 29
+
+posU: 30
+
+posU: 31
+
+posU: 32
+
+posU: 33
+
+posU: 34
+
+posU: 35
+
+posU: 36
+
+posU: 37
+
+posU: 38
+
+posU: 39
+
+posU: 40
+
+posU: 41
+
+posU: 42
+
+posU: 43
+
+posU: 44
+
+posU: 45
+
+posU: 46
+
+posU: 47
+
+posU: 48
+
+posU: 49
+
+posU: 50
+
+posU: 51
+
+posU: 52
+
+posU: 53
+
+posU: 54
+
+posU: 55
+
+posU: 56
+
+posU: 57
+
+posU: 58
+
+posU: 59
+
+posU: 60
+
+posU: 61
+
+posU: 62
+
+posU: 63
+
+posU: 64
+
+posU: 65
+
+posU: 66
+
+posU: 67
+
+posU: 68
+
+posU: 69
+
+posU: 70
+
+posU: 71
+
+posU: 72
+
+posU: 73
+
+posU: 74
+
+posU: 75
+
+posU: 76
+
+posU: 77
+
+posU: 78
+
+posU: 79
+
+posU: 80
+
+posU: 81
+
+posU: 82
+
+posU: 83
+
+posU: 84
+
+posU: 85
+
+posU: 86
+
+posU: 87
+
+posU: 88
+
+posU: 89
+
+posU: 90
+
+posU: 91
+
+posU: 92
+
+posU: 93
+
+posU: 94
+
+posU: 95
+
+posU: 96
+
+posU: 97
+
+posU: 98
+
+posU: 99
+
+posU: 100
+
+posU: 101
+
+posU: 102
+
+posU: 103
+
+posU: 104
+
+posU: 105
+
+posU: 106
+
+posU: 107
+
+posU: 108
+
+posU: 109
+
+posU: 110
+
+posU: 111
+
+posU: 112
+
+posU: 113
+
+posU: 114
+
+posU: 115
+
+posU: 116
+
+posU: 117
+
+posU: 118
+
+posU: 119
+
+posU: 0
+
+posU: 1
+
+posU: 2
+
+posU: 3
+
+posU: 4
+
+posU: 5
+
+posU: 6
+
+posU: 7
+
+posU: 8
+
+posU: 9
+
+posU: 10
+
+posU: 11
+
+posU: 12
+
+posU: 13
+
+posU: 14
+
+posU: 15
+
+posU: 16
+
+posU: 17
+
+posU: 18
+
+posU: 19
+
+posU: 20
+
+posU: 21
+
+posU: 22
+
+posU: 23
+
+posU: 24
+
+posU: 25
+
+posU: 26
+
+posU: 27
+
+posU: 28
+
+posU: 29
+
+posU: 30
+
+posU: 31
+
+posU: 32
+
+posU: 33
+
+posU: 34
+
+posU: 35
+
+posU: 36
+
+posU: 37
+
+posU: 38
+
+posU: 39
+
+posU: 40
+
+posU: 41
+
+posU: 42
+
+posU: 43
+
+posU: 44
+
+posU: 45
+
+posU: 46
+
+posU: 47
+
+posU: 48
+
+posU: 49
+
+posU: 50
+
+posU: 51
+
+posU: 52
+
+posU: 53
+
+posU: 54
+
+posU: 55
+
+posU: 56
+
+posU: 57
+
+posU: 58
+
+posU: 59
+
+posU: 60
+
+posU: 61
+
+posU: 62
+
+posU: 63
+
+posU: 64
+
+posU: 65
+
+posU: 66
+
+posU: 67
+
+posU: 68
+
+posU: 69
+
+posU: 70
+
+posU: 71
+
+posU: 72
+
+posU: 73
+
+posU: 74
+
+posU: 75
+
+posU: 76
+
+posU: 77
+
+posU: 78
+
+posU: 79
+
+posU: 80
+
+posU: 81
+
+posU: 82
+
+posU: 83
+
+posU: 84
+
+posU: 85
+
+posU: 86
+
+posU: 87
+
+posU: 88
+
+posU: 89
+
+posU: 90
+
+posU: 91
+
+posU: 92
+
+posU: 93
+
+posU: 94
+
+posU: 95
+
+posU: 96
+
+posU: 97
+
+posU: 98
+
+posU: 99
+
+posU: 100
+
+posU: 101
+
+posU: 102
+
+posU: 103
+
+posU: 104
+
+posU: 105
+
+posU: 106
+
+posU: 107
+
+posU: 108
+
+posU: 109
+
+posU: 110
+
+posU: 111
+
+posU: 112
+
+posU: 113
+
+posU: 114
+
+posU: 115
+
+posU: 116
+
+posU: 117
+
+posU: 118
+
+posU: 119
+
+improved: 7490
+2
+initial: 14305
+posU: 0
+improved: 14232
+posV: 5
+
+posU: 1
+improved: 14197
+posV: 6
+
+posU: 1
+improved: 14189
+posV: 12
+
+posU: 1
+improved: 14173
+posV: 6
+
+posU: 1
+improved: 14160
+posV: 31
+
+posU: 1
+improved: 14123
+posV: 5
+
+posU: 1
+improved: 14067
+posV: 24
+
+posU: 1
+improved: 14012
+posV: 5
+
+posU: 1
+improved: 14002
+posV: 37
+
+posU: 1
+improved: 13996
+posV: 5
+
+posU: 1
+improved: 13964
+posV: 24
+
+posU: 1
+improved: 13923
+posV: 5
+
+posU: 1
+improved: 13868
+posV: 12
+
+posU: 1
+improved: 13867
+posV: 33
+
+posU: 1
+improved: 13866
+posV: 2
+
+posU: 1
+improved: 13864
+posV: 12
+
+posU: 1
+improved: 13817
+posV: 34
+
+posU: 1
+
+posU: 1
+improved: 13785
+posV: 1
+
+posU: 2
+improved: 13742
+posV: 3
+
+posU: 2
+improved: 13737
+posV: 29
+
+posU: 2
+improved: 13703
+posV: 1
+
+posU: 2
+improved: 13693
+posV: 20
+
+posU: 2
+improved: 13634
+posV: 34
+
+posU: 2
+
+posU: 2
+improved: 13629
+posV: 0
+
+posU: 3
+improved: 13450
+posV: 7
+
+posU: 3
+improved: 13401
+posV: 27
+
+posU: 3
+improved: 13293
+posV: 29
+
+posU: 3
+
+posU: 3
+improved: 13276
+posV: 2
+
+posU: 4
+improved: 13274
+posV: 6
+
+posU: 4
+improved: 13231
+posV: 30
+
+posU: 4
+
+posU: 4
+improved: 13229
+posV: 2
+
+posU: 5
+
+posU: 5
+
+posU: 6
+improved: 13187
+posV: 7
+
+posU: 7
+improved: 13141
+posV: 17
+
+posU: 7
+
+posU: 7
+improved: 13123
+posV: 2
+
+posU: 8
+
+posU: 8
+
+posU: 9
+improved: 13109
+posV: 1
+
+posU: 10
+improved: 13075
+posV: 19
+
+posU: 10
+improved: 13073
+posV: 31
+
+posU: 10
+
+posU: 10
+improved: 13013
+posV: 12
+
+posU: 11
+improved: 12845
+posV: 32
+
+posU: 11
+improved: 12839
+posV: 17
+
+posU: 11
+
+posU: 11
+improved: 12836
+posV: 24
+
+posU: 12
+improved: 12820
+posV: 27
+
+posU: 12
+improved: 12805
+posV: 13
+
+posU: 12
+improved: 12788
+posV: 24
+
+posU: 12
+
+posU: 12
+improved: 12784
+posV: 8
+
+posU: 13
+improved: 12616
+posV: 9
+
+posU: 13
+improved: 12551
+posV: 8
+
+posU: 13
+
+posU: 13
+improved: 12541
+posV: 9
+
+posU: 14
+improved: 12533
+posV: 11
+
+posU: 14
+improved: 12526
+posV: 16
+
+posU: 14
+
+posU: 14
+improved: 12503
+posV: 26
+
+posU: 15
+improved: 12453
+posV: 36
+
+posU: 15
+improved: 12445
+posV: 26
+
+posU: 15
+
+posU: 15
+improved: 12401
+posV: 1
+
+posU: 16
+
+posU: 16
+improved: 12387
+posV: 6
+
+posU: 17
+improved: 12382
+posV: 7
+
+posU: 17
+
+posU: 17
+improved: 12359
+posV: 1
+
+posU: 18
+improved: 12358
+posV: 7
+
+posU: 18
+improved: 12353
+posV: 1
+
+posU: 18
+improved: 12350
+posV: 24
+
+posU: 18
+
+posU: 18
+
+posU: 19
+improved: 12349
+posV: 25
+
+posU: 20
+
+posU: 20
+
+posU: 21
+improved: 12328
+posV: 0
+
+posU: 22
+improved: 12321
+posV: 2
+
+posU: 22
+improved: 12309
+posV: 9
+
+posU: 22
+improved: 12308
+posV: 35
+
+posU: 22
+improved: 12307
+posV: 34
+
+posU: 22
+improved: 12306
+posV: 37
+
+posU: 22
+
+posU: 22
+improved: 12302
+posV: 34
+
+posU: 23
+improved: 12271
+posV: 36
+
+posU: 23
+
+posU: 23
+improved: 12267
+posV: 0
+
+posU: 24
+
+posU: 24
+
+posU: 25
+improved: 12119
+posV: 4
+
+posU: 26
+improved: 12079
+posV: 21
+
+posU: 26
+
+posU: 26
+improved: 12017
+posV: 4
+
+posU: 27
+improved: 11965
+posV: 14
+
+posU: 27
+
+posU: 27
+improved: 11963
+posV: 5
+
+posU: 28
+
+posU: 28
+
+posU: 29
+improved: 11946
+posV: 4
+
+posU: 30
+
+posU: 30
+improved: 11945
+posV: 9
+
+posU: 31
+
+posU: 31
+improved: 11922
+posV: 37
+
+posU: 32
+
+posU: 32
+
+posU: 33
+improved: 11909
+posV: 34
+
+posU: 34
+improved: 11777
+posV: 36
+
+posU: 34
+
+posU: 34
+
+posU: 35
+improved: 11712
+posV: 16
+
+posU: 36
+
+posU: 36
+
+posU: 37
+improved: 11683
+posV: 22
+
+posU: 38
+improved: 11663
+posV: 28
+
+posU: 38
+
+posU: 38
+improved: 11628
+posV: 2
+
+posU: 39
+improved: 11599
+posV: 19
+
+posU: 39
+
+posU: 39
+improved: 11555
+posV: 16
+
+posU: 40
+
+posU: 40
+improved: 11510
+posV: 2
+
+posU: 41
+improved: 11480
+posV: 10
+
+posU: 41
+improved: 11462
+posV: 19
+
+posU: 41
+improved: 11461
+posV: 2
+
+posU: 41
+improved: 11408
+posV: 10
+
+posU: 41
+
+posU: 41
+improved: 11398
+posV: 13
+
+posU: 42
+
+posU: 42
+improved: 11209
+posV: 1
+
+posU: 43
+
+posU: 43
+improved: 11186
+posV: 0
+
+posU: 44
+improved: 11135
+posV: 3
+
+posU: 44
+improved: 11097
+posV: 20
+
+posU: 44
+
+posU: 44
+
+posU: 45
+
+posU: 46
+improved: 11073
+posV: 3
+
+posU: 47
+improved: 10999
+posV: 11
+
+posU: 47
+improved: 10939
+posV: 26
+
+posU: 47
+improved: 10922
+posV: 34
+
+posU: 47
+improved: 10921
+posV: 31
+
+posU: 47
+improved: 10896
+posV: 33
+
+posU: 47
+
+posU: 47
+improved: 10895
+posV: 14
+
+posU: 48
+improved: 10878
+posV: 21
+
+posU: 48
+improved: 10875
+posV: 13
+
+posU: 48
+
+posU: 48
+improved: 10814
+posV: 14
+
+posU: 49
+improved: 10813
+posV: 21
+
+posU: 49
+improved: 10778
+posV: 23
+
+posU: 49
+
+posU: 49
+improved: 10566
+posV: 8
+
+posU: 50
+
+posU: 50
+
+posU: 51
+improved: 10562
+posV: 32
+
+posU: 52
+
+posU: 52
+
+posU: 53
+
+posU: 54
+
+posU: 55
+
+posU: 56
+improved: 10512
+posV: 15
+
+posU: 57
+
+posU: 57
+
+posU: 58
+improved: 10493
+posV: 32
+
+posU: 59
+
+posU: 59
+improved: 10492
+posV: 8
+
+posU: 60
+improved: 10455
+posV: 9
+
+posU: 60
+improved: 10435
+posV: 33
+
+posU: 60
+
+posU: 60
+improved: 10432
+posV: 7
+
+posU: 61
+improved: 10429
+posV: 13
+
+posU: 61
+
+posU: 61
+improved: 10417
+posV: 9
+
+posU: 62
+
+posU: 62
+
+posU: 63
+improved: 10406
+posV: 18
+
+posU: 64
+improved: 10401
+posV: 31
+
+posU: 64
+
+posU: 64
+
+posU: 65
+improved: 10398
+posV: 24
+
+posU: 66
+
+posU: 66
+
+posU: 67
+improved: 10390
+posV: 35
+
+posU: 68
+
+posU: 68
+improved: 10352
+posV: 7
+
+posU: 69
+
+posU: 69
+improved: 10346
+posV: 6
+
+posU: 70
+improved: 10340
+posV: 20
+
+posU: 70
+
+posU: 70
+improved: 10323
+posV: 7
+
+posU: 71
+
+posU: 71
+improved: 10275
+posV: 37
+
+posU: 72
+improved: 10219
+posV: 17
+
+posU: 72
+
+posU: 72
+improved: 10217
+posV: 19
+
+posU: 73
+
+posU: 73
+
+posU: 74
+
+posU: 75
+improved: 10166
+posV: 7
+
+posU: 76
+improved: 10131
+posV: 11
+
+posU: 76
+
+posU: 76
+
+posU: 77
+improved: 10123
+posV: 3
+
+posU: 78
+
+posU: 78
+
+posU: 79
+improved: 10119
+posV: 23
+
+posU: 80
+improved: 10117
+posV: 32
+
+posU: 80
+improved: 10114
+posV: 0
+
+posU: 80
+improved: 10107
+posV: 25
+
+posU: 80
+
+posU: 80
+
+posU: 81
+improved: 10053
+posV: 8
+
+posU: 82
+
+posU: 82
+
+posU: 83
+improved: 10022
+posV: 7
+
+posU: 84
+
+posU: 84
+improved: 10018
+posV: 33
+
+posU: 85
+
+posU: 85
+improved: 10017
+posV: 7
+
+posU: 86
+improved: 10016
+posV: 14
+
+posU: 86
+improved: 9947
+posV: 22
+
+posU: 86
+improved: 9934
+posV: 18
+
+posU: 86
+improved: 9926
+posV: 22
+
+posU: 86
+
+posU: 86
+improved: 9780
+posV: 4
+
+posU: 87
+
+posU: 87
+improved: 9762
+posV: 10
+
+posU: 88
+improved: 9754
+posV: 25
+
+posU: 88
+improved: 9679
+posV: 37
+
+posU: 88
+
+posU: 88
+improved: 9674
+posV: 28
+
+posU: 89
+
+posU: 89
+improved: 9669
+posV: 31
+
+posU: 90
+improved: 9668
+posV: 9
+
+posU: 90
+improved: 9662
+posV: 10
+
+posU: 90
+improved: 9657
+posV: 4
+
+posU: 90
+improved: 9656
+posV: 39
+
+posU: 90
+improved: 9652
+posV: 10
+
+posU: 90
+
+posU: 90
+improved: 9636
+posV: 31
+
+posU: 91
+improved: 9449
+posV: 36
+
+posU: 91
+
+posU: 91
+
+posU: 92
+improved: 9448
+posV: 18
+
+posU: 93
+
+posU: 93
+improved: 9379
+posV: 29
+
+posU: 94
+
+posU: 94
+improved: 9348
+posV: 9
+
+posU: 95
+
+posU: 95
+improved: 9312
+posV: 14
+
+posU: 96
+
+posU: 96
+improved: 9100
+posV: 4
+
+posU: 97
+
+posU: 97
+
+posU: 98
+
+posU: 99
+improved: 9005
+posV: 9
+
+posU: 100
+improved: 8989
+posV: 14
+
+posU: 100
+improved: 8979
+posV: 30
+
+posU: 100
+improved: 8974
+posV: 32
+
+posU: 100
+
+posU: 100
+
+posU: 101
+improved: 8899
+posV: 13
+
+posU: 102
+improved: 8857
+posV: 36
+
+posU: 102
+
+posU: 102
+
+posU: 103
+improved: 8856
+posV: 19
+
+posU: 104
+
+posU: 104
+
+posU: 105
+
+posU: 106
+improved: 8855
+posV: 1
+
+posU: 107
+improved: 8848
+posV: 6
+
+posU: 107
+improved: 8772
+posV: 9
+
+posU: 107
+
+posU: 107
+improved: 8749
+posV: 0
+
+posU: 108
+
+posU: 108
+improved: 8735
+posV: 26
+
+posU: 109
+
+posU: 109
+
+posU: 110
+improved: 8726
+posV: 20
+
+posU: 111
+
+posU: 111
+
+posU: 112
+improved: 8721
+posV: 0
+
+posU: 113
+improved: 8716
+posV: 1
+
+posU: 113
+improved: 8712
+posV: 11
+
+posU: 113
+improved: 8711
+posV: 17
+
+posU: 113
+
+posU: 113
+
+posU: 114
+improved: 8662
+posV: 11
+
+posU: 115
+
+posU: 115
+improved: 8657
+posV: 39
+
+posU: 116
+
+posU: 116
+improved: 8654
+posV: 5
+
+posU: 117
+
+posU: 117
+
+posU: 118
+improved: 8651
+posV: 11
+
+posU: 119
+
+posU: 119
+improved: 8603
+posV: 38
+
+posU: 0
+improved: 8594
+posV: 37
+
+posU: 1
+
+posU: 1
+improved: 8588
+posV: 6
+
+posU: 2
+
+posU: 2
+
+posU: 3
+
+posU: 4
+improved: 8586
+posV: 2
+
+posU: 5
+
+posU: 5
+improved: 8585
+posV: 6
+
+posU: 6
+
+posU: 6
+
+posU: 7
+improved: 8582
+posV: 7
+
+posU: 8
+
+posU: 8
+
+posU: 9
+
+posU: 10
+
+posU: 11
+
+posU: 12
+
+posU: 13
+improved: 8581
+posV: 16
+
+posU: 14
+
+posU: 14
+
+posU: 15
+
+posU: 16
+
+posU: 17
+improved: 8580
+posV: 33
+
+posU: 18
+
+posU: 18
+
+posU: 19
+improved: 8527
+posV: 20
+
+posU: 20
+
+posU: 20
+
+posU: 21
+
+posU: 22
+improved: 8526
+posV: 10
+
+posU: 23
+
+posU: 23
+
+posU: 24
+improved: 8522
+posV: 34
+
+posU: 25
+
+posU: 25
+
+posU: 26
+
+posU: 27
+improved: 8517
+posV: 15
+
+posU: 28
+improved: 8516
+posV: 36
+
+posU: 28
+
+posU: 28
+improved: 8514
+posV: 1
+
+posU: 29
+
+posU: 29
+
+posU: 30
+improved: 8510
+posV: 5
+
+posU: 31
+
+posU: 31
+improved: 8506
+posV: 20
+
+posU: 32
+improved: 8462
+posV: 37
+
+posU: 32
+
+posU: 32
+improved: 8359
+posV: 1
+
+posU: 33
+
+posU: 33
+
+posU: 34
+
+posU: 35
+
+posU: 36
+improved: 8357
+posV: 7
+
+posU: 37
+
+posU: 37
+improved: 8352
+posV: 13
+
+posU: 38
+improved: 8349
+posV: 15
+
+posU: 38
+improved: 8339
+posV: 28
+
+posU: 38
+
+posU: 38
+
+posU: 39
+improved: 8329
+posV: 15
+
+posU: 40
+improved: 8309
+posV: 32
+
+posU: 40
+
+posU: 40
+
+posU: 41
+
+posU: 42
+
+posU: 43
+
+posU: 44
+
+posU: 45
+
+posU: 46
+
+posU: 47
+improved: 8277
+posV: 21
+
+posU: 48
+
+posU: 48
+improved: 8273
+posV: 14
+
+posU: 49
+improved: 8125
+posV: 23
+
+posU: 49
+
+posU: 49
+
+posU: 50
+improved: 8124
+posV: 6
+
+posU: 51
+improved: 8070
+posV: 23
+
+posU: 51
+
+posU: 51
+improved: 8066
+posV: 32
+
+posU: 52
+improved: 8038
+posV: 16
+
+posU: 52
+improved: 8031
+posV: 32
+
+posU: 52
+
+posU: 52
+
+posU: 53
+improved: 8028
+posV: 37
+
+posU: 54
+
+posU: 54
+
+posU: 55
+improved: 8026
+posV: 25
+
+posU: 56
+
+posU: 56
+improved: 8021
+posV: 15
+
+posU: 57
+
+posU: 57
+improved: 8012
+posV: 27
+
+posU: 58
+
+posU: 58
+
+posU: 59
+improved: 8009
+posV: 20
+
+posU: 60
+improved: 8000
+posV: 30
+
+posU: 60
+
+posU: 60
+
+posU: 61
+improved: 7998
+posV: 12
+
+posU: 62
+
+posU: 62
+improved: 7961
+posV: 26
+
+posU: 63
+improved: 7920
+posV: 23
+
+posU: 63
+improved: 7882
+posV: 19
+
+posU: 63
+
+posU: 63
+improved: 7829
+posV: 18
+
+posU: 64
+improved: 7825
+posV: 32
+
+posU: 64
+
+posU: 64
+
+posU: 65
+
+posU: 66
+
+posU: 67
+improved: 7822
+posV: 27
+
+posU: 68
+improved: 7820
+posV: 3
+
+posU: 68
+
+posU: 68
+
+posU: 69
+improved: 7809
+posV: 6
+
+posU: 70
+improved: 7791
+posV: 8
+
+posU: 70
+
+posU: 70
+
+posU: 71
+
+posU: 72
+
+posU: 73
+
+posU: 74
+
+posU: 75
+
+posU: 76
+
+posU: 77
+improved: 7790
+posV: 3
+
+posU: 78
+
+posU: 78
+
+posU: 79
+improved: 7789
+posV: 16
+
+posU: 80
+
+posU: 80
+
+posU: 81
+improved: 7775
+posV: 27
+
+posU: 82
+
+posU: 82
+
+posU: 83
+improved: 7767
+posV: 32
+
+posU: 84
+
+posU: 84
+
+posU: 85
+
+posU: 86
+
+posU: 87
+improved: 7750
+posV: 8
+
+posU: 88
+
+posU: 88
+improved: 7720
+posV: 28
+
+posU: 89
+
+posU: 89
+
+posU: 90
+
+posU: 91
+
+posU: 92
+
+posU: 93
+
+posU: 94
+improved: 7704
+posV: 9
+
+posU: 95
+
+posU: 95
+
+posU: 96
+improved: 7681
+posV: 32
+
+posU: 97
+
+posU: 97
+
+posU: 98
+
+posU: 99
+improved: 7629
+posV: 30
+
+posU: 100
+
+posU: 100
+
+posU: 101
+improved: 7557
+posV: 13
+
+posU: 102
+
+posU: 102
+
+posU: 103
+
+posU: 104
+
+posU: 105
+
+posU: 106
+
+posU: 107
+
+posU: 108
+
+posU: 109
+
+posU: 110
+improved: 7556
+posV: 37
+
+posU: 111
+
+posU: 111
+
+posU: 112
+
+posU: 113
+
+posU: 114
+improved: 7552
+posV: 12
+
+posU: 115
+
+posU: 115
+
+posU: 116
+
+posU: 117
+
+posU: 118
+
+posU: 119
+
+posU: 0
+
+posU: 1
+
+posU: 2
+
+posU: 3
+improved: 7530
+posV: 2
+
+posU: 4
+
+posU: 4
+improved: 7527
+posV: 27
+
+posU: 5
+
+posU: 5
+
+posU: 6
+
+posU: 7
+
+posU: 8
+
+posU: 9
+
+posU: 10
+
+posU: 11
+
+posU: 12
+
+posU: 13
+
+posU: 14
+
+posU: 15
+
+posU: 16
+
+posU: 17
+
+posU: 18
+
+posU: 19
+
+posU: 20
+
+posU: 21
+
+posU: 22
+improved: 7526
+posV: 10
+
+posU: 23
+
+posU: 23
+
+posU: 24
+
+posU: 25
+improved: 7521
+posV: 3
+
+posU: 26
+
+posU: 26
+
+posU: 27
+improved: 7519
+posV: 2
+
+posU: 28
+improved: 7517
+posV: 36
+
+posU: 28
+
+posU: 28
+
+posU: 29
+
+posU: 30
+
+posU: 31
+
+posU: 32
+
+posU: 33
+
+posU: 34
+
+posU: 35
+
+posU: 36
+
+posU: 37
+
+posU: 38
+
+posU: 39
+
+posU: 40
+
+posU: 41
+
+posU: 42
+
+posU: 43
+
+posU: 44
+
+posU: 45
+
+posU: 46
+
+posU: 47
+
+posU: 48
+
+posU: 49
+
+posU: 50
+
+posU: 51
+
+posU: 52
+
+posU: 53
+
+posU: 54
+
+posU: 55
+
+posU: 56
+improved: 7513
+posV: 15
+
+posU: 57
+
+posU: 57
+
+posU: 58
+
+posU: 59
+
+posU: 60
+
+posU: 61
+
+posU: 62
+
+posU: 63
+
+posU: 64
+
+posU: 65
+
+posU: 66
+
+posU: 67
+
+posU: 68
+
+posU: 69
+
+posU: 70
+
+posU: 71
+
+posU: 72
+
+posU: 73
+
+posU: 74
+
+posU: 75
+
+posU: 76
+
+posU: 77
+
+posU: 78
+
+posU: 79
+
+posU: 80
+
+posU: 81
+improved: 7503
+posV: 27
+
+posU: 82
+
+posU: 82
+
+posU: 83
+
+posU: 84
+
+posU: 85
+
+posU: 86
+
+posU: 87
+
+posU: 88
+
+posU: 89
+
+posU: 90
+
+posU: 91
+
+posU: 92
+
+posU: 93
+
+posU: 94
+
+posU: 95
+
+posU: 96
+
+posU: 97

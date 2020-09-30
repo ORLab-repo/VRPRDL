@@ -75,6 +75,8 @@ int main(int argc, char* argv[]) {
         }
     }*/
     //cin.tie(0); cout.tie(0);    
+    int checkedTrue;
+    cin >> checkedTrue;    
     ios::sync_with_stdio(0);
     Rng::config(seed[0]);
     //srand(seed[0]);    
@@ -115,14 +117,19 @@ int main(int argc, char* argv[]) {
     std::cout << "elapsed time: " << elapsed_seconds.count() << "s\n";
     fl.close();
     */
-    //for (int i = 1; i <= bestSol.n; ++i)bestSol.giantT[i] = i;                
-    bestSol.isFixed = false;//5751     
+    //for (int i = 1; i <= bestSol.n; ++i)bestSol.giantT[i] = i;                 
+    bestSol.isFixed = true;//5751     
+    if (checkedTrue == 0)bestSol.isFixed = false;
+    for (int i = 0; i < 4; ++i)
+        for (int j = 0; j < 4; ++j)bestSol.count[i][j] = 0LL;
     pr->isDebug = false;
+    pr->debugLS = false;
     int minCost = oo;
     int oldCost;
-    for (int i = 1; i <= 1; ++i) {
-        cout << i << "\n";        
-        bestSol.genGiantT();
+    for (int i = 1; i <= 30000; ++i) {
+        cout << i << "\n";  
+        bestSol.isFixed = true;
+        bestSol.genGiantT();        
         bestSol.Split();
         cout <<"initial: "<< bestSol.cost << "\n";       
         while (true)
@@ -131,14 +138,21 @@ int main(int argc, char* argv[]) {
             bestSol.updateObj();
             bestSol.cvGiantT();
             bestSol.Split();
-            assert(oldCost >= bestSol.cost);
+            if (!(oldCost >= bestSol.cost)) {
+                throw "update obj error";
+            }
             if (oldCost == bestSol.cost)break;
             bestSol.isFixed = !bestSol.isFixed;
         }
+        /*bestSol.updateObj();
+        bestSol.cvGiantT();
+        bestSol.Split();*/
         cout <<"improved: "<< bestSol.cost << "\n";
         minCost = min(minCost, bestSol.cost);
     }
     cout << minCost << "\n";
+    /*for (int i = 1; i < 4; ++i)
+        for (int j = 0; j < 4; ++j)cout << i << " " << j << " " << bestSol.count[i][j] << "\n";*/
     /*bestSol.solT.clear();
     for (int i = 0; i < sizeof(arr) / sizeof(int); ++i)bestSol.solT.push_back(arr[i]);    
     int ckCosts = 0;    

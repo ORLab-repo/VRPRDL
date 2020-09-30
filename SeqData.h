@@ -26,6 +26,12 @@ public:
 	};
 	~SeqData() {};
 
+	void showSeq() {
+		cout << pr->listLoc[firstnode].idxClient << " " << pr->listLoc[lastnode].idxClient << "\n";
+	}
+	void showSeqLoc() {
+		cout << firstnode << " " << lastnode << "\n";
+	}
 	//method:
 	/*
 	* Construct sequence containing only one node
@@ -52,8 +58,8 @@ public:
 		}
 		if (seq->load + pr->listLoc[idxLoc].demand > pr->Q) {
 			F = false;
-		}
-		cost = seq->cost + pr->costs[seq->lastnode][idxLoc];		
+		}		
+		cost = min(seq->cost + pr->costs[seq->lastnode][idxLoc], int(oo));		
 		load = seq->load + pr->listLoc[idxLoc].demand;
 		E = max(seq->E + t_12, pr->listLoc[idxLoc].stTime);
 		L = min(seq->L, pr->listLoc[idxLoc].enTime - t_12 - seq->T);
@@ -73,7 +79,7 @@ public:
 		if (seq->load + pr->listLoc[idxLoc].demand > pr->Q) {
 			F = false;
 		}
-		cost = seq->cost + pr->costs[idxLoc][seq->firstnode];
+		cost = min(seq->cost + pr->costs[idxLoc][seq->firstnode], int(oo));
 		load = seq->load + pr->listLoc[idxLoc].demand;
 		E = max(pr->listLoc[idxLoc].stTime + t_12 + seq->T, seq->E);
 		L = min(pr->listLoc[idxLoc].enTime, seq->L - t_12);
