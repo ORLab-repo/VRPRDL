@@ -21,6 +21,7 @@ public:
 	vector<vector<int> > new_costs;// distance	
 	vector<vector<int> > times;// distance			
 	bool isDebug = false;
+	bool isTurnCkSol = false;
 	int lambda = 2;	
 	clock_t start;
 	int ldTw = 5;// coff for TW

@@ -10,13 +10,15 @@ class SeqData
 public:
 	//attributes:
 	int firstnode;//index location
+	int afterFiNode;// index after first node
 	int lastnode;//index location
+	int beforeLaNode;// index before last node
 	int cost;// will set to oo if infeasible sub-sequence
 	int load;
 	int E;//earliest time completion
 	int L;//latest starting time
 	int T;//sum of travel and service time
-	int F;//check feasibility;
+	bool F;//check feasibility;
 	Param* pr;
 	
 	//constructor
@@ -38,7 +40,9 @@ public:
 	*/
 	void init(int idxLoc) {
 		firstnode = idxLoc;
+		afterFiNode = -1;
 		lastnode = idxLoc;
+		beforeLaNode = -1;
 		T = 0;// changed to service time if have
 		E = pr->listLoc[idxLoc].stTime;// plus service time if have.
 		L = pr->listLoc[idxLoc].enTime;
@@ -66,6 +70,10 @@ public:
 		T = seq->T + t_12;
 		lastnode = idxLoc;
 		firstnode = seq->firstnode;
+		if (seq->afterFiNode == -1) {
+			afterFiNode = idxLoc;
+		}else afterFiNode = seq->afterFiNode;
+		beforeLaNode = seq->lastnode;
 	}
 	/**/
 	void concatOneBefore(SeqData* seq, int idxLoc) {
@@ -86,6 +94,10 @@ public:
 		T = seq->T + t_12;
 		firstnode = idxLoc;
 		lastnode = seq->lastnode;
+		if (seq->beforeLaNode == -1) {
+			beforeLaNode = idxLoc;
+		}else beforeLaNode = seq->beforeLaNode;
+		afterFiNode = seq->firstnode;
 	}
 	/**/
 	int evaluation(vector<SeqData*> seqs) {		
@@ -97,13 +109,13 @@ public:
 		int totalE = seqs[0]->E;
 		int totalL = seqs[0]->L;
 		int totalT = seqs[0]->T;
-		int u = -1, v = -1;
+		int u = -1, v = -1;		
 		for (int i = 0; i < seqs.size() - 1; ++i) {
 			u = seqs[i]->lastnode;
 			v = seqs[i + 1]->firstnode;
 			costR += (pr->costs[u][v] + seqs[i + 1]->cost);
 			loadR += seqs[i + 1]->load;
-			totalF = (totalF & seqs[i]->F) & (totalE + pr->times[u][v] <= seqs[i + 1]->L) & (loadR <= pr->Q) &(costR < oo);
+			totalF = (totalF & seqs[i + 1]->F) & (totalE + pr->times[u][v] <= seqs[i + 1]->L) & (loadR <= pr->Q) & (costR < oo);
 			if (!totalF)return oo;// only use for checking feasible solution
 			totalE = max(totalE + pr->times[u][v] + seqs[i + 1]->T, seqs[i + 1]->E);
 			totalL = max(totalL, seqs[i + 1]->L - pr->times[u][v] - totalT);

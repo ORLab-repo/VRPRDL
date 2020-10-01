@@ -75,8 +75,12 @@ int main(int argc, char* argv[]) {
         }
     }*/
     //cin.tie(0); cout.tie(0);    
-    int checkedTrue;
-    cin >> checkedTrue;    
+    int numRun;
+    cout << "Num of runs: ";
+    cin >> numRun;    
+    int isFlex;
+    cout << "isFlex: ";
+    cin >> isFlex;
     ios::sync_with_stdio(0);
     Rng::config(seed[0]);
     //srand(seed[0]);    
@@ -118,21 +122,24 @@ int main(int argc, char* argv[]) {
     fl.close();
     */
     //for (int i = 1; i <= bestSol.n; ++i)bestSol.giantT[i] = i;                 
-    bestSol.isFixed = true;//5751     
-    if (checkedTrue == 0)bestSol.isFixed = false;
+    std::chrono::time_point<std::chrono::system_clock> start, end;
+    start = std::chrono::system_clock::now();
+    bestSol.isFixed = true;        
     for (int i = 0; i < 4; ++i)
         for (int j = 0; j < 4; ++j)bestSol.count[i][j] = 0LL;
     pr->isDebug = false;
     pr->debugLS = false;
+    pr->isTurnCkSol = true;
     int minCost = oo;
     int oldCost;
-    for (int i = 1; i <= 30000; ++i) {
-        cout << i << "\n";  
-        bestSol.isFixed = true;
-        bestSol.genGiantT();        
+    for (int i = 1; i <= numRun; ++i) {
+        cout << i << "\n";
+        if (!isFlex)bestSol.isFixed = false;
+        else bestSol.isFixed = true;
+        bestSol.genGiantT();
         bestSol.Split();
-        cout <<"initial: "<< bestSol.cost << "\n";       
-        while (true)
+        cout << "initial: " << bestSol.cost << "\n";
+        for (int j = 1; j <= 2; ++j)    
         {                   
             oldCost = bestSol.cost;
             bestSol.updateObj();
@@ -141,7 +148,7 @@ int main(int argc, char* argv[]) {
             if (!(oldCost >= bestSol.cost)) {
                 throw "update obj error";
             }
-            if (oldCost == bestSol.cost)break;
+            //if (oldCost == bestSol.cost)break;
             bestSol.isFixed = !bestSol.isFixed;
         }
         /*bestSol.updateObj();
@@ -150,9 +157,15 @@ int main(int argc, char* argv[]) {
         cout <<"improved: "<< bestSol.cost << "\n";
         minCost = min(minCost, bestSol.cost);
     }
+    cout << "Type start strategy: " << isFlex << "\n";
     cout << minCost << "\n";
     /*for (int i = 1; i < 4; ++i)
         for (int j = 0; j < 4; ++j)cout << i << " " << j << " " << bestSol.count[i][j] << "\n";*/
+    end = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed_seconds = end - start;
+    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+
+    std::cout << "elapsed time: " << elapsed_seconds.count() << "s\n";
     /*bestSol.solT.clear();
     for (int i = 0; i < sizeof(arr) / sizeof(int); ++i)bestSol.solT.push_back(arr[i]);    
     int ckCosts = 0;    

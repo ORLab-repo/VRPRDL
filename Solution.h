@@ -125,7 +125,7 @@ public:
         //for route        
         for (int i = 1; i <= m + 1; ++i)setR.pb(new Route(pr));
         for (int i = 1; i <= m; ++i) {
-            setR[i]->depot = nodes[i + n];            
+            setR[i]->depot = nodes[i + n];                       
         }       
         //for split:
         /* using when num of vehicles is limit.
@@ -168,6 +168,9 @@ public:
             nodes[i]->seqn_i = &myseqDatas[posSeq + 3];
             posSeq += 4;
         }
+        for (int i = 1; i <= m; ++i) {
+            setR[i]->updateRoute();
+        }
         //only contain depot:
         seqDep = new SeqData(_pr);        
         seqDep->init(0);
@@ -196,7 +199,7 @@ public:
 
     void cvGiantT() {
         int pos = 0;
-        for (int i = 1; i <= m; ++i) {
+        for (int i = 1; i <= min(m + 1, n); ++i) {
             Node* val = setR[i]->depot;
             do
             {
@@ -209,10 +212,10 @@ public:
             for (int i = 1; i <= n; ++i)dd[i] = 0;
             for (int i = 1; i <= n; ++i)dd[giantT[i]] = 1;
             for (int i = 1; i <= n; ++i)if (dd[i] == 0) {
-                throw "Wrong here";
+                throw "Wrong here 1";
             }
             if (pos != n) {
-                throw "Wrong here";
+                throw "Wrong here 2";
             }
             delete[] dd;
         }
@@ -225,7 +228,7 @@ public:
         int* dd = new int[n + 1];
         for (int i = 1; i <= n; ++i)dd[i] = 0;
         int totalCost = 0;
-        for (int i = 1; i <= m; ++i) {
+        for (int i = 1; i <= min(m+1, n); ++i) {
             if(pr->isDebug)setR[i]->showR();
             Node* val = setR[i]->depot;
             setR[i]->ckRoute();
@@ -342,7 +345,7 @@ public:
     //}    
 
     //reset all moves in route r
-    void reinitSingleMoveInRou(Route* r) {
+    void reinitSingleMoveInRou(Route* r) {        
         for (int i = 1; i <= n; ++i)r->isNodeTested[i] = false;
         for (Node* tempNode = r->depot->suc; tempNode->idxClient != 0; tempNode = tempNode->suc) {
             for (int i = 1; i <= min(m + 1, n); ++i)setR[i]->isNodeTested[tempNode->idxClient] = false;
@@ -365,8 +368,11 @@ public:
     void reinitCluSet(Node* nod) {
         for (auto val : nod->movesClu) {
             nod->idxCluMoves[val] = false;
-        }        
+        }                
         nod->movesClu = nod->rou->pr->listLoc[nod->idxLoc].moves;
+        for (auto val : nod->movesClu) {
+            nod->idxCluMoves[val] = true;
+        }
     }
 
     //reset neigborhood set for each node
@@ -412,6 +418,7 @@ public:
             //clear all route:
             for (int i = 1; i <= m; ++i) {
                 setR[i]->clearNode();
+                setR[i]->updateRoute();
             }
             reinitAllMovesInRou();
         }
@@ -543,12 +550,20 @@ public:
                 setR[numVeh]->insertToRou(nodes[idCus]);
             }
         }                
-        for (int i = 1; i <= m; ++i) {            
+        for (int i = 1; i <= min(m+1, n); ++i) {            
             setR[i]->updateRoute();
             //setR[i]->showR();
         }
         reinitNegiborSet();
-        ckSol();
+        if (pr->isTurnCkSol) {            
+            try {
+                ckSol();
+            }
+            catch (const char* msg) {
+                cerr << msg << endl;
+                exit(0);
+            }
+        }
         //cvSolT(); // uncomment when need tracking the specific postion in solution (used in sequential search)
         lstLabel.clear();
         curLabel.clear();
@@ -640,6 +655,12 @@ public:
         }
     }
 
+    bool isCorrelated(Node* u, Node* v) {
+        if (u->idxClient == 0 || v->idxClient == 0)return true;
+        if (isFixed)return v->idxLocMoves[u->idxClient];
+        else return v->idxCluMoves[u->idxClient];
+    }
+
     void updateObj() {
         //shuffle the moves:
         for (int i = 1; i <= n; ++i) {
@@ -670,7 +691,7 @@ public:
                 if (isFixed)lstNeig = &nodeU->movesLoc;
                 else lstNeig = &nodeU->movesClu;                      
                 for (int posV = 0; posV < lstNeig->size() && isMoved == 0; ++posV) {                    
-                    nodeV = nodes[lstNeig->at(posV)];                                        
+                    nodeV = nodes[lstNeig->at(posV)];                                                    
                     routeV = nodeV->rou;
                     if (nodeV->rou->isNodeTested[nodeU->idxClient])continue;                    
                     vPred = nodeV->pred;
@@ -688,11 +709,16 @@ public:
                             vPred = nodeV->pred;
                         }
                         //2-Opt*
-
+                        if (isMoved != 1) {
+                            isMoved = interRoute2Opt();
+                        }
                         //2-Opt* Inverse
+                        if (isMoved != 1) {
+                            isMoved = interRoute2OptInv();
+                        }
                     }
-                    else if(!isFixed){                        
-                        //intra route general insert:                        
+                    else if(isFixed){                        
+                        //intra route general insert (only consider with fixed version):                        
                         tempNode = nodeV;
                         nodeV = nodeV->suc;
                         vSuc = nodeV->suc;
@@ -708,23 +734,93 @@ public:
                     }                    
                 }
                 
+                //intra route 2Opt:
+                nodeV = nodeU->suc; 
+                routeV = nodeV->rou;
+                if (!routeV->isNodeTested[nodeU->idxClient]) {                       
+                    while (isMoved != 1 && nodeV->idxClient)
+                    {
+                        vPred = nodeV->pred;
+                        vSuc = nodeV->suc;
+                        if (isCorrelated(uPred, nodeV) || isCorrelated(nodeU, vSuc))
+                            isMoved = intraRoute2Opt();
+                        nodeV = nodeV->suc;                        
+                    }
+                }
+                                
+                // Special cases : testing the insertions behind the depot, and the empty routes
+                for (int idRou = 1; idRou <= min(m + 1, n) && isMoved == 0; ++idRou) {                    
+                    nodeV = setR[idRou]->depot;                    
+                    routeV = nodeV->rou;
+                    vSuc = nodeV->suc;
+                    vPred = nodeV->pred;
+                    if (routeV->isNodeTested[nodeU->idxClient])continue;
+                    if (isMetEmpRou && vSuc->idxClient == 0)continue;
+                    if (vSuc->idxClient == 0)isMetEmpRou = true;
+                    if (routeU != routeV) {
+                        //apply inter general insert:
+                        if (isMoved != 1) {                            
+                            tempNode = nodeV;
+                            nodeV = nodeV->suc;
+                            vSuc = nodeV->suc;
+                            vPred = nodeV->pred;
+                            isMoved = interRouteGeneralInsert();
+                            nodeV = tempNode;
+                            vSuc = nodeV->suc;
+                            vPred = nodeV->pred;
+                        }
+                        //2-Opt*
+                        if (isMoved != 1) {
+                            isMoved = interRoute2Opt();
+                        }
+                        //2-Opt* Inverse
+                        if (isMoved != 1) {
+                            isMoved = interRoute2OptInv();
+                        }
+                    }
+                    else if (isFixed) {
+                        //intra route general insert (only consider with fixed version):                        
+                        tempNode = nodeV;
+                        nodeV = nodeV->suc;
+                        vSuc = nodeV->suc;
+                        vPred = nodeV->pred;
+                        int old_cost = cost;
+                        if (isMoved != 1) {
+                            isMoved = intraRouteGeneralInsert();
+                        }
+                        nodeV = tempNode;
+                        routeV = nodeV->rou;
+                        vSuc = nodeV->suc;
+                        vPred = nodeV->pred;
+                    }
+                    if (isMoved != 0 && idRou == m + 1) {
+                        m++;
+                    }
+                }
+                                
                 if (isMoved == 0) {
-                    //markNodeTested(nodeU);                    
+                    markNodeTested(nodeU);
                 }
                 else {
                     isEndSearch = false;
-                }
+                }                
             }
         }
     }    
     
-    //flexSeq must have 2-3 routes
+    //flexSeq must have larger than 2 sequences
+    //with flexible version, it will change locations of the last node of first sequence and first node of last sequence .
     III evalFlex(vector<SeqData*> flexSeq) {
-        III res = III(II(-1, -1), oo);// (location of 2 changed node and result)
+        III res = III(II(-1, -1), oo);// (location of 2 changed node and result)        
         SeqData* firstE = flexSeq.front();
         SeqData* lastE = flexSeq.back();
-        int cliFirst = pr->listLoc[firstE->lastnode].idxClient;
-        int cliLast = pr->listLoc[lastE->firstnode].idxClient;        
+        int cliFirst = pr->listLoc[firstE->lastnode].idxClient;         
+        int cliBe;
+        if (firstE->beforeLaNode != -1)cliBe = pr->listLoc[firstE->beforeLaNode].idxClient;
+        int cliLast = pr->listLoc[lastE->firstnode].idxClient;         
+        int cliAf;
+        if(lastE->afterFiNode != -1)cliAf = pr->listLoc[lastE->afterFiNode].idxClient;
+        int valCli;
         SeqData* seqLocU = new SeqData(pr);
         SeqData* seqLocV = new SeqData(pr);
         SeqData* seqTempU = seqLocU;
@@ -734,8 +830,10 @@ public:
             if (locU == 0) {
                 seqLocU = seqDep;
             }
-            else {
-                seqLocU->concatOneAfter(nodes[cliFirst]->pred->seq0_i, locU);
+            else {                       
+                if (cliBe == 0)seqLocU->concatOneAfter(seqDep, locU);
+                else if (nodes[cliFirst]->pred == nodes[cliBe]) seqLocU->concatOneAfter(nodes[cliBe]->seq0_i, locU);
+                else seqLocU->concatOneAfter(nodes[cliBe]->seqn_i, locU);
             }
             if (!seqLocU->F)continue;
             flexSeq[0] = seqLocU;
@@ -744,7 +842,9 @@ public:
                     seqLocV = seqDep;
                 }
                 else {
-                    seqLocV->concatOneBefore(nodes[cliLast]->suc->seqi_n, locV);
+                    if (cliAf == 0)seqLocV->concatOneBefore(seqDep, locV);
+                    else if (nodes[cliLast]->suc == nodes[cliAf])seqLocV->concatOneBefore(nodes[cliAf]->seqi_n, locV);
+                    else seqLocV->concatOneBefore(nodes[cliAf]->seqi_0, locV);
                 }
                 if (!seqLocV->F)continue;
                 flexSeq.front() = seqLocU;
@@ -765,6 +865,7 @@ public:
     //input: location used to change
     void changeLocCli(int idLoc) {
         if (idLoc == 0)return;
+        if (nodes[pr->listLoc[idLoc].idxClient]->idxLoc == idLoc)return;
         nodes[pr->listLoc[idLoc].idxClient]->idxLoc = idLoc;
         reinitCluSet(nodes[pr->listLoc[idLoc].idxClient]);
     }
@@ -821,12 +922,12 @@ public:
         if (uPred->idxClient) {
             myseqs1.clear();
             myseqs1.push_back(uPred->pred->seq0_i);
-            myseqs1.push_back(uSuc->seqi_n);
+            myseqs1.push_back(uSuc->seqi_n);            
             if(isFixed)resGenInMoves[3][0] = seq->evaluation(myseqs1);
-            else resSubFlex1[3][0] = evalFlex(myseqs1);
+            else resSubFlex1[3][0] = evalFlex(myseqs1);            
             myseqs2[1] = uPred->seqj_i[1];
             if(isFixed)resGenInMoves[3][0] += seq->evaluation(myseqs2);
-            else resSubFlex2[3][0] = evalFlex(myseqs2);
+            else resSubFlex2[3][0] = evalFlex(myseqs2);            
         }
         //condition for remain cases
         if (nodeV->idxClient == 0)goto line1;            
@@ -988,13 +1089,16 @@ public:
         if (pr->isDebug) {
             cout << iBest << " " << jBest << "\n";//2 0
             cout << nodeU->idxClient << " " << nodeV->idxClient << "\n";//4 111
+            cout << resSubFlex1[iBest][jBest].sc << " " << resSubFlex2[iBest][jBest].sc << "\n";
             cout << resGenInMoves[iBest][jBest] << "\n";//289
         }
         //update route data
         routeU->updateRoute();
         routeV->updateRoute();        
         if (pr->isDebug) {
+            routeU->showR();
             routeU->showRLoc();
+            routeV->showR();
             routeV->showRLoc();
             cout << routeU->caculateDis() << " " << routeV->caculateDis() << "\n";
         }
@@ -1002,7 +1106,15 @@ public:
         //if (nodeU->idxClient == 80 && nodeV->idxClient == 108)goto line2;
         cost += resGenInMoves[iBest][jBest] - resGenInMoves[0][0];        
         //count[iBest][jBest]++;
-        ckSol();        
+        if (pr->isTurnCkSol) {
+            try {
+                ckSol();
+            }
+            catch (const char* msg) {
+                cerr << msg << endl;
+                exit(0);
+            }
+        }
         return 1;
         //line2:
         //return 0;
@@ -1010,7 +1122,25 @@ public:
 
     //when the size of sequence is bigger than sizeSub
     //we need to add it in pieces
-    void addSeqInPieces(Node* st, Node* en, vector<SeqData*> &myseqs) {
+    void addRevSeqInPieces(Node* st, Node* en, vector<SeqData*> &myseqs) {
+        //st and en are in the same route.        
+        if (st->posInRoute > en->posInRoute)return;
+        int disInR = -1;
+        Node* val = st;
+        while (true)
+        {
+            disInR = en->posInRoute - val->posInRoute;
+            if (disInR + 1 <= pr->sizeSub) {
+                myseqs.push_back(val->seqj_i[disInR]);
+                break;
+            }
+            SeqData* curSeq = val->seqj_i[pr->sizeSub - 1];
+            myseqs.push_back(curSeq);
+            val = nodes[pr->listLoc[curSeq->lastnode].idxClient]->suc;
+        }              
+    }
+
+    void addSeqInPieces(Node* st, Node* en, vector<SeqData*>& myseqs) {
         //st and en are in the same route.        
         if (st->posInRoute > en->posInRoute)return;
         int disInR = -1;
@@ -1025,9 +1155,8 @@ public:
             SeqData* curSeq = val->seqi_j[pr->sizeSub - 1];
             myseqs.push_back(curSeq);
             val = nodes[pr->listLoc[curSeq->lastnode].idxClient]->suc;
-        }              
+        }
     }
-
     int intraRouteGeneralInsert() {        
         //nodeV in this case can be depot (arrival depot)
         int difDir = nodeV->posInRoute - nodeU->posInRoute;
@@ -1445,7 +1574,7 @@ public:
             insertNode(vSuc, nodeV);
         }
 
-        count[iBest][jBest]++;
+        //count[iBest][jBest]++;
         routeU->updateRoute();        
         nodeU = tempU;
         nodeV = tempV;
@@ -1454,10 +1583,293 @@ public:
         uSuc = nodeU->suc;
         vSuc = nodeV->suc;
         cost += resGenInMoves[iBest][jBest] - resGenInMoves[0][0];        
-        ckSol();
-        return 1;    
+        if (pr->isTurnCkSol) {
+            try {
+                ckSol();
+            }
+            catch (const char* msg) {
+                cerr << msg << endl;
+                exit(0);
+            }
+        }
+        return 1;       
     }        
 
+    int interRoute2Opt() {                
+        SeqData* seq = nodeU->seq0_i;
+        if (uPred->idxClient == 0 && nodeV->idxClient == 0)return 0;
+        int oldCost = routeU->depot->seqi_n->cost + routeV->depot->seqi_n->cost;
+        int newCost;
+        III flexCost1;
+        III flexCost2;
+        //route 1:            
+        myseqs1.clear();
+        myseqs1.push_back(uPred->seq0_i);
+        myseqs1.push_back(vSuc->seqi_n);        
+        //route 2:            
+        myseqs2.clear();
+        myseqs2.push_back(nodeV->seq0_i);
+        myseqs2.push_back(nodeU->seqi_n);
+        if (isFixed) {            
+            newCost = seq->evaluation(myseqs1) + seq->evaluation(myseqs2);
+        }
+        else {
+            flexCost1 = evalFlex(myseqs1);
+            flexCost2 = evalFlex(myseqs2);
+            newCost = flexCost1.sc + flexCost2.sc;
+        }   
+        if (pr->isDebug)cout << "ck inter route 2Opt\n";
+        //check changed cost:
+        if (oldCost <= newCost)return 0;
+        if (pr->isDebug) {
+            cout << "improved: " << newCost << "\n";            
+        }
+        //improvement change
+        reinitSingleMoveInRou(routeU);
+        reinitSingleMoveInRou(routeV);
+        if (!isFixed) {
+            //change location for routeU:
+            changeLocCli(flexCost1.ft.ft);
+            changeLocCli(flexCost1.ft.sc);
+            //change location for routeV:
+            changeLocCli(flexCost2.ft.ft);
+            changeLocCli(flexCost2.ft.sc);            
+        }
+        Node* lastNodeU = routeU->depot->pred->pred;// last client in routeU
+        Node* lastNodeV = routeV->depot->pred->pred;// last client in routeV
+        //changed for route 1: uPred->vSuc        
+
+        if (vSuc->idxClient) {            
+            uPred->suc = vSuc;
+            vSuc->pred = uPred;
+            lastNodeV->suc = routeU->depot->pred;
+            routeU->depot->pred->pred = lastNodeV;
+        }
+        else {
+            uPred->suc = routeU->depot->pred;
+            routeU->depot->pred->pred = uPred;
+        }
+        //changed for route 2: nodeV->nodeU        
+        if (nodeU->idxClient) {
+            nodeV->suc = nodeU;
+            nodeU->pred = nodeV;
+            lastNodeU->suc = routeV->depot->pred;
+            routeV->depot->pred->pred = lastNodeU;
+        }
+        else {
+            nodeV->suc = routeV->depot->pred;
+            routeV->depot->pred->pred = nodeV;
+        }        
+        //update route data:
+        routeU->updateRoute();
+        routeV->updateRoute();        
+        //reset infor for futher search
+        uPred = nodeU->pred;
+        uSuc = nodeU->suc;
+        routeU = nodeU->rou;
+        cost += newCost - oldCost;
+        //count[1][0]++;        
+        if (pr->isTurnCkSol) {
+            try {
+                ckSol();
+            }
+            catch (const char* msg) {
+                cerr << msg << endl;
+                exit(0);
+            }
+        }
+        return 1;        
+    }
+
+    //2opt*-Inv
+    int interRoute2OptInv() {        
+        SeqData* seq = nodeU->seq0_i;
+        int oldCost = routeU->depot->seqi_n->cost + routeV->depot->seqi_n->cost;
+        int newCost = 0;
+        int valCost;
+        int valCostRev;
+        III flexValCost;
+        III flexCost1;
+        III flexCost2;        
+        bool reverseRouteU = false, reverseRouteV = false;                
+        ///routeU        
+        myseqs1.clear();
+        myseqs1.push_back(vSuc->seqn_i);
+        myseqs1.push_back(uSuc->seqi_n);
+        if (isFixed)valCost = seq->evaluation(myseqs1);
+        else {
+            flexCost1 = evalFlex(myseqs1);
+            valCost = flexCost1.sc;
+        }        
+        //reverse it:
+        myseqs1[0] = uSuc->seqn_i;
+        myseqs1[1] = vSuc->seqi_n;
+        if (isFixed)valCostRev = seq->evaluation(myseqs1);
+        else {
+            flexValCost = evalFlex(myseqs1);
+            valCostRev = flexValCost.sc;
+        }        
+        //check what is better:
+        if (valCost < valCostRev)newCost += valCost;
+        else {
+            newCost += valCostRev; 
+            flexCost1 = flexValCost;
+            reverseRouteU = true;
+        }        
+        
+        ///routeV
+        myseqs1.clear();
+        myseqs1.push_back(nodeV->seq0_i);
+        myseqs1.push_back(nodeU->seqi_0);
+        valCost = seq->evaluation(myseqs1);
+        if (isFixed)valCost = seq->evaluation(myseqs1);
+        else {
+            flexCost2 = evalFlex(myseqs1);
+            valCost = flexCost2.sc;
+        }        
+        //reverse it:
+        myseqs1[0] = nodeU->seq0_i;
+        myseqs1[1] = nodeV->seqi_0;
+        if (isFixed)valCostRev = seq->evaluation(myseqs1);
+        else {
+            flexValCost = evalFlex(myseqs1);
+            valCostRev = flexValCost.sc;
+        }
+        //check what is better:
+        if (valCost < valCostRev)newCost += valCost;
+        else {
+            newCost += valCostRev;
+            flexCost2 = flexValCost;
+            reverseRouteV = true;
+        }        
+        ///check whether has improvement:
+        if (oldCost <= newCost)return 0;
+        if(pr->isDebug) {
+            cout << "check inter route 2Opt Inv\n";
+            cout << nodeU->idxClient << " " << nodeV->idxClient << "\n";
+            routeU->showR();
+            routeU->showRLoc();
+            routeV->showR();
+            routeV->showRLoc();
+            cout << boolalpha << reverseRouteU << " " << reverseRouteV << "\n";
+            cout << "improved: " << newCost << "\n";            
+        }        
+        reinitSingleMoveInRou(routeU);
+        reinitSingleMoveInRou(routeV);
+        if (!isFixed) {
+            //change location for routeU:
+            changeLocCli(flexCost1.ft.ft);
+            changeLocCli(flexCost1.ft.sc);
+            //change location for routeV:
+            changeLocCli(flexCost2.ft.ft);
+            changeLocCli(flexCost2.ft.sc);
+        }
+        //routeU:
+        Node* endNode = uSuc;
+        Node* startNode = vSuc;
+        while(startNode->idxClient){
+            Node* tempNode = startNode->suc;
+            startNode->suc = endNode;
+            endNode->pred = startNode;
+            endNode = startNode;
+            startNode = tempNode;
+        }
+        endNode->pred = routeU->depot;
+        routeU->depot->suc = endNode;
+        if (reverseRouteU)routeU->reverse();        
+        //routeV:
+        startNode = nodeV;
+        endNode = nodeU;
+        while (endNode->idxClient)
+        {
+            Node* tempNode = endNode->pred;
+            startNode->suc = endNode;
+            endNode->pred = startNode;
+            startNode = endNode;
+            endNode = tempNode;
+        }
+        startNode->suc = routeV->depot->pred;
+        routeV->depot->pred->pred = startNode;
+        if (reverseRouteV)routeV->reverse();
+
+        //update route data:
+        routeU->updateRoute();
+        routeV->updateRoute();        
+        //reset infor for futher search
+        uPred = nodeU->pred;
+        uSuc = nodeU->suc;
+        routeU = nodeU->rou;
+        cost += newCost - oldCost;
+        //count[1][1]++;
+        if (pr->isTurnCkSol) {
+            try {
+                ckSol();
+            }
+            catch (const char* msg) {
+                cerr << msg << endl;
+                exit(0);
+            }
+        }
+        return 1;    
+    }
+
+    //intra route 2Opt:
+    int intraRoute2Opt() {
+        //nodeV is always on the right side of nodeU
+        int oldCost = routeV->depot->seqi_n->cost;
+        SeqData* seq = nodeU->seq0_i;
+        myseqs1.clear();
+        myseqs1.push_back(uPred->seq0_i);
+        addRevSeqInPieces(nodeU, nodeV, myseqs1);
+        myseqs1.push_back(vSuc->seqi_n);
+        int newCost;
+        III flexRes;
+        if(isFixed)newCost = seq->evaluation(myseqs1);
+        else {
+            flexRes = evalFlex(myseqs1);
+            newCost = flexRes.sc;
+        }
+        if (oldCost <= newCost)return 0;        
+        if (pr->isDebug) {
+            cout << "ck intra route 2Opt\n"; 
+            /*cout << boolalpha << isFixed << "\n";
+            cout << nodeU->idxClient << " " << nodeV->idxClient << "\n";*/
+        }
+        reinitSingleMoveInRou(routeV);
+        if (!isFixed) {
+            changeLocCli(flexRes.ft.ft);
+            changeLocCli(flexRes.ft.sc);            
+        }
+        //update route structure
+        Node* startNode = uPred;
+        Node* endNode = nodeV;
+        while (startNode != nodeU)
+        {
+            Node* tempNode = endNode->pred;
+            startNode->suc = endNode;
+            endNode->pred = startNode;
+            startNode = endNode;
+            endNode = tempNode;
+        }
+        nodeU->suc = vSuc;
+        vSuc->pred = nodeU;
+        //update route data:        
+        routeV->updateRoute();
+        cost += newCost - oldCost;
+        uSuc = nodeU->suc;
+        uPred = nodeU->pred;        
+        count[1][1]++;
+        //check sol
+        if (pr->isTurnCkSol) {
+            try {
+                ckSol();
+            }
+            catch (const char* msg) {
+                cerr << msg << endl;
+                exit(0);
+            }
+        }
+    }
     ///ELSALGO:
     void exchange() {
         int posU = Rng::getNumInRan(1, n);
