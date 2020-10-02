@@ -49,10 +49,10 @@ public:
     III resSubFlex2[4][4];//using for flexible version
     Node* nodeU;
     Node* uPred;
-    Node* uSuc;    
+    Node* uSuc;
     Node* nodeV;
     Node* vPred;
-    Node* vSuc;    
+    Node* vSuc;
     Route* routeU;
     Route* routeV;
     bool isFixed;// for identifying the type of LS;
@@ -70,7 +70,7 @@ public:
     int* pred;
 
     Solution(Param* _pr) {
-        pr = _pr;        
+        pr = _pr;
         n = pr->numClient - 1;// not contain depot
         if (pr->maxNeibor > n)pr->maxNeibor = n - 1;// deal with special case (exploring all neiborhood)
         if (pr->numVeh != oo)m = pr->numVeh;
@@ -85,7 +85,7 @@ public:
         //create node        
         /*
         * indexing from 1
-        * each route contains 2 depot         
+        * each route contains 2 depot
         */
         for (int i = 1; i <= n + 2 * m + 1; ++i)nodes.pb(new Node());
         //for customer        
@@ -125,21 +125,21 @@ public:
         //for route        
         for (int i = 1; i <= m + 1; ++i)setR.pb(new Route(pr));
         for (int i = 1; i <= m; ++i) {
-            setR[i]->depot = nodes[i + n];                       
-        }       
+            setR[i]->depot = nodes[i + n];
+        }
         //for split:
         /* using when num of vehicles is limit.
         F = new double* [m + 1];
         pred = new int* [m + 1];
         for (int k = 0; k <= m; ++k) {
             F[k] = new double[n + 1];
-            pred[k] = new int[n + 1];                       
+            pred[k] = new int[n + 1];
         }
         */
         //for LS
         /*
         * init seqdata for each node
-        */    
+        */
         int maxSizeSeq = (pr->sizeSub * 2 + 4) * n + 2 * m * 4;
         SeqData* myseqDatas = new SeqData[maxSizeSeq];
         for (int i = 0; i < maxSizeSeq; ++i)myseqDatas[i].pr = _pr;
@@ -172,17 +172,17 @@ public:
             setR[i]->updateRoute();
         }
         //only contain depot:
-        seqDep = new SeqData(_pr);        
+        seqDep = new SeqData(_pr);
         seqDep->init(0);
         /*
         * init set of moves for each node
         * fixed and flexible version.
         */
-        for (int i = 1; i <= n; ++i) {            
+        for (int i = 1; i <= n; ++i) {
             nodes[i]->idxLocMoves.resize(n + 1, false);
             nodes[i]->movesLoc.resize(pr->maxNeibor);
-            nodes[i]->idxCluMoves.resize(n + 1, false);            
-            nodes[i]->movesClu.resize(pr->maxNeibor);                        
+            nodes[i]->idxCluMoves.resize(n + 1, false);
+            nodes[i]->movesClu.resize(pr->maxNeibor);
         }
 
         /*
@@ -194,7 +194,7 @@ public:
 
     void genGiantT() {
         for (int i = 1; i <= n; ++i)giantT[i] = i;
-        shuffle(giantT.begin() + 1, giantT.end(), Rng::generator);
+        //shuffle(giantT.begin() + 1, giantT.end(), Rng::generator);
     }
 
     void cvGiantT() {
@@ -221,22 +221,22 @@ public:
         }
     }
 
-    
+
     bool ckSol() {
-        if(pr->isDebug)cout << "Current Check\n";
+        if (pr->isDebug)cout << "Current Check\n";
         vector<int> arrSol;
         int* dd = new int[n + 1];
         for (int i = 1; i <= n; ++i)dd[i] = 0;
         int totalCost = 0;
-        for (int i = 1; i <= min(m+1, n); ++i) {
-            if(pr->isDebug)setR[i]->showR();
+        for (int i = 1; i <= min(m + 1, n); ++i) {
+            if (pr->isDebug)setR[i]->showR();
             Node* val = setR[i]->depot;
             setR[i]->ckRoute();
             while (true)
             {
                 val = val->suc;
                 if (val->idxClient == 0)break;
-                dd[val->idxClient] = 1;                
+                dd[val->idxClient] = 1;
             }
             totalCost += setR[i]->depot->pred->seq0_i->cost;
         }
@@ -246,8 +246,8 @@ public:
         if (!(totalCost == cost)) {
             throw "error total cost";
         }
-        delete [] dd;
-    }    
+        delete[] dd;
+    }
 
     //void cvSolT() {
     //    if (pr->isDebug) {
@@ -345,7 +345,7 @@ public:
     //}    
 
     //reset all moves in route r
-    void reinitSingleMoveInRou(Route* r) {        
+    void reinitSingleMoveInRou(Route* r) {
         for (int i = 1; i <= n; ++i)r->isNodeTested[i] = false;
         for (Node* tempNode = r->depot->suc; tempNode->idxClient != 0; tempNode = tempNode->suc) {
             for (int i = 1; i <= min(m + 1, n); ++i)setR[i]->isNodeTested[tempNode->idxClient] = false;
@@ -368,7 +368,7 @@ public:
     void reinitCluSet(Node* nod) {
         for (auto val : nod->movesClu) {
             nod->idxCluMoves[val] = false;
-        }                
+        }
         nod->movesClu = nod->rou->pr->listLoc[nod->idxLoc].moves;
         for (auto val : nod->movesClu) {
             nod->idxCluMoves[val] = true;
@@ -382,7 +382,7 @@ public:
         for (int i = 1; i <= n; ++i) {
             u = nodes[i]->idxLoc;
             //cluster set:
-            if(isConClu)reinitCluSet(nodes[i]);
+            if (isConClu)reinitCluSet(nodes[i]);
             //location set: 
             /// (can update on the fly by using data structure set but trading off when processing)
             //reset all existing index
@@ -392,7 +392,7 @@ public:
 
             //checking based on the corelation measure:
             sDis.clear();
-            for (int j = 1; j <= n; ++j) if(j!=i){
+            for (int j = 1; j <= n; ++j) if (j != i) {
                 v = nodes[j]->idxLoc;
                 sDis.insert(II(pr->corDis[v][u], v));
             }
@@ -404,15 +404,15 @@ public:
                 nodes[i]->idxLocMoves[nodes[i]->movesLoc.back()] = true;
                 if (nodes[i]->movesLoc.size() == pr->maxNeibor)break;
             }
-        }        
+        }
     }
     // split without limit number of vehicles
-    void Split() {                
+    void Split() {
         /*
         * (cost, time)
         * idx of location
         */
-        if(pr->isDebug)cout << m << "\n";
+        if (pr->isDebug)cout << m << "\n";
         if (m != pr->numVeh + 1 && m != n + 1) {
             //rerun split
             //clear all route:
@@ -422,20 +422,20 @@ public:
             }
             reinitAllMovesInRou();
         }
-        else m--;                    
+        else m--;
         vector<III> lstLabel; //((cost, time), loc)
         vector<III> curLabel; //((cost, time), prv)
         vector<int> prvIdLb; //previous label in vector
         //the index that cannot exceed in a route due to the capacity.
         int* maxIdx = new int[n + 1];
         int curLoad = 0;
-        maxIdx[0] = 0;       
+        maxIdx[0] = 0;
         for (int i = 1; i <= n; ++i) {
             maxIdx[i] = max(maxIdx[i - 1], i);
             int prvIdx = giantT[i - 1];
-            curLoad -= pr->listCL[prvIdx].demand;            
-            if (maxIdx[i - 1] < i)curLoad = pr->listCL[giantT[i]].demand;            
-            if (maxIdx[i - 1] == n){
+            curLoad -= pr->listCL[prvIdx].demand;
+            if (maxIdx[i - 1] < i)curLoad = pr->listCL[giantT[i]].demand;
+            if (maxIdx[i - 1] == n) {
                 maxIdx[i] = n;
                 continue;
             }
@@ -447,13 +447,13 @@ public:
                 else {
                     break;
                 }
-            }            
-        }        
+            }
+        }
         //init split phase:
         for (int i = 1; i <= n; ++i) {
             F[i] = oo;
             pred[i] = -1;
-        }        
+        }
         F[0] = 0;
         pred[0] = -1;
         int stLb = -1, enLb = -1;
@@ -461,14 +461,14 @@ public:
         II label1, label2, label3;
         int idCus, costU, timeU, idLocU;
         int timeV, costV;
-        for (int st = 1; st <= n; st++) {          
+        for (int st = 1; st <= n; st++) {
             //init first label:            
             lstLabel.pb(III(II(0, 0), 0));
             prvIdLb.pb(pred[st - 1]);
             stLb = lstLabel.size() - 1;
             enLb = lstLabel.size() - 1;
             for (int v = st; v <= maxIdx[st]; ++v) {
-                int idCus = giantT[v];                
+                int idCus = giantT[v];
                 for (auto idLocV : pr->listCL[idCus].listLoc) {
                     label1 = II(oo, oo);
                     label2 = II(oo, 0);
@@ -483,7 +483,7 @@ public:
                         costU = lbU.ft.ft;
                         timeU = lbU.ft.sc;
                         idLocU = lbU.sc;
-                        timeV = max(timeU + pr->times[idLocU][idLocV], pr->listLoc[idLocV].stTime);                        
+                        timeV = max(timeU + pr->times[idLocU][idLocV], pr->listLoc[idLocV].stTime);
                         if (timeV > pr->listLoc[idLocV].enTime
                             || timeV + pr->times[idLocV][0] > pr->T // only true when travel times satisfy triangle inequality 
                             ) {
@@ -494,13 +494,13 @@ public:
                         if (notDominatePush(lbV.first, label1, label2, label3)) {
                             updateLabel(lbV.first, label1, label2, label3);
                             curLabel.pb(lbV);
-                        }                        
-                    }                    
+                        }
+                    }
                     //dominate label
-                    sort(curLabel.begin(), curLabel.end());                    
+                    sort(curLabel.begin(), curLabel.end());
                     int minT = oo;
                     //for (auto val : curLabel) {
-                    for(int i=0;i<curLabel.size();++i){
+                    for (int i = 0; i < curLabel.size(); ++i) {
                         III val = curLabel[i];
                         if (val.ft.sc < minT)
                         {
@@ -511,24 +511,24 @@ public:
                             if (//val.ft.sc + pr->times[idLocV][0] < pr->T // uncomment when travel times does not satisfy triangle inequality
                                 F[v] > val.ft.ft + pr->costs[idLocV][0] + F[st - 1]) {
                                 F[v] = val.ft.ft + pr->costs[idLocV][0] + F[st - 1];
-                                pred[v] = lstLabel.size() - 1;                                
-                            }                            
-                        }                        
+                                pred[v] = lstLabel.size() - 1;
+                            }
+                        }
                     }
                 }
                 stLb = enLb + 1;
                 enLb = lstLabel.size() - 1;
                 if (stLb > enLb)break;
             }
-        }                
+        }
         cost = F[n];
         if (cost == oo)return;
         int indexLb = pred[n];// index of last label.
         ///construct solution
-        vector<int> tourLoc;        
+        vector<int> tourLoc;
         int numVeh = 0;
         while (indexLb != -1)
-        {                        
+        {
             tourLoc.pb(lstLabel[indexLb].second);
             if (lstLabel[indexLb].second == 0)numVeh++;
             indexLb = prvIdLb[indexLb];
@@ -537,25 +537,25 @@ public:
         if (!(tourLoc.size() == m + n)) {
             throw "split bug loc size";
         }
-        reverse(tourLoc.begin(), tourLoc.end());        
+        reverse(tourLoc.begin(), tourLoc.end());
         numVeh = 0;
         for (auto val : tourLoc) {
             if (val == 0) {
-                numVeh++;                
+                numVeh++;
             }
-            else {                
+            else {
                 idCus = pr->listLoc[val].idxClient;
                 nodes[idCus]->idxClient = idCus;
                 nodes[idCus]->idxLoc = val;
                 setR[numVeh]->insertToRou(nodes[idCus]);
             }
-        }                
-        for (int i = 1; i <= min(m+1, n); ++i) {            
+        }
+        for (int i = 1; i <= min(m + 1, n); ++i) {
             setR[i]->updateRoute();
             //setR[i]->showR();
         }
         reinitNegiborSet();
-        if (pr->isTurnCkSol) {            
+        if (pr->isTurnCkSol) {
             try {
                 ckSol();
             }
@@ -571,70 +571,37 @@ public:
         tourLoc.clear();
         delete[] maxIdx;
     }
-   
-//    void initSol() {
-//        vector<Route*> setOfR;
-//        setOfR.push_back(nullptr);
-//        Node** setDepot = new Node * [2*n + 1];
-//        for (int i = 1; i <= n; ++i) {
-//            setDepot[i] = new Node(0);
-//            setDepot[i+n] = new Node(0);            
-//            setDepot[i]->suc = setDepot[i + n];
-//            setDepot[i + n]->pred = setDepot[i];
-//            setDepot[i + n]->suc = setDepot[i];
-//            setDepot[i]->pred = setDepot[i + n];
-//        }
-//        for (int i = 1; i <= n; ++i) {
-//            setOfR.push_back(new Route(pr));
-//            //init depot:
-//            setOfR[i]->depot = setDepot[i];
-//            //set direct:                                    
-//            setOfR[i]->insertToRou(nodes[i]);
-//            setOfR[i]->updateRoute();
-//        }
-//
-//        //symmetric ?? 
-//        vector<DII> saving;
-//        for (int i = 1; i <= n; ++i)
-//            for (int j = i + 1; j <= n; ++j) {
-//                saving.push_back(DII(pr->costs[i][0] + pr->costs[j][0] - pr->costs[i][j], II(i, j)));
-//                //saving.push_back(DII(pr->costs[i][0] + pr->costs[j][0] - pr->costs[i][j], II(j, i)));
-//            }
-//        sort(saving.begin(), saving.end(), greater<>());
-//        int u, v;
-//        double eUV, eVU;
-//        for (auto val : saving) {
-//            u = val.sc.ft;
-//            v = val.sc.sc;
-//            if (nodes[u]->rou == nodes[v]->rou)continue;
-//            if (!nodes[u]->ckNearDepot() || !nodes[v]->ckNearDepot())continue;
-//            eUV = ckEnerCWH(u, v);
-//            eVU = ckEnerCWH(v, u);
-//            if(min(eUV, eVU) <= pr->maxE){                
-//                if (eUV < eVU)ckEnerCWH(u, v, true);
-//                else ckEnerCWH(v, u, true);
-//            }
-//        }
-//
-//        int pos = 0;
-//        for (int i = 1; i <= n; ++i)
-//        {
-//            Route* val = setOfR[i];            
-//            if (val->depot == nullptr)continue;            
-//            val->updateRoute();
-//            Node* test = val->depot;
-//            do {
-//                test = test->suc;
-//                if (test->idxClient == 0)break;
-//                giantT[++pos] = test->idxClient;// construc giant tour
-//            } while (1);
-//            //cout << val->E[val->length]<<endl;
-//        }
-//        delete[] setDepot;
-//        for (int i = 1; i <= n; ++i)delete setOfR[i];
-//        Split();        
-//    }
-//    
+
+    void initSol() {
+        vector<DD> points(n + 1);
+        set<DI> setAng;
+        setAng.clear();
+        points[0] = DD(pr->listLoc[0].x, pr->listLoc[0].y);
+        double avgX, avgY;
+        for (int i = 1; i <= n; ++i) {
+            avgX = 0.0;
+            avgY = 0.0;
+            for (auto val : pr->listCL[i].listLoc) {
+                avgX += pr->listLoc[val].x;
+                avgY += pr->listLoc[val].y;
+            }
+            avgX /= pr->listCL[i].listLoc.size();
+            avgY /= pr->listCL[i].listLoc.size();
+            //caculate angle with depot:
+            setAng.insert(DI(atan2(avgY - points[0].sc, avgX - points[0].ft), i));
+        }
+        int idPos = 0;
+        for (auto val : setAng) {
+            giantT[++idPos] = val.sc;
+        }
+        if (idPos != n) {
+            throw "error init";
+        }
+        //Split();       
+        cout << "initial cost: " << cost << "\n";
+        setAng.clear();
+        points.clear();
+    }
     ///Local Search:
     /// isFixed =  true if running fixed version LS
     /// Otherwise if running flexible version LS
@@ -661,15 +628,10 @@ public:
         else return v->idxCluMoves[u->idxClient];
     }
 
-    void updateObj() {
-        //shuffle the moves:
-        for (int i = 1; i <= n; ++i) {
-            shuffle(ordNodeLs.begin(), ordNodeLs.end(), Rng::generator);
-            shuffle(nodes[i]->movesClu.begin(), nodes[i]->movesClu.end(), Rng::generator);
-            shuffle(nodes[i]->movesLoc.begin(), nodes[i]->movesLoc.end(), Rng::generator);
-        }
+    int updateObjInter(int typeU, int typeV) {
+        //shuffle the moves:        
         //reset all moves on route:
-        reinitAllMovesInRou();
+        //reinitAllMovesInRou();
         //checking move:
         int isMoved = 0;
         bool isMetEmpRou = false;
@@ -678,109 +640,48 @@ public:
         while (!isEndSearch)
         {
             isEndSearch = true;
-            isMoved = 0;
-            for (int posU = 0; posU < ordNodeLs.size(); ++posU) {
-                //cout << "posU: " << posU <<"\n";
-                posU -= isMoved;                
-                isMoved = 0;                
-                isMetEmpRou = false;                
-                nodeU = nodes[ordNodeLs[posU]];                                
+            //isMoved = 0;                        
+            for (int posU = 0; posU < ordNodeLs.size() && isMoved == 0; ++posU) {
+                //cout << "posU: " << posU << " " << isMoved << "\n";;
+                posU -= isMoved;
+                isMoved = 0;
+                isMetEmpRou = false;
+                nodeU = nodes[ordNodeLs[posU]];
                 routeU = nodeU->rou;
                 uSuc = nodeU->suc;
-                uPred = nodeU->pred;                
+                uPred = nodeU->pred;
                 if (isFixed)lstNeig = &nodeU->movesLoc;
-                else lstNeig = &nodeU->movesClu;                      
-                for (int posV = 0; posV < lstNeig->size() && isMoved == 0; ++posV) {                    
-                    nodeV = nodes[lstNeig->at(posV)];                                                    
+                else lstNeig = &nodeU->movesClu;
+                for (int posV = 0; posV < lstNeig->size() && isMoved == 0; ++posV) {
+                    nodeV = nodes[lstNeig->at(posV)];
                     routeV = nodeV->rou;
-                    if (nodeV->rou->isNodeTested[nodeU->idxClient])continue;                    
+                    if (nodeV->rou->isNodeTested[nodeU->idxClient])continue;
                     vPred = nodeV->pred;
                     vSuc = nodeV->suc;
                     if (routeU != routeV) {
                         //apply inter general insert:
                         if (isMoved != 1) {
-                            tempNode = nodeV;
-                            nodeV = nodeV->suc;                            
-                            vSuc = nodeV->suc;
-                            vPred = nodeV->pred;                            
-                            isMoved = interRouteGeneralInsert();                                                        
-                            nodeV = tempNode;
-                            vSuc = nodeV->suc;
-                            vPred = nodeV->pred;
-                        }
-                        //2-Opt*
-                        if (isMoved != 1) {
-                            isMoved = interRoute2Opt();
-                        }
-                        //2-Opt* Inverse
-                        if (isMoved != 1) {
-                            isMoved = interRoute2OptInv();
-                        }
-                    }
-                    else if(isFixed){                        
-                        //intra route general insert (only consider with fixed version):                        
-                        tempNode = nodeV;
-                        nodeV = nodeV->suc;
-                        vSuc = nodeV->suc;
-                        vPred = nodeV->pred;
-                        int old_cost = cost;                        
-                        if (isMoved != 1) {
-                            isMoved = intraRouteGeneralInsert();                            
-                        }                                        
-                        nodeV = tempNode;
-                        routeV = nodeV->rou;
-                        vSuc = nodeV->suc;
-                        vPred = nodeV->pred;
-                    }                    
-                }
-                
-                //intra route 2Opt:
-                nodeV = nodeU->suc; 
-                routeV = nodeV->rou;
-                if (!routeV->isNodeTested[nodeU->idxClient]) {                       
-                    while (isMoved != 1 && nodeV->idxClient)
-                    {
-                        vPred = nodeV->pred;
-                        vSuc = nodeV->suc;
-                        if (isCorrelated(uPred, nodeV) || isCorrelated(nodeU, vSuc))
-                            isMoved = intraRoute2Opt();
-                        nodeV = nodeV->suc;                        
-                    }
-                }
-                                
-                // Special cases : testing the insertions behind the depot, and the empty routes
-                for (int idRou = 1; idRou <= min(m + 1, n) && isMoved == 0; ++idRou) {                    
-                    nodeV = setR[idRou]->depot;                    
-                    routeV = nodeV->rou;
-                    vSuc = nodeV->suc;
-                    vPred = nodeV->pred;
-                    if (routeV->isNodeTested[nodeU->idxClient])continue;
-                    if (isMetEmpRou && vSuc->idxClient == 0)continue;
-                    if (vSuc->idxClient == 0)isMetEmpRou = true;
-                    if (routeU != routeV) {
-                        //apply inter general insert:
-                        if (isMoved != 1) {                            
                             tempNode = nodeV;
                             nodeV = nodeV->suc;
                             vSuc = nodeV->suc;
                             vPred = nodeV->pred;
-                            isMoved = interRouteGeneralInsert();
+                            isMoved = interRouteGeneralInsert(typeU, typeV);
                             nodeV = tempNode;
                             vSuc = nodeV->suc;
                             vPred = nodeV->pred;
                         }
                         //2-Opt*
-                        if (isMoved != 1) {
+                        /*if (isMoved != 1) {
                             isMoved = interRoute2Opt();
-                        }
+                        }*/
                         //2-Opt* Inverse
-                        if (isMoved != 1) {
+                        /*if (isMoved != 1) {
                             isMoved = interRoute2OptInv();
-                        }
+                        }*/
                     }
                     else if (isFixed) {
                         //intra route general insert (only consider with fixed version):                        
-                        tempNode = nodeV;
+                        /*tempNode = nodeV;
                         nodeV = nodeV->suc;
                         vSuc = nodeV->suc;
                         vPred = nodeV->pred;
@@ -791,46 +692,112 @@ public:
                         nodeV = tempNode;
                         routeV = nodeV->rou;
                         vSuc = nodeV->suc;
+                        vPred = nodeV->pred;*/
+                    }
+                }
+
+                //intra route 2Opt:
+                //cout << "status " << isMoved << "\n";
+                /*nodeV = nodeU->suc;
+                routeV = nodeV->rou;
+                if (!routeV->isNodeTested[nodeU->idxClient]) {
+                    while (isMoved != 1 && nodeV->idxClient)
+                    {
                         vPred = nodeV->pred;
+                        vSuc = nodeV->suc;
+                        if (isCorrelated(uPred, nodeV) || isCorrelated(nodeU, vSuc))
+                            isMoved = intraRoute2Opt();
+                        nodeV = nodeV->suc;
+                    }
+                }*/
+
+                // Special cases : testing the insertions behind the depot, and the empty routes
+                //cout << "status " << isMoved << "\n";
+                for (int idRou = 1; idRou <= min(m + 1, n) && isMoved == 0; ++idRou) {
+                    nodeV = setR[idRou]->depot;
+                    routeV = nodeV->rou;
+                    vSuc = nodeV->suc;
+                    vPred = nodeV->pred;
+                    if (routeV->isNodeTested[nodeU->idxClient])continue;
+                    if (isMetEmpRou && vSuc->idxClient == 0)continue;
+                    if (vSuc->idxClient == 0)isMetEmpRou = true;
+                    if (routeU != routeV) {
+                        //apply inter general insert:
+                        if (isMoved != 1) {
+                            tempNode = nodeV;
+                            nodeV = nodeV->suc;
+                            vSuc = nodeV->suc;
+                            vPred = nodeV->pred;
+                            isMoved = interRouteGeneralInsert(typeU, typeV);
+                            nodeV = tempNode;
+                            vSuc = nodeV->suc;
+                            vPred = nodeV->pred;
+                        }
+                        //2-Opt*
+                        /*if (isMoved != 1) {
+                            isMoved = interRoute2Opt();
+                        }*/
+                        //2-Opt* Inverse
+                        /*if (isMoved != 1) {
+                            isMoved = interRoute2OptInv();
+                        }*/
+                    }
+                    else if (isFixed) {
+                        //intra route general insert (only consider with fixed version):                        
+                        /*tempNode = nodeV;
+                        nodeV = nodeV->suc;
+                        vSuc = nodeV->suc;
+                        vPred = nodeV->pred;
+                        if (isMoved != 1) {
+                            isMoved = intraRouteGeneralInsert();
+                        }
+                        nodeV = tempNode;
+                        routeV = nodeV->rou;
+                        vSuc = nodeV->suc;
+                        vPred = nodeV->pred;*/
                     }
                     if (isMoved != 0 && idRou == m + 1) {
                         m++;
                     }
                 }
-                                
+                //cout << "status " << isMoved << "\n";
+
                 if (isMoved == 0) {
-                    markNodeTested(nodeU);
+                    //markNodeTested(nodeU);
                 }
                 else {
-                    isEndSearch = false;
-                }                
+                    return 1;
+                    //isEndSearch = false;                    
+                }
             }
         }
-    }    
-    
+        return 0;
+    }
+
     //flexSeq must have larger than 2 sequences
     //with flexible version, it will change locations of the last node of first sequence and first node of last sequence .
     III evalFlex(vector<SeqData*> flexSeq) {
+        pr->start = clock();
         III res = III(II(-1, -1), oo);// (location of 2 changed node and result)        
         SeqData* firstE = flexSeq.front();
         SeqData* lastE = flexSeq.back();
-        int cliFirst = pr->listLoc[firstE->lastnode].idxClient;         
+        int cliFirst = pr->listLoc[firstE->lastnode].idxClient;
         int cliBe;
         if (firstE->beforeLaNode != -1)cliBe = pr->listLoc[firstE->beforeLaNode].idxClient;
-        int cliLast = pr->listLoc[lastE->firstnode].idxClient;         
+        int cliLast = pr->listLoc[lastE->firstnode].idxClient;
         int cliAf;
-        if(lastE->afterFiNode != -1)cliAf = pr->listLoc[lastE->afterFiNode].idxClient;
+        if (lastE->afterFiNode != -1)cliAf = pr->listLoc[lastE->afterFiNode].idxClient;
         int valCli;
         SeqData* seqLocU = new SeqData(pr);
         SeqData* seqLocV = new SeqData(pr);
         SeqData* seqTempU = seqLocU;
         SeqData* seqTempV = seqLocV;
-        int ckRes;        
+        int ckRes;
         for (auto locU : pr->listCL[cliFirst].listLoc) {
             if (locU == 0) {
                 seqLocU = seqDep;
             }
-            else {                       
+            else {
                 if (cliBe == 0)seqLocU->concatOneAfter(seqDep, locU);
                 else if (nodes[cliFirst]->pred == nodes[cliBe]) seqLocU->concatOneAfter(nodes[cliBe]->seq0_i, locU);
                 else seqLocU->concatOneAfter(nodes[cliBe]->seqn_i, locU);
@@ -850,15 +817,16 @@ public:
                 flexSeq.front() = seqLocU;
                 flexSeq.back() = seqLocV;
                 ckRes = seqDep->evaluation(flexSeq);
-                if (ckRes < res.sc) {                    
+                if (ckRes < res.sc) {
                     res.sc = ckRes;
                     res.ft = II(locU, locV);
                 }
             }
-        }                
+        }
         delete seqTempU;
         delete seqTempV;
-        return res;    
+        pr->total += (double)(clock() - pr->start) / CLOCKS_PER_SEC;
+        return res;
     }
 
     //change location of client 
@@ -870,9 +838,9 @@ public:
         reinitCluSet(nodes[pr->listLoc[idLoc].idxClient]);
     }
 
-    int interRouteGeneralInsert() {
+    int interRouteGeneralInsert(int typeU, int typeV) {
         int iBest = 0, jBest = 0;
-        int moveMin;                
+        int moveMin;
         // 0 -> send nothing
         // 1 -> send U
         // 2 -> send U,Unext
@@ -884,159 +852,183 @@ public:
         SeqData* seq = nodeU->seq0_i;
         for (int i = 0; i < 4; ++i)
             for (int j = 0; j < 4; ++j)resGenInMoves[i][j] = oo;
-        if(!isFixed){
+        if (!isFixed) {
             for (int i = 0; i < 4; ++i)
                 for (int j = 0; j < 4; ++j) {
                     resSubFlex1[i][j].sc = oo;
                     resSubFlex2[i][j].sc = oo;
                 }
         }
-        resGenInMoves[0][0] = routeU->depot->seqi_n->cost + routeV->depot->seqi_n->cost;                
+        resGenInMoves[0][0] = routeU->depot->seqi_n->cost + routeV->depot->seqi_n->cost;
         //condition for remain cases
-        if (nodeU->idxClient == 0)return 0;       
-        if(pr->isDebug)cout << "ck inter Insert\n";
+        if (nodeU->idxClient == 0)return 0;
+        if (pr->isDebug)cout << "ck inter Insert\n";
         //1-0                
-        myseqs1.clear();           
-        myseqs1.push_back(uPred->seq0_i);
-        myseqs1.push_back(uSuc->seqi_n);
-        if (isFixed)resGenInMoves[1][0] = seq->evaluation(myseqs1);
-        else resSubFlex1[1][0] = evalFlex(myseqs1);
-        myseqs2.clear();
-        myseqs2.push_back(vPred->seq0_i);
-        myseqs2.push_back(nodeU->seqi_j[0]);
-        myseqs2.push_back(nodeV->seqi_n);
-        if(isFixed)resGenInMoves[1][0] += seq->evaluation(myseqs2);            
-        else resSubFlex2[1][0] = evalFlex(myseqs2);
-        //2-0
-        if (uSuc->idxClient) {
+        if (typeU == 1 && typeV == 0) {
             myseqs1.clear();
             myseqs1.push_back(uPred->seq0_i);
-            myseqs1.push_back(uSuc->suc->seqi_n);
-            if (isFixed)resGenInMoves[2][0] = seq->evaluation(myseqs1);
-            else resSubFlex1[2][0] = evalFlex(myseqs1);
-            myseqs2[1] = nodeU->seqi_j[1];                
-            if (isFixed)resGenInMoves[2][0] += seq->evaluation(myseqs2);
-            else resSubFlex2[2][0] = evalFlex(myseqs2);            
+            myseqs1.push_back(uSuc->seqi_n);
+            if (isFixed)resGenInMoves[1][0] = seq->evaluation(myseqs1);
+            else resSubFlex1[1][0] = evalFlex(myseqs1);
+            myseqs2.clear();
+            myseqs2.push_back(vPred->seq0_i);
+            myseqs2.push_back(nodeU->seqi_j[0]);
+            myseqs2.push_back(nodeV->seqi_n);
+            if (isFixed)resGenInMoves[1][0] += seq->evaluation(myseqs2);
+            else resSubFlex2[1][0] = evalFlex(myseqs2);
         }
-        //3-0
-        if (uPred->idxClient) {
-            myseqs1.clear();
-            myseqs1.push_back(uPred->pred->seq0_i);
-            myseqs1.push_back(uSuc->seqi_n);            
-            if(isFixed)resGenInMoves[3][0] = seq->evaluation(myseqs1);
-            else resSubFlex1[3][0] = evalFlex(myseqs1);            
-            myseqs2[1] = uPred->seqj_i[1];
-            if(isFixed)resGenInMoves[3][0] += seq->evaluation(myseqs2);
-            else resSubFlex2[3][0] = evalFlex(myseqs2);            
-        }
+        //2-0
+        if (typeU == 2 && typeV == 0) {
+            myseqs2.clear();
+            myseqs2.push_back(vPred->seq0_i);
+            myseqs2.push_back(nodeU->seqi_j[0]);
+            myseqs2.push_back(nodeV->seqi_n);
+            if (uSuc->idxClient) {
+                myseqs1.clear();
+                myseqs1.push_back(uPred->seq0_i);
+                myseqs1.push_back(uSuc->suc->seqi_n);
+                if (isFixed)resGenInMoves[2][0] = seq->evaluation(myseqs1);
+                else resSubFlex1[2][0] = evalFlex(myseqs1);
+                myseqs2[1] = nodeU->seqi_j[1];
+                if (isFixed)resGenInMoves[2][0] += seq->evaluation(myseqs2);
+                else resSubFlex2[2][0] = evalFlex(myseqs2);
+            }
+            //3-0        
+            if (uPred->idxClient) {
+                myseqs1.clear();
+                myseqs1.push_back(uPred->pred->seq0_i);
+                myseqs1.push_back(uSuc->seqi_n);
+                if (isFixed)resGenInMoves[3][0] = seq->evaluation(myseqs1);
+                else resSubFlex1[3][0] = evalFlex(myseqs1);
+                myseqs2[1] = uPred->seqj_i[1];
+                if (isFixed)resGenInMoves[3][0] += seq->evaluation(myseqs2);
+                else resSubFlex2[3][0] = evalFlex(myseqs2);
+            }
+        }    
         //condition for remain cases
         if (nodeV->idxClient == 0)goto line1;            
         //1-1            
-        myseqs1.clear();                        
-        myseqs1.push_back(uPred->seq0_i);
-        myseqs1.push_back(nodeV->seqi_j[0]);
-        myseqs1.push_back(uSuc->seqi_n);
-        if (isFixed)resGenInMoves[1][1] = seq->evaluation(myseqs1);
-        else resSubFlex1[1][1] = evalFlex(myseqs1);
-        myseqs2.clear();
-        myseqs2.push_back(vPred->seq0_i);
-        myseqs2.push_back(nodeU->seqi_j[0]);
-        myseqs2.push_back(vSuc->seqi_n);
-        if(isFixed)resGenInMoves[1][1] += seq->evaluation(myseqs2);            
-        else resSubFlex2[1][1] = evalFlex(myseqs2);
-        //2-1
-        if (uSuc->idxClient) {
+        if (typeU == 1 && typeV == 1) {
             myseqs1.clear();
             myseqs1.push_back(uPred->seq0_i);
             myseqs1.push_back(nodeV->seqi_j[0]);
-            myseqs1.push_back(uSuc->suc->seqi_n);
-            if(isFixed)resGenInMoves[2][1] = seq->evaluation(myseqs1);
-            else resSubFlex1[2][1] = evalFlex(myseqs1);
-            myseqs2[1] = nodeU->seqi_j[1];
-            if(isFixed)resGenInMoves[2][1] += seq->evaluation(myseqs2);
-            else resSubFlex2[2][1] = evalFlex(myseqs2);
-        }
-        //3-1
-        if (uPred->idxClient) {
-            myseqs1.clear();
-            myseqs1.push_back(uPred->pred->seq0_i);
-            myseqs1.push_back(nodeV->seqi_j[0]);
             myseqs1.push_back(uSuc->seqi_n);
-            if(isFixed)resGenInMoves[3][1] = seq->evaluation(myseqs1);
-            else resSubFlex1[3][1] = evalFlex(myseqs1);
-            myseqs2[1] = uPred->seqj_i[1];
-            if(isFixed)resGenInMoves[3][1] += seq->evaluation(myseqs2);
-            else resSubFlex2[3][1] = evalFlex(myseqs2);
+            if (isFixed)resGenInMoves[1][1] = seq->evaluation(myseqs1);
+            else resSubFlex1[1][1] = evalFlex(myseqs1);
+            myseqs2.clear();
+            myseqs2.push_back(vPred->seq0_i);
+            myseqs2.push_back(nodeU->seqi_j[0]);
+            myseqs2.push_back(vSuc->seqi_n);
+            if (isFixed)resGenInMoves[1][1] += seq->evaluation(myseqs2);
+            else resSubFlex2[1][1] = evalFlex(myseqs2);
+        }
+        //2-1
+        if (typeU == 2 && typeV == 1) {
+            myseqs2.clear();
+            myseqs2.push_back(vPred->seq0_i);
+            myseqs2.push_back(nodeU->seqi_j[0]);
+            myseqs2.push_back(vSuc->seqi_n);
+            if (uSuc->idxClient) {
+                myseqs1.clear();
+                myseqs1.push_back(uPred->seq0_i);
+                myseqs1.push_back(nodeV->seqi_j[0]);
+                myseqs1.push_back(uSuc->suc->seqi_n);
+                if (isFixed)resGenInMoves[2][1] = seq->evaluation(myseqs1);
+                else resSubFlex1[2][1] = evalFlex(myseqs1);
+                myseqs2[1] = nodeU->seqi_j[1];
+                if (isFixed)resGenInMoves[2][1] += seq->evaluation(myseqs2);
+                else resSubFlex2[2][1] = evalFlex(myseqs2);
+            }
+            //3-1        
+            if (uPred->idxClient) {
+                myseqs1.clear();
+                myseqs1.push_back(uPred->pred->seq0_i);
+                myseqs1.push_back(nodeV->seqi_j[0]);
+                myseqs1.push_back(uSuc->seqi_n);
+                if (isFixed)resGenInMoves[3][1] = seq->evaluation(myseqs1);
+                else resSubFlex1[3][1] = evalFlex(myseqs1);
+                myseqs2[1] = uPred->seqj_i[1];
+                if (isFixed)resGenInMoves[3][1] += seq->evaluation(myseqs2);
+                else resSubFlex2[3][1] = evalFlex(myseqs2);
+            }
         }
         //condition for remain cases
         if (vSuc->idxClient == 0)goto line1;
         //with second indexes are 2 and 3, some concat operations may do at the same time
         //1-2            
-        myseqs1.clear();
-        myseqs1.push_back(uPred->seq0_i);
-        myseqs1.push_back(nodeV->seqi_j[1]);
-        myseqs1.push_back(uSuc->seqi_n);
-        if (isFixed)resGenInMoves[1][2] = seq->evaluation(myseqs1);
-        else resSubFlex1[1][2] = evalFlex(myseqs1);
-        myseqs2.clear();
-        myseqs2.push_back(vPred->seq0_i);
-        myseqs2.push_back(nodeU->seqi_j[0]);
-        myseqs2.push_back(vSuc->suc->seqi_n);
-        if (isFixed) {
-            resGenInMoves[1][3] = seq->evaluation(myseqs2);//same route as 1-3
-            resGenInMoves[1][2] += resGenInMoves[1][3];
-        }
-        else {
-            resSubFlex2[1][3] = evalFlex(myseqs2);
-            resSubFlex2[1][2] = resSubFlex2[1][3];
-        }
-        //1-3:            
-        myseqs1[1] = nodeV->seqj_i[1];
-        if (isFixed)resGenInMoves[1][3] += seq->evaluation(myseqs1);
-        else resSubFlex1[1][3] = evalFlex(myseqs1);
-        //2-2
-        if (uSuc->idxClient) {
+        if (typeU == 1 && typeV == 2) {
             myseqs1.clear();
             myseqs1.push_back(uPred->seq0_i);
             myseqs1.push_back(nodeV->seqi_j[1]);
-            myseqs1.push_back(uSuc->suc->seqi_n);
-            if (isFixed)resGenInMoves[2][2] = seq->evaluation(myseqs1);
-            else resSubFlex1[2][2] = evalFlex(myseqs1);
-            myseqs2[1] = nodeU->seqi_j[1];
-            if (isFixed) {
-                resGenInMoves[2][3] = seq->evaluation(myseqs2);//same route as 2-3
-                resGenInMoves[2][2] += resGenInMoves[2][3];
-            }
-            else {
-                resSubFlex2[2][3] = evalFlex(myseqs2);
-                resSubFlex2[2][2] = resSubFlex2[2][3];
-            }
-            //2-3:
-            myseqs1[1] = nodeV->seqj_i[1];
-            if (isFixed)resGenInMoves[2][3] += seq->evaluation(myseqs1);
-            else resSubFlex1[2][3] = evalFlex(myseqs1);
-        }
-        //3-2
-        if (uPred->idxClient) {
-            myseqs1.clear();
-            myseqs1.push_back(uPred->pred->seq0_i);
-            myseqs1.push_back(nodeV->seqi_j[1]);
             myseqs1.push_back(uSuc->seqi_n);
-            if (isFixed)resGenInMoves[3][2] = seq->evaluation(myseqs1);
-            else resSubFlex1[3][2] = evalFlex(myseqs1);
-            myseqs2[1] = uPred->seqj_i[1];
+            if (isFixed)resGenInMoves[1][2] = seq->evaluation(myseqs1);
+            else resSubFlex1[1][2] = evalFlex(myseqs1);
+            myseqs2.clear();
+            myseqs2.push_back(vPred->seq0_i);
+            myseqs2.push_back(nodeU->seqi_j[0]);
+            myseqs2.push_back(vSuc->suc->seqi_n);
             if (isFixed) {
-                resGenInMoves[3][3] = seq->evaluation(myseqs2);//same route as 3-3
-                resGenInMoves[3][2] += resGenInMoves[3][3];
+                resGenInMoves[1][3] = seq->evaluation(myseqs2);//same route as 1-3
+                resGenInMoves[1][2] += resGenInMoves[1][3];
             }
             else {
-                resSubFlex2[3][3] = evalFlex(myseqs2);
-                resSubFlex2[3][2] = resSubFlex2[3][3];
+                resSubFlex2[1][3] = evalFlex(myseqs2);
+                resSubFlex2[1][2] = resSubFlex2[1][3];
             }
-            //3-3:
+            //1-3:            
             myseqs1[1] = nodeV->seqj_i[1];
-            if (isFixed)resGenInMoves[3][3] += seq->evaluation(myseqs1);
-            else resSubFlex1[3][3] = evalFlex(myseqs1);
+            if (isFixed)resGenInMoves[1][3] += seq->evaluation(myseqs1);
+            else resSubFlex1[1][3] = evalFlex(myseqs1);
+        }
+        //2-2
+        if (typeU == 2 && typeV == 2) {
+            myseqs2.clear();
+            myseqs2.push_back(vPred->seq0_i);
+            myseqs2.push_back(nodeU->seqi_j[0]);
+            myseqs2.push_back(vSuc->suc->seqi_n);
+            if (uSuc->idxClient) {
+                myseqs1.clear();
+                myseqs1.push_back(uPred->seq0_i);
+                myseqs1.push_back(nodeV->seqi_j[1]);
+                myseqs1.push_back(uSuc->suc->seqi_n);
+                if (isFixed)resGenInMoves[2][2] = seq->evaluation(myseqs1);
+                else resSubFlex1[2][2] = evalFlex(myseqs1);
+                myseqs2[1] = nodeU->seqi_j[1];
+                if (isFixed) {
+                    resGenInMoves[2][3] = seq->evaluation(myseqs2);//same route as 2-3
+                    resGenInMoves[2][2] += resGenInMoves[2][3];
+                }
+                else {
+                    resSubFlex2[2][3] = evalFlex(myseqs2);
+                    resSubFlex2[2][2] = resSubFlex2[2][3];
+                }
+                //2-3:
+                myseqs1[1] = nodeV->seqj_i[1];
+                if (isFixed)resGenInMoves[2][3] += seq->evaluation(myseqs1);
+                else resSubFlex1[2][3] = evalFlex(myseqs1);
+            }
+            //3-2
+            if (uPred->idxClient) {
+                myseqs1.clear();
+                myseqs1.push_back(uPred->pred->seq0_i);
+                myseqs1.push_back(nodeV->seqi_j[1]);
+                myseqs1.push_back(uSuc->seqi_n);
+                if (isFixed)resGenInMoves[3][2] = seq->evaluation(myseqs1);
+                else resSubFlex1[3][2] = evalFlex(myseqs1);
+                myseqs2[1] = uPred->seqj_i[1];
+                if (isFixed) {
+                    resGenInMoves[3][3] = seq->evaluation(myseqs2);//same route as 3-3
+                    resGenInMoves[3][2] += resGenInMoves[3][3];
+                }
+                else {
+                    resSubFlex2[3][3] = evalFlex(myseqs2);
+                    resSubFlex2[3][2] = resSubFlex2[3][3];
+                }
+                //3-3:
+                myseqs1[1] = nodeV->seqj_i[1];
+                if (isFixed)resGenInMoves[3][3] += seq->evaluation(myseqs1);
+                else resSubFlex1[3][3] = evalFlex(myseqs1);
+            }
         }
         line1:
         moveMin = oo;
@@ -1061,8 +1053,8 @@ public:
         }                                    
         if (iBest == 0 && jBest == 0)
             return 0;        
-        reinitSingleMoveInRou(routeU);
-        reinitSingleMoveInRou(routeV);                
+        //reinitSingleMoveInRou(routeU);
+        //reinitSingleMoveInRou(routeV);                
         //Moving nodes in each changed route
         if (!isFixed) {
             //change location when using flexible verion:
@@ -1105,7 +1097,7 @@ public:
 
         //if (nodeU->idxClient == 80 && nodeV->idxClient == 108)goto line2;
         cost += resGenInMoves[iBest][jBest] - resGenInMoves[0][0];        
-        //count[iBest][jBest]++;
+        count[iBest][jBest]++;
         if (pr->isTurnCkSol) {
             try {
                 ckSol();
@@ -1120,26 +1112,8 @@ public:
         //return 0;
     }
 
-    //when the size of sequence is bigger than sizeSub
-    //we need to add it in pieces
-    void addRevSeqInPieces(Node* st, Node* en, vector<SeqData*> &myseqs) {
-        //st and en are in the same route.        
-        if (st->posInRoute > en->posInRoute)return;
-        int disInR = -1;
-        Node* val = st;
-        while (true)
-        {
-            disInR = en->posInRoute - val->posInRoute;
-            if (disInR + 1 <= pr->sizeSub) {
-                myseqs.push_back(val->seqj_i[disInR]);
-                break;
-            }
-            SeqData* curSeq = val->seqj_i[pr->sizeSub - 1];
-            myseqs.push_back(curSeq);
-            val = nodes[pr->listLoc[curSeq->lastnode].idxClient]->suc;
-        }              
-    }
-
+    
+    
     void addSeqInPieces(Node* st, Node* en, vector<SeqData*>& myseqs) {
         //st and en are in the same route.        
         if (st->posInRoute > en->posInRoute)return;
@@ -1157,7 +1131,26 @@ public:
             val = nodes[pr->listLoc[curSeq->lastnode].idxClient]->suc;
         }
     }
-    int intraRouteGeneralInsert() {        
+
+    void addRevSeqInPieces(Node* st, Node* en, vector<SeqData*>& myseqs) {
+        //st and en are in the same route.        
+        if (st->posInRoute > en->posInRoute)return;
+        int disInR = -1;
+        Node* val = st;
+        while (true)
+        {
+            disInR = en->posInRoute - val->posInRoute;
+            if (disInR + 1 <= pr->sizeSub) {
+                myseqs.push_back(val->seqj_i[disInR]);
+                break;
+            }
+            SeqData* curSeq = val->seqj_i[pr->sizeSub - 1];
+            myseqs.push_back(curSeq);
+            val = nodes[pr->listLoc[curSeq->lastnode].idxClient]->suc;
+        }
+    }
+
+    int intraRouteGeneralInsert() {      
         //nodeV in this case can be depot (arrival depot)
         int difDir = nodeV->posInRoute - nodeU->posInRoute;
         if (difDir >= 0 && difDir <= 1) {// move in this case is useless
@@ -1862,13 +1855,14 @@ public:
         //check sol
         if (pr->isTurnCkSol) {
             try {
-                ckSol();
+                ckSol();                
             }
             catch (const char* msg) {
-                cerr << msg << endl;
+                cerr << msg << endl;                
                 exit(0);
             }
         }
+        return 1;
     }
     ///ELSALGO:
     void exchange() {
@@ -1910,8 +1904,107 @@ public:
             }
         }
     }        
+    
+    void LocalSearch() {
+        for (int i = 1; i <= n; ++i) {
+            shuffle(ordNodeLs.begin(), ordNodeLs.end(), Rng::generator);
+            shuffle(nodes[i]->movesClu.begin(), nodes[i]->movesClu.end(), Rng::generator);
+            shuffle(nodes[i]->movesLoc.begin(), nodes[i]->movesLoc.end(), Rng::generator);
+        }
+        int isImproved = 1;
+        while (isImproved)
+        {
+            isImproved = 0;
+            for (int i = 1; i <= 6; ++i) {                
+                switch (i) {
+                case 1:
+                    isImproved = updateObjInter(1, 1);                    
+                    break;
+                case 2:
+                    isImproved = updateObjInter(1, 0);
+                    break;
+                case 3:
+                    isImproved = updateObjInter(2, 1);
+                    break;
+                case 4:
+                    isImproved = updateObjInter(1, 2);
+                    break;
+                case 5:
+                    isImproved = updateObjInter(2, 2);
+                    break;
+                case 6:
+                    isImproved = updateObjInter(2, 0);
+                    break;
+                    /*case 7:
+                        isImproved=(SwapTailLocalSearch())?true:isImproved;
+                        break;*/
+                default:
+                    break;
+                }
+            }
+        }
+    }
+
+    void R_ILS() {
+        int bestCost = oo;
+        int budget = pr->nbR * pr->nbIls;
+        int countB = 0;
+        int* initGiantT = new int[n];
+        initSol();
+        for (int i = 1; i <= n; ++i)initGiantT[i - 1] = giantT[i];
+        int stIdx = -1;
+        int* resGiantT = new int[n + 1];
+        int* localGiantT = new int[n + 1];
+        int* curGiantT = new int[n + 1];        
+        while (countB < budget)
+        {                        
+            cout << countB << "\n";
+            stIdx = (stIdx + 1) % n;
+            int curIdx = stIdx;
+            for (int i = 1; i <= n; ++i) {
+                giantT[i] = initGiantT[curIdx];                
+                curIdx = (curIdx + 1) % n;
+            }
+            Split();
+            //updateTotal();
+            for (int i = 1; i <= n; ++i) {                
+                curGiantT[i] = giantT[i];                
+            }
+            int oldCost = cost;
+            int countILS = 0, countF = 0;
+            while (countILS < pr->nbIls && countF < pr->nbF && countB < budget) {
+                countILS++;
+                for (int i = 1; i <= n; ++i)giantT[i] = curGiantT[i];
+                exchange();
+                Split();
+                //updateTotal();
+                countB++;
+                if (cost < oldCost) {
+                    oldCost = cost;
+                    for (int i = 1; i <= n; ++i) {
+                        curGiantT[i] = giantT[i];
+                        localGiantT[i] = giantT[i];
+                    }
+                    countF = 0;
+                }
+                else
+                {
+                    countF++;
+                }
+            }
+            if (oldCost < bestCost) {
+                for (int i = 1; i <= n; ++i) {
+                    resGiantT[i] = localGiantT[i];
+                }
+                bestCost = oldCost;
+            }
+        }
+        cout << "best cost: " << bestCost << "\n";
+    }
     void ELS() {
-        //initSol();
+        initSol();        
+        //updateTotal();
+        cout << "improved: " << cost << "\n";        
         int* resGiantT = new int[n + 1];        
         int* curGiantT = new int[n + 1];
         for (int i = 1; i <= n; ++i) {
@@ -1924,15 +2017,16 @@ public:
         double curObj;
         int curP = pr->pMin;
         for (int i = 1; i <= pr->nI; ++i) {
+            cout << "ILS" << i << "\n";
             curObj = bestObj;
             for (int j = 1; j <= pr->nC; ++j) {                
                 for (int i1 = 1; i1 <= n; ++i1)giantT[i1] = curGiantT[i1];
                 mutate(curP);                
                 Split();                
                 if (cost == oo)continue;                
-                try {
-                    //updateObj();
-                    continue;
+                try {                    
+                    //updateTotal();
+                    cout << "new cost : " << j << " " << cost << "\n";
                 }
                 catch (...) {
                     cout << "bug here\n";
@@ -1941,7 +2035,7 @@ public:
                     system("pause");
                     exit(0);
                 }
-                if (cost + EP < curObj) {
+                if (cost < curObj) {
                     curObj = cost;
                     for (int i1 = 1; i1 <= n; ++i1)resGiantT[i1] = giantT[i1];
                     curP = pr->pMin;
@@ -1965,21 +2059,21 @@ public:
             }
         }        
         //thispro:
-        cout << "best found obj: " << Util::round2num(bestObj) << endl;
-        pr->fileOut<< "best found obj: " << Util::round2num(bestObj) << endl;
+        cout << "best found obj: " << bestObj << endl;
+        //pr->fileOut<< "best found obj: " << Util::round2num(bestObj) << endl;
         //if (pr->debugLS) {            
             for (int i = 1; i <= n; ++i)giantT[i] = resGiantT[i];
             Split();            
-            if (cost != oo && cost - bestObj > EP) {
+            if (cost != oo && cost - bestObj > 0) {
                 cout << "bug here\n";
                 system("pause");
                 exit(0);
             }
-            cout << Util::round2num(cost) << endl;
-            pr->fileOut << "Giant Tour:\n";
+            cout << "final cost \n"<<cost << endl;
+            /*pr->fileOut << "Giant Tour:\n";
             for (int i = 1; i <= n; ++i)pr->fileOut << giantT[i] << ", ";
             pr->fileOut << "\n";
-            pr->fileOut<<"cost split: " << Util::round2num(cost) << endl;
+            pr->fileOut<<"cost split: " << Util::round2num(cost) << endl;*/
         //}
         delete[] resGiantT;
         delete[] curGiantT;

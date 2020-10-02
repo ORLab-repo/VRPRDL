@@ -5,7 +5,7 @@
 using namespace std;
 
 int arr[] = {
-    0, 55, 76, 23, 14, 15, 119, 71, 19, 59, 9, 51, 39, 66, 35, 81, 107, 92, 77, 83, 86, 45, 34, 54, 91, 68, 25, 37, 13, 3, 115, 70, 5, 28, 52, 49, 74, 79, 27, 40, 17, 26, 18, 1, 7, 102, 117, 105, 33, 116, 113, 10, 11, 104, 64, 90, 101, 42, 8, 73, 60, 65, 85, 12, 97, 46, 95, 53, 57, 43, 29, 94, 120, 2, 78, 56, 32, 38, 6, 111, 61, 20, 4, 30, 106, 99, 112, 47, 108, 96, 16, 87, 44, 31, 88, 100, 41, 80, 93, 36, 103, 110, 22, 82, 72, 63, 67, 98, 24, 50, 89, 114, 69, 109, 84, 21, 75, 48, 58, 62, 118
+    0, 82, 72, 63, 67, 24, 75, 48, 62, 118, 81, 102, 14, 15, 101, 42, 73, 46, 30, 106, 99, 112, 47, 87, 16, 19, 66, 59, 9, 51, 39, 111, 2, 20, 4, 44, 31, 88, 17, 95, 53, 57, 43, 29, 94, 22, 52, 74, 49, 79, 27, 40, 26, 23, 97, 41, 80, 93, 36, 103, 110, 76, 18, 1, 7, 60, 65, 85, 12, 92, 77, 83, 86, 45, 34, 54, 91, 10, 11, 104, 64, 90, 108, 96, 38, 55, 35, 78, 61, 120, 107, 68, 69, 109, 84, 21, 98, 50, 89, 114, 37, 25, 13, 3, 115, 70, 5, 28, 58, 56, 6, 32, 119, 71, 8, 117, 100, 105, 33, 116, 113
 };
 
 int seed[] = {
@@ -40,7 +40,7 @@ void getSamples() {
 }
 //exe -ni -nc -pmin -pmax -ld - bi -TL -method
 string typeIns[] = { "C", "R", "RC" };
-int _numI = 200, _numC = 200, _pMin = 1, _pMax = 2, _ld = 2, timeLimit = oo;
+int _numI = 30, _numC = 100, _pMin = 1, _pMax = 2, _ld = 2, timeLimit = oo;
 string method = "ELS";
 bool _bi = true;
 void ckChanged(vector<int> arr) {
@@ -75,12 +75,12 @@ int main(int argc, char* argv[]) {
         }
     }*/
     //cin.tie(0); cout.tie(0);    
-    int numRun;
-    cout << "Num of runs: ";
-    cin >> numRun;    
-    int isFlex;
-    cout << "isFlex: ";
-    cin >> isFlex;
+    int numRun = 1;
+    //cout << "Num of runs: ";
+    //cin >> numRun;    
+    int isFlex = 1;
+    //cout << "isFlex: ";
+    //cin >> isFlex;
     ios::sync_with_stdio(0);
     Rng::config(seed[0]);
     //srand(seed[0]);    
@@ -105,9 +105,10 @@ int main(int argc, char* argv[]) {
     init(pr);
     Solution bestSol(pr);
     ///check solution
-    /*
+    
     ofstream fl("ckSol.txt");
-    std::chrono::time_point<std::chrono::system_clock> start, end;
+    fl << "abc";
+    /*std::chrono::time_point<std::chrono::system_clock> start, end;
     start = std::chrono::system_clock::now();
     for (int i = 1; i <= 100000; ++i) {
         for (int j = 1; j <= bestSol.n; ++j)bestSol.giantT[j] = samArr[i - 1][j - 1];
@@ -124,43 +125,25 @@ int main(int argc, char* argv[]) {
     //for (int i = 1; i <= bestSol.n; ++i)bestSol.giantT[i] = i;                 
     std::chrono::time_point<std::chrono::system_clock> start, end;
     start = std::chrono::system_clock::now();
-    bestSol.isFixed = true;        
+    bestSol.isFixed = false;        
     for (int i = 0; i < 4; ++i)
         for (int j = 0; j < 4; ++j)bestSol.count[i][j] = 0LL;
     pr->isDebug = false;
     pr->debugLS = false;
     pr->isTurnCkSol = true;
     int minCost = oo;
-    int oldCost;
-    for (int i = 1; i <= numRun; ++i) {
-        cout << i << "\n";
-        if (!isFlex)bestSol.isFixed = false;
-        else bestSol.isFixed = true;
-        bestSol.genGiantT();
-        bestSol.Split();
-        cout << "initial: " << bestSol.cost << "\n";
-        for (int j = 1; j <= 2; ++j)    
-        {                   
-            oldCost = bestSol.cost;
-            bestSol.updateObj();
-            bestSol.cvGiantT();
-            bestSol.Split();
-            if (!(oldCost >= bestSol.cost)) {
-                throw "update obj error";
-            }
-            //if (oldCost == bestSol.cost)break;
-            bestSol.isFixed = !bestSol.isFixed;
-        }
-        /*bestSol.updateObj();
-        bestSol.cvGiantT();
-        bestSol.Split();*/
-        cout <<"improved: "<< bestSol.cost << "\n";
-        minCost = min(minCost, bestSol.cost);
-    }
-    cout << "Type start strategy: " << isFlex << "\n";
-    cout << minCost << "\n";
-    /*for (int i = 1; i < 4; ++i)
-        for (int j = 0; j < 4; ++j)cout << i << " " << j << " " << bestSol.count[i][j] << "\n";*/
+    int oldCost;   
+    //bestSol.R_ILS();    
+    //for (int j = 1; j <= bestSol.n; ++j)bestSol.giantT[j] = arr[j];
+    bestSol.genGiantT();
+    bestSol.Split();
+    cout << "initial: " << bestSol.cost << "\n";
+    //bestSol.updateTotal();   
+    bestSol.LocalSearch();
+    cout << "times: " << pr->total << "\n";
+    cout << "cost: " << bestSol.cost << "\n";
+    for (int i = 1; i < 4; ++i)
+        for (int j = 0; j < 4; ++j)cout << i << " " << j << " " << bestSol.count[i][j] << "\n";
     end = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = end - start;
     std::time_t end_time = std::chrono::system_clock::to_time_t(end);

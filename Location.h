@@ -25,7 +25,7 @@ public:
 
 	int calDis(Location& val) {
 		return round(sqrt((x - val.x) * (x - val.x) + (y - val.y) * (y - val.y)));
-	}
+	}	
 	
 	~Location()
 	{
