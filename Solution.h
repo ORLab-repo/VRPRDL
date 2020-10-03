@@ -597,7 +597,7 @@ public:
         if (idPos != n) {
             throw "error init";
         }
-        //Split();       
+        Split();       
         cout << "initial cost: " << cost << "\n";
         setAng.clear();
         points.clear();
@@ -628,10 +628,10 @@ public:
         else return v->idxCluMoves[u->idxClient];
     }
 
-    int updateObjInter(int typeU, int typeV) {
+    void updateObj() {
         //shuffle the moves:        
         //reset all moves on route:
-        //reinitAllMovesInRou();
+        reinitAllMovesInRou();
         //checking move:
         int isMoved = 0;
         bool isMetEmpRou = false;
@@ -640,8 +640,8 @@ public:
         while (!isEndSearch)
         {
             isEndSearch = true;
-            //isMoved = 0;                        
-            for (int posU = 0; posU < ordNodeLs.size() && isMoved == 0; ++posU) {
+            isMoved = 0;                        
+            for (int posU = 0; posU < ordNodeLs.size(); ++posU) {
                 //cout << "posU: " << posU << " " << isMoved << "\n";;
                 posU -= isMoved;
                 isMoved = 0;
@@ -665,23 +665,23 @@ public:
                             nodeV = nodeV->suc;
                             vSuc = nodeV->suc;
                             vPred = nodeV->pred;
-                            isMoved = interRouteGeneralInsert(typeU, typeV);
+                            isMoved = interRouteGeneralInsert();
                             nodeV = tempNode;
                             vSuc = nodeV->suc;
                             vPred = nodeV->pred;
                         }
                         //2-Opt*
-                        /*if (isMoved != 1) {
+                        if (isMoved != 1) {
                             isMoved = interRoute2Opt();
-                        }*/
+                        }
                         //2-Opt* Inverse
-                        /*if (isMoved != 1) {
+                        if (isMoved != 1) {
                             isMoved = interRoute2OptInv();
-                        }*/
+                        }
                     }
-                    else if (isFixed) {
+                    else /*if (isFixed)*/ {
                         //intra route general insert (only consider with fixed version):                        
-                        /*tempNode = nodeV;
+                        tempNode = nodeV;
                         nodeV = nodeV->suc;
                         vSuc = nodeV->suc;
                         vPred = nodeV->pred;
@@ -692,13 +692,13 @@ public:
                         nodeV = tempNode;
                         routeV = nodeV->rou;
                         vSuc = nodeV->suc;
-                        vPred = nodeV->pred;*/
+                        vPred = nodeV->pred;
                     }
                 }
 
                 //intra route 2Opt:
                 //cout << "status " << isMoved << "\n";
-                /*nodeV = nodeU->suc;
+                nodeV = nodeU->suc;
                 routeV = nodeV->rou;
                 if (!routeV->isNodeTested[nodeU->idxClient]) {
                     while (isMoved != 1 && nodeV->idxClient)
@@ -709,7 +709,7 @@ public:
                             isMoved = intraRoute2Opt();
                         nodeV = nodeV->suc;
                     }
-                }*/
+                }
 
                 // Special cases : testing the insertions behind the depot, and the empty routes
                 //cout << "status " << isMoved << "\n";
@@ -728,23 +728,23 @@ public:
                             nodeV = nodeV->suc;
                             vSuc = nodeV->suc;
                             vPred = nodeV->pred;
-                            isMoved = interRouteGeneralInsert(typeU, typeV);
+                            isMoved = interRouteGeneralInsert();
                             nodeV = tempNode;
                             vSuc = nodeV->suc;
                             vPred = nodeV->pred;
                         }
                         //2-Opt*
-                        /*if (isMoved != 1) {
+                        if (isMoved != 1) {
                             isMoved = interRoute2Opt();
-                        }*/
+                        }
                         //2-Opt* Inverse
-                        /*if (isMoved != 1) {
+                        if (isMoved != 1) {
                             isMoved = interRoute2OptInv();
-                        }*/
+                        }
                     }
-                    else if (isFixed) {
+                    else /*if (isFixed)*/ {
                         //intra route general insert (only consider with fixed version):                        
-                        /*tempNode = nodeV;
+                        tempNode = nodeV;
                         nodeV = nodeV->suc;
                         vSuc = nodeV->suc;
                         vPred = nodeV->pred;
@@ -754,7 +754,7 @@ public:
                         nodeV = tempNode;
                         routeV = nodeV->rou;
                         vSuc = nodeV->suc;
-                        vPred = nodeV->pred;*/
+                        vPred = nodeV->pred;
                     }
                     if (isMoved != 0 && idRou == m + 1) {
                         m++;
@@ -763,15 +763,15 @@ public:
                 //cout << "status " << isMoved << "\n";
 
                 if (isMoved == 0) {
-                    //markNodeTested(nodeU);
+                    markNodeTested(nodeU);
                 }
                 else {
-                    return 1;
-                    //isEndSearch = false;                    
+                    //return 1;
+                    isEndSearch = false;                    
                 }
             }
         }
-        return 0;
+        //return 0;
     }
 
     //flexSeq must have larger than 2 sequences
@@ -838,7 +838,7 @@ public:
         reinitCluSet(nodes[pr->listLoc[idLoc].idxClient]);
     }
 
-    int interRouteGeneralInsert(int typeU, int typeV) {
+    int interRouteGeneralInsert() {
         int iBest = 0, jBest = 0;
         int moveMin;
         // 0 -> send nothing
@@ -864,173 +864,173 @@ public:
         if (nodeU->idxClient == 0)return 0;
         if (pr->isDebug)cout << "ck inter Insert\n";
         //1-0                
-        if (typeU == 1 && typeV == 0) {
+        //if (typeU == 1 && typeV == 0) {
+        myseqs1.clear();
+        myseqs1.push_back(uPred->seq0_i);
+        myseqs1.push_back(uSuc->seqi_n);
+        if (isFixed)resGenInMoves[1][0] = seq->evaluation(myseqs1);
+        else resSubFlex1[1][0] = evalFlex(myseqs1);
+        myseqs2.clear();
+        myseqs2.push_back(vPred->seq0_i);
+        myseqs2.push_back(nodeU->seqi_j[0]);
+        myseqs2.push_back(nodeV->seqi_n);
+        if (isFixed)resGenInMoves[1][0] += seq->evaluation(myseqs2);
+        else resSubFlex2[1][0] = evalFlex(myseqs2);
+        //}
+        //2-0
+        //if (typeU == 2 && typeV == 0) {
+        myseqs2.clear();
+        myseqs2.push_back(vPred->seq0_i);
+        myseqs2.push_back(nodeU->seqi_j[0]);
+        myseqs2.push_back(nodeV->seqi_n);
+        if (uSuc->idxClient) {
             myseqs1.clear();
             myseqs1.push_back(uPred->seq0_i);
-            myseqs1.push_back(uSuc->seqi_n);
-            if (isFixed)resGenInMoves[1][0] = seq->evaluation(myseqs1);
-            else resSubFlex1[1][0] = evalFlex(myseqs1);
-            myseqs2.clear();
-            myseqs2.push_back(vPred->seq0_i);
-            myseqs2.push_back(nodeU->seqi_j[0]);
-            myseqs2.push_back(nodeV->seqi_n);
-            if (isFixed)resGenInMoves[1][0] += seq->evaluation(myseqs2);
-            else resSubFlex2[1][0] = evalFlex(myseqs2);
+            myseqs1.push_back(uSuc->suc->seqi_n);
+            if (isFixed)resGenInMoves[2][0] = seq->evaluation(myseqs1);
+            else resSubFlex1[2][0] = evalFlex(myseqs1);
+            myseqs2[1] = nodeU->seqi_j[1];
+            if (isFixed)resGenInMoves[2][0] += seq->evaluation(myseqs2);
+            else resSubFlex2[2][0] = evalFlex(myseqs2);
         }
-        //2-0
-        if (typeU == 2 && typeV == 0) {
-            myseqs2.clear();
-            myseqs2.push_back(vPred->seq0_i);
-            myseqs2.push_back(nodeU->seqi_j[0]);
-            myseqs2.push_back(nodeV->seqi_n);
-            if (uSuc->idxClient) {
-                myseqs1.clear();
-                myseqs1.push_back(uPred->seq0_i);
-                myseqs1.push_back(uSuc->suc->seqi_n);
-                if (isFixed)resGenInMoves[2][0] = seq->evaluation(myseqs1);
-                else resSubFlex1[2][0] = evalFlex(myseqs1);
-                myseqs2[1] = nodeU->seqi_j[1];
-                if (isFixed)resGenInMoves[2][0] += seq->evaluation(myseqs2);
-                else resSubFlex2[2][0] = evalFlex(myseqs2);
-            }
-            //3-0        
-            if (uPred->idxClient) {
-                myseqs1.clear();
-                myseqs1.push_back(uPred->pred->seq0_i);
-                myseqs1.push_back(uSuc->seqi_n);
-                if (isFixed)resGenInMoves[3][0] = seq->evaluation(myseqs1);
-                else resSubFlex1[3][0] = evalFlex(myseqs1);
-                myseqs2[1] = uPred->seqj_i[1];
-                if (isFixed)resGenInMoves[3][0] += seq->evaluation(myseqs2);
-                else resSubFlex2[3][0] = evalFlex(myseqs2);
-            }
-        }    
+        //3-0        
+        if (uPred->idxClient) {
+            myseqs1.clear();
+            myseqs1.push_back(uPred->pred->seq0_i);
+            myseqs1.push_back(uSuc->seqi_n);
+            if (isFixed)resGenInMoves[3][0] = seq->evaluation(myseqs1);
+            else resSubFlex1[3][0] = evalFlex(myseqs1);
+            myseqs2[1] = uPred->seqj_i[1];
+            if (isFixed)resGenInMoves[3][0] += seq->evaluation(myseqs2);
+            else resSubFlex2[3][0] = evalFlex(myseqs2);
+        }
+        //}    
         //condition for remain cases
-        if (nodeV->idxClient == 0)goto line1;            
+        if (nodeV->idxClient == 0)goto line1;
         //1-1            
-        if (typeU == 1 && typeV == 1) {
+        //if (typeU == 1 && typeV == 1) {
+        myseqs1.clear();
+        myseqs1.push_back(uPred->seq0_i);
+        myseqs1.push_back(nodeV->seqi_j[0]);
+        myseqs1.push_back(uSuc->seqi_n);
+        if (isFixed)resGenInMoves[1][1] = seq->evaluation(myseqs1);
+        else resSubFlex1[1][1] = evalFlex(myseqs1);
+        myseqs2.clear();
+        myseqs2.push_back(vPred->seq0_i);
+        myseqs2.push_back(nodeU->seqi_j[0]);
+        myseqs2.push_back(vSuc->seqi_n);
+        if (isFixed)resGenInMoves[1][1] += seq->evaluation(myseqs2);
+        else resSubFlex2[1][1] = evalFlex(myseqs2);
+        //}
+        //2-1
+        //if (typeU == 2 && typeV == 1) {
+        myseqs2.clear();
+        myseqs2.push_back(vPred->seq0_i);
+        myseqs2.push_back(nodeU->seqi_j[0]);
+        myseqs2.push_back(vSuc->seqi_n);
+        if (uSuc->idxClient) {
             myseqs1.clear();
             myseqs1.push_back(uPred->seq0_i);
             myseqs1.push_back(nodeV->seqi_j[0]);
+            myseqs1.push_back(uSuc->suc->seqi_n);
+            if (isFixed)resGenInMoves[2][1] = seq->evaluation(myseqs1);
+            else resSubFlex1[2][1] = evalFlex(myseqs1);
+            myseqs2[1] = nodeU->seqi_j[1];
+            if (isFixed)resGenInMoves[2][1] += seq->evaluation(myseqs2);
+            else resSubFlex2[2][1] = evalFlex(myseqs2);
+        }
+        //3-1        
+        if (uPred->idxClient) {
+            myseqs1.clear();
+            myseqs1.push_back(uPred->pred->seq0_i);
+            myseqs1.push_back(nodeV->seqi_j[0]);
             myseqs1.push_back(uSuc->seqi_n);
-            if (isFixed)resGenInMoves[1][1] = seq->evaluation(myseqs1);
-            else resSubFlex1[1][1] = evalFlex(myseqs1);
-            myseqs2.clear();
-            myseqs2.push_back(vPred->seq0_i);
-            myseqs2.push_back(nodeU->seqi_j[0]);
-            myseqs2.push_back(vSuc->seqi_n);
-            if (isFixed)resGenInMoves[1][1] += seq->evaluation(myseqs2);
-            else resSubFlex2[1][1] = evalFlex(myseqs2);
+            if (isFixed)resGenInMoves[3][1] = seq->evaluation(myseqs1);
+            else resSubFlex1[3][1] = evalFlex(myseqs1);
+            myseqs2[1] = uPred->seqj_i[1];
+            if (isFixed)resGenInMoves[3][1] += seq->evaluation(myseqs2);
+            else resSubFlex2[3][1] = evalFlex(myseqs2);
         }
-        //2-1
-        if (typeU == 2 && typeV == 1) {
-            myseqs2.clear();
-            myseqs2.push_back(vPred->seq0_i);
-            myseqs2.push_back(nodeU->seqi_j[0]);
-            myseqs2.push_back(vSuc->seqi_n);
-            if (uSuc->idxClient) {
-                myseqs1.clear();
-                myseqs1.push_back(uPred->seq0_i);
-                myseqs1.push_back(nodeV->seqi_j[0]);
-                myseqs1.push_back(uSuc->suc->seqi_n);
-                if (isFixed)resGenInMoves[2][1] = seq->evaluation(myseqs1);
-                else resSubFlex1[2][1] = evalFlex(myseqs1);
-                myseqs2[1] = nodeU->seqi_j[1];
-                if (isFixed)resGenInMoves[2][1] += seq->evaluation(myseqs2);
-                else resSubFlex2[2][1] = evalFlex(myseqs2);
-            }
-            //3-1        
-            if (uPred->idxClient) {
-                myseqs1.clear();
-                myseqs1.push_back(uPred->pred->seq0_i);
-                myseqs1.push_back(nodeV->seqi_j[0]);
-                myseqs1.push_back(uSuc->seqi_n);
-                if (isFixed)resGenInMoves[3][1] = seq->evaluation(myseqs1);
-                else resSubFlex1[3][1] = evalFlex(myseqs1);
-                myseqs2[1] = uPred->seqj_i[1];
-                if (isFixed)resGenInMoves[3][1] += seq->evaluation(myseqs2);
-                else resSubFlex2[3][1] = evalFlex(myseqs2);
-            }
-        }
+        //}
         //condition for remain cases
         if (vSuc->idxClient == 0)goto line1;
         //with second indexes are 2 and 3, some concat operations may do at the same time
         //1-2            
-        if (typeU == 1 && typeV == 2) {
+        //if (typeU == 1 && typeV == 2) {
+        myseqs1.clear();
+        myseqs1.push_back(uPred->seq0_i);
+        myseqs1.push_back(nodeV->seqi_j[1]);
+        myseqs1.push_back(uSuc->seqi_n);
+        if (isFixed)resGenInMoves[1][2] = seq->evaluation(myseqs1);
+        else resSubFlex1[1][2] = evalFlex(myseqs1);
+        myseqs2.clear();
+        myseqs2.push_back(vPred->seq0_i);
+        myseqs2.push_back(nodeU->seqi_j[0]);
+        myseqs2.push_back(vSuc->suc->seqi_n);
+        if (isFixed) {
+            resGenInMoves[1][3] = seq->evaluation(myseqs2);//same route as 1-3
+            resGenInMoves[1][2] += resGenInMoves[1][3];
+        }
+        else {
+            resSubFlex2[1][3] = evalFlex(myseqs2);
+            resSubFlex2[1][2] = resSubFlex2[1][3];
+        }
+        //1-3:            
+        myseqs1[1] = nodeV->seqj_i[1];
+        if (isFixed)resGenInMoves[1][3] += seq->evaluation(myseqs1);
+        else resSubFlex1[1][3] = evalFlex(myseqs1);
+        //}
+        //2-2
+        //if (typeU == 2 && typeV == 2) {
+        myseqs2.clear();
+        myseqs2.push_back(vPred->seq0_i);
+        myseqs2.push_back(nodeU->seqi_j[0]);
+        myseqs2.push_back(vSuc->suc->seqi_n);
+        if (uSuc->idxClient) {
             myseqs1.clear();
             myseqs1.push_back(uPred->seq0_i);
             myseqs1.push_back(nodeV->seqi_j[1]);
-            myseqs1.push_back(uSuc->seqi_n);
-            if (isFixed)resGenInMoves[1][2] = seq->evaluation(myseqs1);
-            else resSubFlex1[1][2] = evalFlex(myseqs1);
-            myseqs2.clear();
-            myseqs2.push_back(vPred->seq0_i);
-            myseqs2.push_back(nodeU->seqi_j[0]);
-            myseqs2.push_back(vSuc->suc->seqi_n);
+            myseqs1.push_back(uSuc->suc->seqi_n);
+            if (isFixed)resGenInMoves[2][2] = seq->evaluation(myseqs1);
+            else resSubFlex1[2][2] = evalFlex(myseqs1);
+            myseqs2[1] = nodeU->seqi_j[1];
             if (isFixed) {
-                resGenInMoves[1][3] = seq->evaluation(myseqs2);//same route as 1-3
-                resGenInMoves[1][2] += resGenInMoves[1][3];
+                resGenInMoves[2][3] = seq->evaluation(myseqs2);//same route as 2-3
+                resGenInMoves[2][2] += resGenInMoves[2][3];
             }
             else {
-                resSubFlex2[1][3] = evalFlex(myseqs2);
-                resSubFlex2[1][2] = resSubFlex2[1][3];
+                resSubFlex2[2][3] = evalFlex(myseqs2);
+                resSubFlex2[2][2] = resSubFlex2[2][3];
             }
-            //1-3:            
+            //2-3:
             myseqs1[1] = nodeV->seqj_i[1];
-            if (isFixed)resGenInMoves[1][3] += seq->evaluation(myseqs1);
-            else resSubFlex1[1][3] = evalFlex(myseqs1);
+            if (isFixed)resGenInMoves[2][3] += seq->evaluation(myseqs1);
+            else resSubFlex1[2][3] = evalFlex(myseqs1);
         }
-        //2-2
-        if (typeU == 2 && typeV == 2) {
-            myseqs2.clear();
-            myseqs2.push_back(vPred->seq0_i);
-            myseqs2.push_back(nodeU->seqi_j[0]);
-            myseqs2.push_back(vSuc->suc->seqi_n);
-            if (uSuc->idxClient) {
-                myseqs1.clear();
-                myseqs1.push_back(uPred->seq0_i);
-                myseqs1.push_back(nodeV->seqi_j[1]);
-                myseqs1.push_back(uSuc->suc->seqi_n);
-                if (isFixed)resGenInMoves[2][2] = seq->evaluation(myseqs1);
-                else resSubFlex1[2][2] = evalFlex(myseqs1);
-                myseqs2[1] = nodeU->seqi_j[1];
-                if (isFixed) {
-                    resGenInMoves[2][3] = seq->evaluation(myseqs2);//same route as 2-3
-                    resGenInMoves[2][2] += resGenInMoves[2][3];
-                }
-                else {
-                    resSubFlex2[2][3] = evalFlex(myseqs2);
-                    resSubFlex2[2][2] = resSubFlex2[2][3];
-                }
-                //2-3:
-                myseqs1[1] = nodeV->seqj_i[1];
-                if (isFixed)resGenInMoves[2][3] += seq->evaluation(myseqs1);
-                else resSubFlex1[2][3] = evalFlex(myseqs1);
+        //3-2
+        if (uPred->idxClient) {
+            myseqs1.clear();
+            myseqs1.push_back(uPred->pred->seq0_i);
+            myseqs1.push_back(nodeV->seqi_j[1]);
+            myseqs1.push_back(uSuc->seqi_n);
+            if (isFixed)resGenInMoves[3][2] = seq->evaluation(myseqs1);
+            else resSubFlex1[3][2] = evalFlex(myseqs1);
+            myseqs2[1] = uPred->seqj_i[1];
+            if (isFixed) {
+                resGenInMoves[3][3] = seq->evaluation(myseqs2);//same route as 3-3
+                resGenInMoves[3][2] += resGenInMoves[3][3];
             }
-            //3-2
-            if (uPred->idxClient) {
-                myseqs1.clear();
-                myseqs1.push_back(uPred->pred->seq0_i);
-                myseqs1.push_back(nodeV->seqi_j[1]);
-                myseqs1.push_back(uSuc->seqi_n);
-                if (isFixed)resGenInMoves[3][2] = seq->evaluation(myseqs1);
-                else resSubFlex1[3][2] = evalFlex(myseqs1);
-                myseqs2[1] = uPred->seqj_i[1];
-                if (isFixed) {
-                    resGenInMoves[3][3] = seq->evaluation(myseqs2);//same route as 3-3
-                    resGenInMoves[3][2] += resGenInMoves[3][3];
-                }
-                else {
-                    resSubFlex2[3][3] = evalFlex(myseqs2);
-                    resSubFlex2[3][2] = resSubFlex2[3][3];
-                }
-                //3-3:
-                myseqs1[1] = nodeV->seqj_i[1];
-                if (isFixed)resGenInMoves[3][3] += seq->evaluation(myseqs1);
-                else resSubFlex1[3][3] = evalFlex(myseqs1);
+            else {
+                resSubFlex2[3][3] = evalFlex(myseqs2);
+                resSubFlex2[3][2] = resSubFlex2[3][3];
             }
+            //3-3:
+            myseqs1[1] = nodeV->seqj_i[1];
+            if (isFixed)resGenInMoves[3][3] += seq->evaluation(myseqs1);
+            else resSubFlex1[3][3] = evalFlex(myseqs1);
         }
-        line1:
+        //}
+    line1:
         moveMin = oo;
         iBest = 0; jBest = 0;
         //deal with flexible version:
@@ -1043,18 +1043,18 @@ public:
         }
         //find best move:
         for (int i = 0; i < 4; ++i) {
-            for (int j = 0; j < 4; ++j) {                
+            for (int j = 0; j < 4; ++j) {
                 if (resGenInMoves[i][j] < moveMin) {
                     moveMin = resGenInMoves[i][j];
                     iBest = i;
                     jBest = j;
                 }
             }
-        }                                    
+        }
         if (iBest == 0 && jBest == 0)
-            return 0;        
-        //reinitSingleMoveInRou(routeU);
-        //reinitSingleMoveInRou(routeV);                
+            return 0;
+        reinitSingleMoveInRou(routeU);
+        reinitSingleMoveInRou(routeV);
         //Moving nodes in each changed route
         if (!isFixed) {
             //change location when using flexible verion:
@@ -1086,7 +1086,7 @@ public:
         }
         //update route data
         routeU->updateRoute();
-        routeV->updateRoute();        
+        routeV->updateRoute();
         if (pr->isDebug) {
             routeU->showR();
             routeU->showRLoc();
@@ -1096,7 +1096,7 @@ public:
         }
 
         //if (nodeU->idxClient == 80 && nodeV->idxClient == 108)goto line2;
-        cost += resGenInMoves[iBest][jBest] - resGenInMoves[0][0];        
+        cost += resGenInMoves[iBest][jBest] - resGenInMoves[0][0];
         count[iBest][jBest]++;
         if (pr->isTurnCkSol) {
             try {
@@ -1109,7 +1109,7 @@ public:
         }
         return 1;
         //line2:
-        //return 0;
+        //return 0;        
     }
 
     
@@ -1851,7 +1851,7 @@ public:
         cost += newCost - oldCost;
         uSuc = nodeU->suc;
         uPred = nodeU->pred;        
-        count[1][1]++;
+        //count[1][1]++;
         //check sol
         if (pr->isTurnCkSol) {
             try {
@@ -1896,16 +1896,17 @@ public:
 
     void mutate(int numP) {
         for (int i = 1; i <= numP; ++i) {
-            if (Rng::generator() % 2 == 0) {
+            exchange();
+            /*if (Rng::generator() % 2 == 0) {
                 exchange();
             }
             else {
                 interchange();
-            }
+            }*/
         }
     }        
     
-    void LocalSearch() {
+    /*void LocalSearch() {
         for (int i = 1; i <= n; ++i) {
             shuffle(ordNodeLs.begin(), ordNodeLs.end(), Rng::generator);
             shuffle(nodes[i]->movesClu.begin(), nodes[i]->movesClu.end(), Rng::generator);
@@ -1935,15 +1936,15 @@ public:
                 case 6:
                     isImproved = updateObjInter(2, 0);
                     break;
-                    /*case 7:
+                    case 7:
                         isImproved=(SwapTailLocalSearch())?true:isImproved;
-                        break;*/
+                        break;
                 default:
                     break;
                 }
             }
         }
-    }
+    }*/
 
     void R_ILS() {
         int bestCost = oo;
@@ -2001,9 +2002,24 @@ public:
         }
         cout << "best cost: " << bestCost << "\n";
     }
+
+    void updateTotal() {        
+        isFixed = true;
+        for (int j = 1; j <= 2; ++j) {
+            int oldCost = cost;
+            updateObj();
+            cvGiantT();
+            Split();
+            if (oldCost < cost) {
+                throw "error Split";
+            }
+            isFixed = !isFixed;
+        }
+    }
+
     void ELS() {
         initSol();        
-        //updateTotal();
+        updateTotal();
         cout << "improved: " << cost << "\n";        
         int* resGiantT = new int[n + 1];        
         int* curGiantT = new int[n + 1];
@@ -2012,12 +2028,12 @@ public:
             resGiantT[i] = giantT[i];
             //cout << giantT[i] << " " << endl;
         }        
-        double bestObj=cost;
+        int bestObj=cost;
         cout << cost << endl;
-        double curObj;
-        int curP = pr->pMin;
+        int curObj;
+        int curP = pr->pMin;        
         for (int i = 1; i <= pr->nI; ++i) {
-            cout << "ILS" << i << "\n";
+            cout << "ILS" << i <<" "<<bestObj<< "\n";
             curObj = bestObj;
             for (int j = 1; j <= pr->nC; ++j) {                
                 for (int i1 = 1; i1 <= n; ++i1)giantT[i1] = curGiantT[i1];
@@ -2025,8 +2041,7 @@ public:
                 Split();                
                 if (cost == oo)continue;                
                 try {                    
-                    //updateTotal();
-                    cout << "new cost : " << j << " " << cost << "\n";
+                    updateTotal();                    
                 }
                 catch (...) {
                     cout << "bug here\n";
@@ -2034,16 +2049,11 @@ public:
                     cout << endl;
                     system("pause");
                     exit(0);
-                }
+                }            
                 if (cost < curObj) {
                     curObj = cost;
                     for (int i1 = 1; i1 <= n; ++i1)resGiantT[i1] = giantT[i1];
-                    curP = pr->pMin;
                 }
-                else {
-                    curP = min(pr->pMax, curP + 1);
-                }
-
                 /*if ((clock() - pr->start) / CLOCKS_PER_SEC >= pr->TL) {
                     if (curObj + EP < bestObj) {
                         bestObj = curObj;
@@ -2052,11 +2062,16 @@ public:
                 }*/
                 //cout << i << " " << j << "\n";
             } 
-            //cout << i << endl;
-            if (curObj + EP < bestObj) {
+            if (curObj < bestObj) {
                 bestObj = curObj;
                 for (int i1 = 1; i1 <= n; ++i1)curGiantT[i1] = resGiantT[i1];
+                curP = pr->pMin;
+                i = 1;
+            }            
+            else {
+                curP = min(pr->pMax, curP + 1);
             }
+            //cout << i << endl;            
         }        
         //thispro:
         cout << "best found obj: " << bestObj << endl;

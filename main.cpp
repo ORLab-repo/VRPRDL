@@ -40,7 +40,7 @@ void getSamples() {
 }
 //exe -ni -nc -pmin -pmax -ld - bi -TL -method
 string typeIns[] = { "C", "R", "RC" };
-int _numI = 30, _numC = 100, _pMin = 1, _pMax = 2, _ld = 2, timeLimit = oo;
+int _numI = 100, _numC = 20, _pMin = 1, _pMax = 2, _ld = 2, timeLimit = oo;
 string method = "ELS";
 bool _bi = true;
 void ckChanged(vector<int> arr) {
@@ -134,12 +134,13 @@ int main(int argc, char* argv[]) {
     int minCost = oo;
     int oldCost;   
     //bestSol.R_ILS();    
-    //for (int j = 1; j <= bestSol.n; ++j)bestSol.giantT[j] = arr[j];
+    for (int j = 1; j <= bestSol.n; ++j)bestSol.giantT[j] = arr[j];
     bestSol.genGiantT();
     bestSol.Split();
-    cout << "initial: " << bestSol.cost << "\n";
-    //bestSol.updateTotal();   
-    bestSol.LocalSearch();
+    //cout << "initial: " << bestSol.cost << "\n";
+    //bestSol.updateTotal();       
+    //bestSol.updateObj();    
+    bestSol.ELS();
     cout << "times: " << pr->total << "\n";
     cout << "cost: " << bestSol.cost << "\n";
     for (int i = 1; i < 4; ++i)
