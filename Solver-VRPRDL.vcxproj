@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{7594E55F-D662-4015-8723-1362475DD7D1}</ProjectGuid>
+    <ProjectGuid>{E05B1E80-CF32-4BC7-89D1-104ED8ECF49D}</ProjectGuid>
     <RootNamespace>SolverVRPRDL</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
