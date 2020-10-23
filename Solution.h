@@ -850,8 +850,33 @@ public:
         //get order cus in route.
         for (auto curSeq : flexSeq) {
             if (curSeq == NULL) continue;
-            if (curSeq->idxCliNode.empty())continue;
-            for (auto val : curSeq->idxCliNode)virGiantT[++curNum] = val;
+            if (curSeq->firstnode == 0 && curSeq->lastnode == 0)continue;
+            int curCli = pr->listLoc[curSeq->firstnode].idxClient;
+            bool isRev = false;
+            if (curSeq->firstnode == curSeq->lastnode) {
+                virGiantT[++curNum] = curCli;
+                continue;
+            }
+            if (curSeq->firstnode) {
+                if (nodes[curCli]->pred == nodes[curSeq->afterFiNode])isRev = true;
+            }
+            else {
+                if (nodes[pr->listLoc[curSeq->lastnode].idxClient]->suc == nodes[pr->listLoc[curSeq->beforeLaNode].idxClient])isRev = true;
+            }
+            int tst = 1;
+            routeU->showR();
+            while (true)
+            {
+                if(curCli)virGiantT[++curNum] = curCli;                
+                if (curCli == pr->listLoc[curSeq->lastnode].idxClient)break;
+                if (curCli == 0) {
+                    curCli = curSeq->afterFiNode;
+                    continue;
+                }
+                if(!isRev)curCli = nodes[curCli]->suc->idxClient;
+                else curCli = nodes[curCli]->pred->idxClient;
+            }
+            //for (auto val : curSeq->idxCliNode)virGiantT[++curNum] = val;
         }
         //optimizing route to optimal:
         vector<III> lstLabel; //((cost, time), loc)

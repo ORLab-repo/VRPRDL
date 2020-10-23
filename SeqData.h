@@ -18,8 +18,7 @@ public:
 	int E;//earliest time completion
 	int L;//latest starting time
 	int T;//sum of travel and service time
-	bool F;//check feasibility;
-	vector<int> idxCliNode;//only contain the index of client in sequence
+	bool F;//check feasibility;d	
 	Param* pr;
 	
 	//constructor
@@ -40,9 +39,7 @@ public:
 	/*
 	* Construct sequence containing only one node
 	*/
-	void init(int idxLoc) {
-		idxCliNode.clear();
-		if (idxLoc)idxCliNode.push_back(pr->listLoc[idxLoc].idxClient);
+	void init(int idxLoc) {				
 		firstnode = idxLoc;
 		afterFiNode = -1;
 		lastnode = idxLoc;
@@ -56,14 +53,9 @@ public:
 	}
 
 	/**/
-	void concatOneAfter(SeqData* seq, int idxLoc, bool updateNode = false) {
+	void concatOneAfter(SeqData* seq, int idxLoc) {
 		if (seq == NULL) init(idxLoc);
-		F = seq->F;
-		if (updateNode) {
-			idxCliNode.clear();
-			idxCliNode = seq->idxCliNode;
-			if (idxLoc)idxCliNode.push_back(pr->listLoc[idxLoc].idxClient);
-		}
+		F = seq->F;	
 
 		int t_12 = pr->times[seq->lastnode][idxLoc];
 		if (seq->E + t_12 > pr->listLoc[idxLoc].enTime) {
@@ -87,14 +79,7 @@ public:
 	/**/
 	void concatOneBefore(SeqData* seq, int idxLoc) {
 		if (seq == NULL) init(idxLoc);
-		F = seq->F;
-
-		idxCliNode.clear();
-		idxCliNode = seq->idxCliNode;
-		if (idxLoc) {
-			if (idxCliNode.size())idxCliNode.insert(idxCliNode.begin(), pr->listLoc[idxLoc].idxClient);
-			else idxCliNode.push_back(pr->listLoc[idxLoc].idxClient);
-		}
+		F = seq->F;	
 
 		int t_12 = pr->times[idxLoc][seq->firstnode];
 		if (pr->listLoc[idxLoc].stTime + t_12> seq->L) {
