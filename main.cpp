@@ -106,8 +106,7 @@ int main(int argc, char* argv[]) {
     Solution bestSol(pr);
     ///check solution
     
-    ofstream fl("ckSol.txt");
-    fl << "abc";
+    ofstream fl("ckSol.txt");    
     /*std::chrono::time_point<std::chrono::system_clock> start, end;
     start = std::chrono::system_clock::now();
     for (int i = 1; i <= 100000; ++i) {
@@ -141,6 +140,10 @@ int main(int argc, char* argv[]) {
     bestSol.cvGiantT();
     bestSol.Split();
     cout << "initial: " << bestSol.cost << "\n";
+    pr->isDebug = true;
+    bestSol.ckSol();
+    for (int i = 1; i <= bestSol.n; ++i)fl << bestSol.giantT[i] << ", ";
+    fl.close();
     //bestSol.updateTotal();       
     cout << "strategy: " << boolalpha << bestSol.isFixed << "\n";
     cout << "times: " << pr->total << "\n";

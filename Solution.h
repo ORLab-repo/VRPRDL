@@ -48,6 +48,10 @@ public:
     III resSubFlex1[4][4];//using for flexible version
     III resSubFlex2[4][4];//using for flexible version
     vector<int> traceLoc[4][4];
+    vector<III> lstLabel; //((cost, time), loc)
+    vector<III> curLabel; //((cost, time), prv)
+    vector<int> prvIdLb; //previous label in vector
+    vector<int> tourLoc;
     Node* nodeU;
     Node* uPred;
     Node* uSuc;
@@ -424,9 +428,12 @@ public:
             reinitAllMovesInRou();
         }
         else m--;
-        vector<III> lstLabel; //((cost, time), loc)
+        /*vector<III> lstLabel; //((cost, time), loc)
         vector<III> curLabel; //((cost, time), prv)
-        vector<int> prvIdLb; //previous label in vector
+        vector<int> prvIdLb; //previous label in vector*/        
+        lstLabel.clear();
+        curLabel.clear();
+        prvIdLb.clear();
         //the index that cannot exceed in a route due to the capacity.
         int* maxIdx = new int[n + 1];
         int curLoad = 0;
@@ -523,16 +530,14 @@ public:
             }
         }
         cost = F[n];
-        if (cost == oo) {
-            lstLabel.clear();
-            curLabel.clear();
-            prvIdLb.clear();            
+        if (cost == oo) {                
             delete[] maxIdx;
             return;
         }
         int indexLb = pred[n];// index of last label.
         ///construct solution
-        vector<int> tourLoc;
+        //vector<int> tourLoc;
+        tourLoc.clear();
         int numVeh = 0;
         while (indexLb != -1)
         {
@@ -571,11 +576,7 @@ public:
                 exit(0);
             }
         }
-        //cvSolT(); // uncomment when need tracking the specific postion in solution (used in sequential search)
-        lstLabel.clear();
-        curLabel.clear();
-        prvIdLb.clear();
-        tourLoc.clear();
+        //cvSolT(); // uncomment when need tracking the specific postion in solution (used in sequential search)        
         delete[] maxIdx;
     }
 
@@ -693,7 +694,7 @@ public:
                     }
                     else /*if (isFixed)*/ {
                         //intra route general insert (only consider with fixed version):                        
-                        isFixed = true;
+                        isFixed = false;
                         tempNode = nodeV;
                         nodeV = nodeV->suc;
                         vSuc = nodeV->suc;
@@ -715,6 +716,7 @@ public:
                 nodeV = nodeU->suc;
                 routeV = nodeV->rou;
                 if (!routeV->isNodeTested[nodeU->idxClient]) {
+                    isFixed = false;
                     while (isMoved != 1 && nodeV->idxClient)
                     {
                         vPred = nodeV->pred;
@@ -723,6 +725,7 @@ public:
                             isMoved = intraRoute2Opt();
                         nodeV = nodeV->suc;
                     }
+                    isFixed = false;
                 }
 
                 // Special cases : testing the insertions behind the depot, and the empty routes
@@ -758,7 +761,7 @@ public:
                     }
                     else /*if (isFixed)*/ {
                         //intra route general insert (only consider with fixed version):                        
-                        isFixed = true;
+                        isFixed = false;
                         tempNode = nodeV;
                         nodeV = nodeV->suc;
                         vSuc = nodeV->suc;
@@ -844,11 +847,11 @@ public:
     }
 
     //split seq:
-    bool evalFlexRou(vector<SeqData*> flexSeq, vector<int>& trace) {        
+    bool evalFlexRou(vector<SeqData*> &flexSeq, vector<int>& trace) {        
         int* virGiantT = new int[routeU->length + 3];
         int curNum = 0;
-        //get order cus in route.
-        for (auto curSeq : flexSeq) {
+        //get order cus in route.            
+        for (auto curSeq : flexSeq) {            
             if (curSeq == NULL) continue;
             if (curSeq->firstnode == 0 && curSeq->lastnode == 0)continue;
             int curCli = pr->listLoc[curSeq->firstnode].idxClient;
@@ -856,37 +859,40 @@ public:
             if (curSeq->firstnode == curSeq->lastnode) {
                 virGiantT[++curNum] = curCli;
                 continue;
-            }
+            }            
             if (curSeq->firstnode) {
-                if (nodes[curCli]->pred == nodes[curSeq->afterFiNode])isRev = true;
+                if (nodes[curCli]->pred == nodes[pr->listLoc[curSeq->afterFiNode].idxClient])isRev = true;
             }
             else {
                 if (nodes[pr->listLoc[curSeq->lastnode].idxClient]->suc == nodes[pr->listLoc[curSeq->beforeLaNode].idxClient])isRev = true;
             }
-            int tst = 1;
-            routeU->showR();
+            int tst = 1;            
             while (true)
             {
                 if(curCli)virGiantT[++curNum] = curCli;                
                 if (curCli == pr->listLoc[curSeq->lastnode].idxClient)break;
                 if (curCli == 0) {
-                    curCli = curSeq->afterFiNode;
+                    curCli = pr->listLoc[curSeq->afterFiNode].idxClient;
                     continue;
                 }
                 if(!isRev)curCli = nodes[curCli]->suc->idxClient;
                 else curCli = nodes[curCli]->pred->idxClient;
             }
             //for (auto val : curSeq->idxCliNode)virGiantT[++curNum] = val;
-        }
+        }                
+        assert(routeU->length + 2 >= curNum);
         //optimizing route to optimal:
-        vector<III> lstLabel; //((cost, time), loc)
+        /*vector<III> lstLabel; //((cost, time), loc)
         vector<III> curLabel; //((cost, time), prv)
-        vector<int> prvIdLb; //previous label in vector
+        vector<int> prvIdLb; //previous label in vector*/
+        lstLabel.clear();
+        curLabel.clear();
+        prvIdLb.clear();
         for (int i = 1; i <= curNum; ++i) {
             F[i] = oo;
             pred[i] = -1;
         }
-        F[0] = 0;
+        F[0] = oo;
         pred[0] = -1;
         int stLb = -1, enLb = -1;
         III lbU, lbV;
@@ -942,8 +948,8 @@ public:
                         //update F function (only consider last client)                        
                         if (v == curNum) {
                             if (//val.ft.sc + pr->times[idLocV][0] < pr->T // uncomment when travel times does not satisfy triangle inequality
-                                F[v] > val.ft.ft + pr->costs[idLocV][0] + F[st - 1]) {
-                                F[v] = val.ft.ft + pr->costs[idLocV][0] + F[st - 1];
+                                F[v] > val.ft.ft + pr->costs[idLocV][0]) {
+                                F[v] = val.ft.ft + pr->costs[idLocV][0];
                                 pred[v] = lstLabel.size() - 1;
                             }
                         }
@@ -954,17 +960,15 @@ public:
             enLb = lstLabel.size() - 1;
             if (stLb > enLb)break;
         }           
-        int oldCost = routeU->depot->seqi_n->cost;
-        if (F[curNum] >= oldCost) {
-            lstLabel.clear();
-            curLabel.clear();
-            prvIdLb.clear();            
-            delete[] virGiantT;
+        int oldCost = routeU->depot->seqi_n->cost;           
+        if (F[curNum] >= oldCost) {                                       
+            delete[] virGiantT;            
             return false;
-        }
+        }        
         int indexLb = pred[curNum];// index of last label.
         ///construct solution
-        vector<int> tourLoc;       
+        //vector<int> tourLoc;       
+        tourLoc.clear();
         while (indexLb != 0)
         {
             tourLoc.pb(lstLabel[indexLb].second);            
@@ -975,11 +979,7 @@ public:
         /*for (auto val : tourLoc) {                           
             changeLocCli(val);
         }*/
-        trace = tourLoc;
-        lstLabel.clear();
-        curLabel.clear();
-        prvIdLb.clear();
-        tourLoc.clear();        
+        trace = tourLoc;                
         delete[] virGiantT;
         return true;
     }
@@ -1259,6 +1259,8 @@ public:
     
     void addSeqInPieces(Node* st, Node* en, vector<SeqData*>& myseqs) {
         //st and en are in the same route.        
+        //st and en can't be depot
+        assert(st->idxClient && en->idxClient);
         if (st->posInRoute > en->posInRoute)return;
         int disInR = -1;
         Node* val = st;
@@ -1277,6 +1279,8 @@ public:
 
     void addRevSeqInPieces(Node* st, Node* en, vector<SeqData*>& myseqs) {
         //st and en are in the same route.        
+        //st and en can't be depot
+        assert(st->idxClient && en->idxClient);
         if (st->posInRoute > en->posInRoute)return;
         int disInR = -1;
         Node* val = st;
@@ -1289,7 +1293,7 @@ public:
             }
             SeqData* curSeq = val->seqj_i[pr->sizeSub - 1];
             myseqs.push_back(curSeq);
-            val = nodes[pr->listLoc[curSeq->lastnode].idxClient]->suc;
+            val = nodes[pr->listLoc[curSeq->firstnode].idxClient]->pred;
         }
     }
 
@@ -2053,7 +2057,7 @@ public:
         int oldCost = routeV->depot->seqi_n->cost;
         SeqData* seq = nodeU->seq0_i;
         myseqs1.clear();
-        myseqs1.push_back(uPred->seq0_i);
+        myseqs1.push_back(uPred->seq0_i);        
         addRevSeqInPieces(nodeU, nodeV, myseqs1);
         myseqs1.push_back(vSuc->seqi_n);
         int newCost = oo;
@@ -2063,11 +2067,11 @@ public:
             /*flexRes = evalFlex(myseqs1);
             newCost = flexRes.sc;*/
             traceLoc[0][1].clear();
-            if (evalFlexRou(myseqs1, traceLoc[0][1])) {
+            if (evalFlexRou(myseqs1, traceLoc[0][1])) {                                
                 newCost = F[traceLoc[0][1].size()];
             }
-        }
-        if (oldCost <= newCost)return 0;        
+        }        
+        if (oldCost <= newCost)return 0;                     
         if (pr->isDebug) {
             cout << "ck intra route 2Opt\n"; 
             /*cout << boolalpha << isFixed << "\n";
@@ -2097,7 +2101,7 @@ public:
         cost += newCost - oldCost;
         uSuc = nodeU->suc;
         uPred = nodeU->pred;        
-        //count[1][1]++;
+        count[1][1]++;
         //check sol
         if (pr->isTurnCkSol) {
             try {
