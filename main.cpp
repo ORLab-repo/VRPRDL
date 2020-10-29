@@ -40,7 +40,7 @@ void getSamples() {
 }
 //exe -ni -nc -pmin -pmax -ld - bi -TL -method
 string typeIns[] = { "C", "R", "RC" };
-int _numI = 30, _numC = 100, _pMin = 1, _pMax = 2, _ld = 2, timeLimit = oo;
+int _numI = 100, _numC = 20, _pMin = 1, _pMax = 2, _ld = 2, timeLimit = oo;
 string method = "ELS";
 bool _bi = true;
 void ckChanged(vector<int> arr) {
@@ -85,7 +85,7 @@ int main(int argc, char* argv[]) {
     Rng::config(seed[0]);
     //srand(seed[0]);    
     string pathIn, pathOut;
-    pathIn = "instances\\instance_30-triangle.vrp";
+    pathIn = "instances\\instance_33-triangle.vrp";
     //getSamples();    
     //pathOut = "solution_"+ to_string(idSed)+"\\" + typeIns[idType] + "\\" + "sol_" + to_string(idx) + ".txt";
     //cin >> pathIn;
@@ -133,18 +133,10 @@ int main(int argc, char* argv[]) {
     int minCost = oo;
     int oldCost;   
     //bestSol.R_ILS();    
-    //for (int j = 1; j <= bestSol.n; ++j)bestSol.giantT[j] = arr[j];
-    bestSol.genGiantT();
-    bestSol.Split();
-    bestSol.updateObjInter();
-    bestSol.cvGiantT();
-    bestSol.Split();
-    cout << "initial: " << bestSol.cost << "\n";
-    pr->isDebug = true;
-    bestSol.ckSol();
-    for (int i = 1; i <= bestSol.n; ++i)fl << bestSol.giantT[i] << ", ";
-    fl.close();
-    //bestSol.updateTotal();       
+    //for (int j = 1; j <= bestSol.n; ++j)bestSol.giantT[j] = arr[j];           
+    //for (int i = 1; i <= bestSol.n; ++i)fl << bestSol.giantT[i] << ", ";
+    //fl.close();
+    bestSol.ELS();
     cout << "strategy: " << boolalpha << bestSol.isFixed << "\n";
     cout << "times: " << pr->total << "\n";
     cout << "cost: " << bestSol.cost << "\n";
