@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{7594E55F-D662-4015-8723-1362475DD7D1}</ProjectGuid>
+    <ProjectGuid>{E05B1E80-CF32-4BC7-89D1-104ED8ECF49D}</ProjectGuid>
     <RootNamespace>SolverVRPRDL</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -147,17 +147,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GA.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Route.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h" />
+    <ClInclude Include="Ga.h" />
     <ClInclude Include="lib.h" />
     <ClInclude Include="Location.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="Param.h" />
     <ClInclude Include="ReadData.h" />
-    <ClInclude Include="Rng.h" />
+    <ClInclude Include="RandomGenerator.h" />
     <ClInclude Include="Route.h" />
     <ClInclude Include="SeqData.h" />
     <ClInclude Include="Solution.h" />

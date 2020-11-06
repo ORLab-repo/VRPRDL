@@ -18,7 +18,7 @@ public:
 	int E;//earliest time completion
 	int L;//latest starting time
 	int T;//sum of travel and service time
-	bool F;//check feasibility;
+	bool F;//check feasibility;d	
 	Param* pr;
 	
 	//constructor
@@ -26,7 +26,8 @@ public:
 	SeqData(Param* _pr) {
 		pr = _pr;
 	};
-	~SeqData() {};
+	~SeqData() {			
+	};
 
 	void showSeq() {
 		cout << pr->listLoc[firstnode].idxClient << " " << pr->listLoc[lastnode].idxClient << "\n";
@@ -38,7 +39,7 @@ public:
 	/*
 	* Construct sequence containing only one node
 	*/
-	void init(int idxLoc) {
+	void init(int idxLoc) {				
 		firstnode = idxLoc;
 		afterFiNode = -1;
 		lastnode = idxLoc;
@@ -54,8 +55,8 @@ public:
 	/**/
 	void concatOneAfter(SeqData* seq, int idxLoc) {
 		if (seq == NULL) init(idxLoc);
-		F = seq->F;
-		
+		F = seq->F;	
+
 		int t_12 = pr->times[seq->lastnode][idxLoc];
 		if (seq->E + t_12 > pr->listLoc[idxLoc].enTime) {
 			F = false;
@@ -78,7 +79,7 @@ public:
 	/**/
 	void concatOneBefore(SeqData* seq, int idxLoc) {
 		if (seq == NULL) init(idxLoc);
-		F = seq->F;
+		F = seq->F;	
 
 		int t_12 = pr->times[idxLoc][seq->firstnode];
 		if (pr->listLoc[idxLoc].stTime + t_12> seq->L) {

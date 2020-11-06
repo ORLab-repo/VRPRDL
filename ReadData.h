@@ -276,8 +276,8 @@ void init(Param* pr) {
                 num_reduced++;
             }
         }
-        cout << num_reduced << endl;
-        cout << flag << endl;
+        /*cout << num_reduced << endl;
+        cout << flag << endl;*/
         if (flag)break;
     }    
 }

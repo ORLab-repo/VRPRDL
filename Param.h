@@ -1,9 +1,11 @@
 #pragma once
 #include "Client.h"
+#include "RandomGenerator.h"
 #include "Location.h"
 
 class Client;
 class Location;
+class RandomGenerator;
 
 class Param {
 public:
@@ -26,8 +28,8 @@ public:
 	clock_t start, end;
 	double total = 0;
 	int ldTw = 5;// coff for TW
-	int maxNeibor = 20;// max size of neigbor vertex set for granular search (can be used for dynamically sertification).
-	//int maxNeibor = 150;// max size of neigbor vertex set for granular search (can be used for dynamically sertification).
+	//int maxNeibor = 40;// max size of neigbor vertex set for granular search (can be used for dynamically sertification).
+	int maxNeibor = 120;// max size of neigbor vertex set for granular search (can be used for dynamically sertification).
 	int nbR = 20;
 	int nbIls = 100;
 	int nbF = 20;
@@ -45,6 +47,7 @@ public:
 	bool moveor = false;
 	bool stringex = false;
 	string pathOut;
+	RandomGenerator Rng;
 	Param() {
 		cout << "clear param\n";
 		listCL.clear();

@@ -1,11 +1,12 @@
 #include "lib.h"
 #include "ReadData.h"
-#include "Solution.h"
+//#include "Solution.h"
+#include "Ga.h"
 
 using namespace std;
 
 int arr[] = {
-    0, 82, 72, 63, 67, 24, 75, 48, 62, 118, 81, 102, 14, 15, 101, 42, 73, 46, 30, 106, 99, 112, 47, 87, 16, 19, 66, 59, 9, 51, 39, 111, 2, 20, 4, 44, 31, 88, 17, 95, 53, 57, 43, 29, 94, 22, 52, 74, 49, 79, 27, 40, 26, 23, 97, 41, 80, 93, 36, 103, 110, 76, 18, 1, 7, 60, 65, 85, 12, 92, 77, 83, 86, 45, 34, 54, 91, 10, 11, 104, 64, 90, 108, 96, 38, 55, 35, 78, 61, 120, 107, 68, 69, 109, 84, 21, 98, 50, 89, 114, 37, 25, 13, 3, 115, 70, 5, 28, 58, 56, 6, 32, 119, 71, 8, 117, 100, 105, 33, 116, 113
+    0, 54, 113, 61, 37, 44, 35, 16, 73, 43, 17, 38, 52, 110, 69, 55, 116, 50, 23, 6, 83, 68, 98, 112, 41, 75, 26, 14, 65, 115, 97, 120, 86, 11, 29, 42, 3, 18, 47, 108, 27, 15, 109, 46, 2, 106, 119, 28, 78, 84, 88, 79, 21, 51, 89, 103, 72, 48, 59, 91, 1, 5, 92, 111, 99, 63, 9, 104, 76, 94, 66, 77, 24, 40, 95, 10, 39, 90, 102, 33, 105, 82, 71, 101, 19, 67, 8, 20, 96, 34, 57, 93, 107, 31, 100, 53, 64, 58, 32, 56, 12, 7, 25, 87, 80, 4, 114, 30, 49, 22, 74, 13, 117, 60, 118, 70, 81, 36, 45, 85, 62
 };
 
 int seed[] = {
@@ -40,7 +41,7 @@ void getSamples() {
 }
 //exe -ni -nc -pmin -pmax -ld - bi -TL -method
 string typeIns[] = { "C", "R", "RC" };
-int _numI = 30, _numC = 100, _pMin = 1, _pMax = 2, _ld = 2, timeLimit = oo;
+int _numI = 100, _numC = 20, _pMin = 1, _pMax = 2, _ld = 2, timeLimit = oo;
 string method = "ELS";
 bool _bi = true;
 void ckChanged(vector<int> arr) {
@@ -81,11 +82,10 @@ int main(int argc, char* argv[]) {
     int isFlex = 1;
     //cout << "isFlex: ";
     //cin >> isFlex;
-    ios::sync_with_stdio(0);
-    Rng::config(seed[0]);
+    ios::sync_with_stdio(0);    
     //srand(seed[0]);    
     string pathIn, pathOut;
-    pathIn = "instances\\instance_30-triangle.vrp";
+    pathIn = "instances\\instance_33-triangle.vrp";
     //getSamples();    
     //pathOut = "solution_"+ to_string(idSed)+"\\" + typeIns[idType] + "\\" + "sol_" + to_string(idx) + ".txt";
     //cin >> pathIn;
@@ -97,17 +97,16 @@ int main(int argc, char* argv[]) {
     pr->pMax = _pMax;
     pr->lambda = _ld;
     pr->bi = _bi;
+    pr->Rng.config(seed[0]);
     //pr->maxE *= 10;             
     //init(pr);
     //pr->fileOut.open(pathOut);
     cout.precision(6);
-    //ckData(pr);
-    init(pr);
+    //ckData(pr);    
+    init(pr);    
     Solution bestSol(pr);
-    ///check solution
-    
-    ofstream fl("ckSol.txt");
-    fl << "abc";
+    ///check solution    
+    ofstream fl("ckSol.txt");    
     /*std::chrono::time_point<std::chrono::system_clock> start, end;
     start = std::chrono::system_clock::now();
     for (int i = 1; i <= 100000; ++i) {
@@ -133,13 +132,15 @@ int main(int argc, char* argv[]) {
     pr->isTurnCkSol = true;
     int minCost = oo;
     int oldCost;   
-    //bestSol.R_ILS();    
-    //for (int j = 1; j <= bestSol.n; ++j)bestSol.giantT[j] = arr[j];
-    bestSol.genGiantT();
-    bestSol.Split();
-    cout << "initial: " << bestSol.cost << "\n";
-    //bestSol.updateTotal();   
-    bestSol.LocalSearch();
+    //bestSol.R_ILS();        
+    //for (int j = 1; j <= bestSol.n; ++j)bestSol.giantT[j] = arr[j];           
+    //for (int i = 1; i <= bestSol.n; ++i)fl << bestSol.giantT[i] << ", ";
+    //fl.close();
+    //bestSol.ELS();
+    GA Algo;
+    Algo.init(pr);
+    Algo.findGasSol();
+    cout << "strategy: " << boolalpha << bestSol.isFixed << "\n";
     cout << "times: " << pr->total << "\n";
     cout << "cost: " << bestSol.cost << "\n";
     for (int i = 1; i < 4; ++i)
