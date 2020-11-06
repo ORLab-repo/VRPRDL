@@ -17,9 +17,9 @@ bool GA::checkIdSol(Solution* u)
 }
 
 bool GA::CheckEqual(Solution* u, Solution* v)
-{
-    for(int i=1; i<=n; ++i)
-        if(u->giantT[i]!=v->giantT[i])return false;
+{    
+    for (int i = 1; i <= n; ++i)
+        if(u->giantT[i] != v->giantT[i])return false;
     return true;    
 }
 
@@ -148,16 +148,15 @@ void GA::insertNew(Solution* u)
     int posIns = nPop1 + 1;
 
     if (nPop1 == 0) {
-        pop[++nPop1] = u;
+        equalSol(pop[++nPop1], u);        
         return;
-    }
-
+    }    
     if (u->cost < pop[1]->cost)posIns = 1;
     else {
         for (int i = 1; i <= nPop1; ++i)
         {
             if (CheckEqual(u, pop[i]))
-            {                
+            {                                
                 return;
             }
         }
@@ -169,8 +168,7 @@ void GA::insertNew(Solution* u)
                 break;
             }
         }
-    }
-
+    }        
     //pop[nPop1 + 1] = u;
     equalSol(pop[nPop1 + 1], u);
     for (int i = nPop1; i >= posIns; --i) {
@@ -185,12 +183,12 @@ void GA::DelPopu()
 }
 
 void GA::InitPopu()
-{    
-    while (nPop1 != nPop) {        
+{        
+    while (nPop1 != nPop) {                
         valPop->genGiantT();
         valPop->Split();
         //valPop->updateTotal();
-        //cout<<val.obj<<endl;
+        //cout<<valPop->cost<<endl;
         insertNew(valPop);
     }
 }
@@ -225,12 +223,12 @@ void GA::findGasSol(int maxNumGas)
     numNotCha = 0;
     //threshold = (n - 1) / 2;
     Solution* child1 = new Solution(pr);
-    Solution* child2 = new Solution(pr);
+    Solution* child2 = new Solution(pr);    
     for (int numga = 1;; ++numga)
     {
         numNotCha++;
         //cout<<numga<<":"<<endl;
-        cout << numNotCha << " " << numga << endl;
+        cout << numNotCha << " " << numga <<"{"<< endl;
         //out<<numga<<"{\n";
         
         //exit(0);
@@ -283,6 +281,6 @@ void GA::findGasSol(int maxNumGas)
             break;
         }
         //if((double)(clock()-be)/CLOCKS_PER_SEC>=600)break;
-        //out<<bestSol.obj<<"}"<<endl;
+        cout<<bestSol->cost<<"}"<<endl;
     }
 }
