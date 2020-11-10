@@ -37,7 +37,7 @@ public:
     Node* vSuc;
     Route* routeU;
     Route* routeV;
-    bool isFixed;// for identifying the type of LS;
+    bool isFixed = false;// for identifying the type of LS;
 
     Param* pr;
     int cost;// objective
@@ -201,6 +201,7 @@ public:
     void genGiantT() {
         for (int i = 1; i <= n; ++i)giantT[i] = i;
         shuffle(giantT.begin() + 1, giantT.end(), pr->Rng.generator);
+        //random_shuffle(giantT.begin() + 1, giantT.end());
     }
 
     void cvGiantT() {
@@ -372,13 +373,13 @@ public:
 
     //reset neigborhood cluster set (run when changing location)
     void reinitCluSet(Node* nod) {
-        for (auto val : nod->movesClu) {
+        /*for (auto val : nod->movesClu) {
             nod->idxCluMoves[val] = false;
-        }
+        }*/
         nod->movesClu = nod->rou->pr->listLoc[nod->idxLoc].moves;
-        for (auto val : nod->movesClu) {
+        /*for (auto val : nod->movesClu) {
             nod->idxCluMoves[val] = true;
-        }
+        }*/
     }
 
     //reset neigborhood set for each node
@@ -632,6 +633,7 @@ public:
     }
 
     bool isCorrelated(Node* u, Node* v) {
+        return true;
         if (u->idxClient == 0 || v->idxClient == 0)return true;
         if (isFixed)return v->idxLocMoves[u->idxClient];
         else return v->idxCluMoves[u->idxClient];

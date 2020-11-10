@@ -225,7 +225,7 @@ void GA::findGasSol(int maxNumGas)
     Solution* child1 = new Solution(pr);
     Solution* child2 = new Solution(pr);    
     for (int numga = 1;; ++numga)
-    {
+    {        
         numNotCha++;
         //cout<<numga<<":"<<endl;
         cout << numNotCha << " " << numga <<"{"<< endl;
@@ -278,6 +278,7 @@ void GA::findGasSol(int maxNumGas)
             cout << id_test << " " << bestSol.obj << " " << (double)(clock() - be) / CLOCKS_PER_SEC << endl;
             fl << bestSol.obj << " " << (double)(clock() - be) / CLOCKS_PER_SEC << "\n";*/
             cout << bestSol->cost;
+            pr->fileOut<< bestSol->cost<<"\n";
             break;
         }
         //if((double)(clock()-be)/CLOCKS_PER_SEC>=600)break;

@@ -36,4 +36,17 @@ public:
     int getNumInRan(int u, int v) {
         return (generator() % (v - u + 1)) + u;
     }
+    /*
+    inline double randomdN(int n)
+    {
+        return (double)rand() / ((double)RAND_MAX / n);
+    }
+    inline int randomN(int n)
+    {
+        return (rand() % n) + 1;
+    }
+    inline int randomR(int u, int v)
+    {
+        return (rand() % (v - u + 1)) + u;
+    }*/
 };

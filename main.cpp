@@ -6,7 +6,7 @@
 using namespace std;
 
 int arr[] = {
-    0, 54, 113, 61, 37, 44, 35, 16, 73, 43, 17, 38, 52, 110, 69, 55, 116, 50, 23, 6, 83, 68, 98, 112, 41, 75, 26, 14, 65, 115, 97, 120, 86, 11, 29, 42, 3, 18, 47, 108, 27, 15, 109, 46, 2, 106, 119, 28, 78, 84, 88, 79, 21, 51, 89, 103, 72, 48, 59, 91, 1, 5, 92, 111, 99, 63, 9, 104, 76, 94, 66, 77, 24, 40, 95, 10, 39, 90, 102, 33, 105, 82, 71, 101, 19, 67, 8, 20, 96, 34, 57, 93, 107, 31, 100, 53, 64, 58, 32, 56, 12, 7, 25, 87, 80, 4, 114, 30, 49, 22, 74, 13, 117, 60, 118, 70, 81, 36, 45, 85, 62
+    0, 83, 2, 34, 86, 11, 45, 120, 6, 26, 105, 79, 72, 57, 1, 110, 107, 51, 60, 78, 63, 97, 23, 91, 20, 24, 30, 116, 22, 16, 89, 85, 111, 38, 114, 7, 74, 106, 76, 54, 68, 59, 94, 35, 67, 9, 73, 77, 101, 18, 25, 29, 56, 13, 62, 82, 5, 61, 69, 103, 3, 96, 14, 39, 99, 64, 21, 98, 102, 58, 117, 90, 84, 15, 95, 28, 53, 92, 71, 112, 40, 75, 4, 80, 66, 41, 100, 37, 87, 10, 12, 46, 27, 47, 93, 49, 32, 17, 108, 44, 55, 88, 119, 19, 115, 36, 104, 8, 52, 109, 81, 65, 113, 31, 70, 43, 118, 42, 33, 48, 50
 };
 
 int seed[] = {
@@ -75,8 +75,10 @@ int main(int argc, char* argv[]) {
             timeLimit = atoi(argv[i + 1]);
         }
     }*/
-    //cin.tie(0); cout.tie(0);    
+    cin.tie(0); cout.tie(0);    
     int numRun = 1;
+    int idxIns;
+    cin >> idxIns;
     //cout << "Num of runs: ";
     //cin >> numRun;    
     int isFlex = 1;
@@ -85,9 +87,9 @@ int main(int argc, char* argv[]) {
     ios::sync_with_stdio(0);    
     //srand(seed[0]);    
     string pathIn, pathOut;
-    pathIn = "instances\\instance_33-triangle.vrp";
+    pathIn = "instances\\instance_" + to_string(idxIns) + "-triangle.vrp";
     //getSamples();    
-    //pathOut = "solution_"+ to_string(idSed)+"\\" + typeIns[idType] + "\\" + "sol_" + to_string(idx) + ".txt";
+    pathOut = "solution\\sol_" + to_string(idxIns) + ".txt";
     //cin >> pathIn;
     Param* pr = read_Ins(pathIn);
     //set up param for algo:
@@ -97,10 +99,10 @@ int main(int argc, char* argv[]) {
     pr->pMax = _pMax;
     pr->lambda = _ld;
     pr->bi = _bi;
-    pr->Rng.config(seed[0]);
+    //pr->Rng.config(seed[0]);   
     //pr->maxE *= 10;             
     //init(pr);
-    //pr->fileOut.open(pathOut);
+    pr->fileOut.open(pathOut);
     cout.precision(6);
     //ckData(pr);    
     init(pr);    
@@ -121,35 +123,47 @@ int main(int argc, char* argv[]) {
     std::cout << "elapsed time: " << elapsed_seconds.count() << "s\n";
     fl.close();
     */
-    //for (int i = 1; i <= bestSol.n; ++i)bestSol.giantT[i] = i;                 
-    std::chrono::time_point<std::chrono::system_clock> start, end;
-    start = std::chrono::system_clock::now();
-    bestSol.isFixed = false;        
-    for (int i = 0; i < 4; ++i)
-        for (int j = 0; j < 4; ++j)bestSol.count[i][j] = 0LL;
-    pr->isDebug = false;
-    pr->debugLS = false;
-    pr->isTurnCkSol = true;
-    int minCost = oo;
-    int oldCost;   
-    //bestSol.R_ILS();        
-    //for (int j = 1; j <= bestSol.n; ++j)bestSol.giantT[j] = arr[j];           
-    //for (int i = 1; i <= bestSol.n; ++i)fl << bestSol.giantT[i] << ", ";
-    //fl.close();
-    //bestSol.ELS();
+    //for (int i = 1; i <= bestSol.n; ++i)bestSol.giantT[i] = i;     
     GA Algo;
     Algo.init(pr);
-    Algo.findGasSol();
-    cout << "strategy: " << boolalpha << bestSol.isFixed << "\n";
-    cout << "times: " << pr->total << "\n";
-    cout << "cost: " << bestSol.cost << "\n";
-    for (int i = 1; i < 4; ++i)
-        for (int j = 0; j < 4; ++j)cout << i << " " << j << " " << bestSol.count[i][j] << "\n";
-    end = std::chrono::system_clock::now();
-    std::chrono::duration<double> elapsed_seconds = end - start;
-    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+    for (int numRun = 0; numRun < 10; ++numRun) {
+        pr->Rng.config(seed[numRun]);
+        std::chrono::time_point<std::chrono::system_clock> start, end;
+        start = std::chrono::system_clock::now();
+        bestSol.isFixed = false;
+        for (int i = 0; i < 4; ++i)
+            for (int j = 0; j < 4; ++j)bestSol.count[i][j] = 0LL;
+        pr->isDebug = false;
+        pr->debugLS = false;
+        pr->isTurnCkSol = true;
+        int minCost = oo;
+        int oldCost;
+        int sumCost = 0;
+        //bestSol.R_ILS();  
+        /*for (int i = 1; i <= 100; ++i) {
+            for (int j = 1; j <= bestSol.n; ++j)bestSol.giantT[j] = arr[j];
+            bestSol.Split();
+            cout << bestSol.cost << "\n";
+            bestSol.updateTotal();
+            cout << bestSol.cost << "\n\n";
+            sumCost += bestSol.cost;
+            minCost = min(minCost, bestSol.cost);
+        }
+        cout << "min: " << minCost << "\n";
+        cout << "avg: " << (double)sumCost / 100<<"\n";*/
+        //for (int i = 1; i <= bestSol.n; ++i)fl << bestSol.giantT[i] << ", ";
+        //fl.close();
+        //bestSol.ELS();        
+        Algo.findGasSol();
 
-    std::cout << "elapsed time: " << elapsed_seconds.count() << "s\n";
+        end = std::chrono::system_clock::now();
+        std::chrono::duration<double> elapsed_seconds = end - start;
+        std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+
+        std::cout << "elapsed time: " << elapsed_seconds.count() << "s\n";
+        pr->fileOut << "elapsed time: " << elapsed_seconds.count() << "s\n\n";
+    }
+    pr->fileOut.close();
     /*bestSol.solT.clear();
     for (int i = 0; i < sizeof(arr) / sizeof(int); ++i)bestSol.solT.push_back(arr[i]);    
     int ckCosts = 0;    
