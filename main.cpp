@@ -87,9 +87,10 @@ int main(int argc, char* argv[]) {
     ios::sync_with_stdio(0);    
     //srand(seed[0]);    
     string pathIn, pathOut;
-    pathIn = "instances\\instance_" + to_string(idxIns) + "-triangle.vrp";
+    //pathIn = "instances\\instance_" + to_string(idxIns) + "-triangle.vrp";
+    pathIn = "instances\\" + to_string(idxIns) + "-v2.vrp";
     //getSamples();    
-    pathOut = "solution\\sol_" + to_string(idxIns) + ".txt";
+    pathOut = "solution\\sol_" + to_string(idxIns) + "-v2.txt";
     //cin >> pathIn;
     Param* pr = read_Ins(pathIn);
     //set up param for algo:
@@ -126,6 +127,7 @@ int main(int argc, char* argv[]) {
     //for (int i = 1; i <= bestSol.n; ++i)bestSol.giantT[i] = i;     
     GA Algo;
     Algo.init(pr);
+    int minCost = oo;
     for (int numRun = 0; numRun < 10; ++numRun) {
         pr->Rng.config(seed[numRun]);
         std::chrono::time_point<std::chrono::system_clock> start, end;
@@ -136,7 +138,7 @@ int main(int argc, char* argv[]) {
         pr->isDebug = false;
         pr->debugLS = false;
         pr->isTurnCkSol = true;
-        int minCost = oo;
+        //int minCost = oo;
         int oldCost;
         int sumCost = 0;
         //bestSol.R_ILS();  
@@ -156,13 +158,14 @@ int main(int argc, char* argv[]) {
         //bestSol.ELS();        
         Algo.findGasSol();
 
+        minCost = min(minCost, Algo.bestCost);
         end = std::chrono::system_clock::now();
         std::chrono::duration<double> elapsed_seconds = end - start;
-        std::time_t end_time = std::chrono::system_clock::to_time_t(end);
-
+        std::time_t end_time = std::chrono::system_clock::to_time_t(end);        
         std::cout << "elapsed time: " << elapsed_seconds.count() << "s\n";
         pr->fileOut << "elapsed time: " << elapsed_seconds.count() << "s\n\n";
     }
+    pr->fileOut << "best run: " << minCost;
     pr->fileOut.close();
     /*bestSol.solT.clear();
     for (int i = 0; i < sizeof(arr) / sizeof(int); ++i)bestSol.solT.push_back(arr[i]);    
