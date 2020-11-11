@@ -6,6 +6,7 @@ class GA
 {
 public:
 	int n;
+	int bestCost;
 	const int nPop = 40;
 	const int delta = 100;
 	vector<Solution*> pop;// [nPop + 200];

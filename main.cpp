@@ -87,10 +87,11 @@ int main(int argc, char* argv[]) {
     ios::sync_with_stdio(0);    
     //srand(seed[0]);    
     string pathIn, pathOut;
-    //pathIn = "instances\\instance_" + to_string(idxIns) + "-triangle.vrp";
-    pathIn = "instances\\" + to_string(idxIns) + "-v2.vrp";
+    //pathIn = "instances_VRPHRDL\\instance_" + to_string(idxIns) + "-triangle.vrp";
+    pathIn = "instances\\instance_" + to_string(idxIns) + "-triangle.vrp";
+    //pathIn = "instances\\" + to_string(idxIns) + "-v2.vrp";
     //getSamples();    
-    pathOut = "solution\\sol_" + to_string(idxIns) + "-v2.txt";
+    pathOut = "solution\\sol_" + to_string(idxIns) + ".txt";
     //cin >> pathIn;
     Param* pr = read_Ins(pathIn);
     //set up param for algo:
@@ -106,10 +107,10 @@ int main(int argc, char* argv[]) {
     pr->fileOut.open(pathOut);
     cout.precision(6);
     //ckData(pr);    
-    init(pr);    
+    init(pr);            
     Solution bestSol(pr);
     ///check solution    
-    ofstream fl("ckSol.txt");    
+    ofstream fl("ckSol.txt");        
     /*std::chrono::time_point<std::chrono::system_clock> start, end;
     start = std::chrono::system_clock::now();
     for (int i = 1; i <= 100000; ++i) {
@@ -126,7 +127,7 @@ int main(int argc, char* argv[]) {
     */
     //for (int i = 1; i <= bestSol.n; ++i)bestSol.giantT[i] = i;     
     GA Algo;
-    Algo.init(pr);
+    Algo.init(pr);        
     int minCost = oo;
     for (int numRun = 0; numRun < 10; ++numRun) {
         pr->Rng.config(seed[numRun]);

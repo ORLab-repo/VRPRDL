@@ -530,7 +530,7 @@ public:
                 enLb = lstLabel.size() - 1;
                 if (stLb > enLb)break;
             }
-        }
+        }        
         cost = F[n];
         if (cost == oo) {                
             delete[] maxIdx;

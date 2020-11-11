@@ -200,7 +200,7 @@ void init(Param* pr) {
             if (pr->listLoc[i].moves.size() == pr->maxNeibor)break;
         }
     }
-
+    
     ///preprocessing:    
     ///comment when travel time does not satisfy the triangle inequality
     /*for (int i = 0; i < pr->numLoc; ++i) {

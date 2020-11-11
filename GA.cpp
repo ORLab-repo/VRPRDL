@@ -277,6 +277,7 @@ void GA::findGasSol(int maxNumGas)
             /*bestSol.printSol();
             cout << id_test << " " << bestSol.obj << " " << (double)(clock() - be) / CLOCKS_PER_SEC << endl;
             fl << bestSol.obj << " " << (double)(clock() - be) / CLOCKS_PER_SEC << "\n";*/
+            bestCost = bestSol->cost;
             cout << bestSol->cost;
             pr->fileOut<< bestSol->cost<<"\n";
             break;
