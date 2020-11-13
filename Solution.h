@@ -530,7 +530,7 @@ public:
                 enLb = lstLabel.size() - 1;
                 if (stLb > enLb)break;
             }
-        }        
+        }
         cost = F[n];
         if (cost == oo) {                
             delete[] maxIdx;
@@ -873,7 +873,10 @@ public:
         }        
         if (cliAf != -1)virGiantT[++curNum] = cliLast;
         else cliAf = cliLast;
-        if (curNum == 0)return 0;
+        if (curNum == 0) {
+            delete[] virGiantT;
+            return 0;
+        }        
         //find min:
         int stT = 0, enT = pr->T;
         int resCost = 0;
@@ -912,7 +915,10 @@ public:
             pred[i] = -1;
             totalLoad += pr->listCL[virGiantT[i]].demand;
         }
-        if (totalLoad > pr->Q)return oo;
+        if (totalLoad > pr->Q) {
+            delete[] virGiantT;
+            return oo;
+        }
         F[0] = oo;
         pred[0] = -1;
         int stLb = -1, enLb = -1;
@@ -981,10 +987,13 @@ public:
             enLb = lstLabel.size() - 1;
             if (stLb > enLb)break;
         }        
+        lstLabel.clear();
+        curLabel.clear();
+        prvIdLb.clear();
         if (F[curNum] >= oo) {
             delete[] virGiantT;
             return oo;
-        }
+        }        
         resCost += F[curNum];
         int indexLb = pred[curNum];// index of last label.
        ///construct solution
