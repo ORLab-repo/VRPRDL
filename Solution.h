@@ -575,7 +575,8 @@ public:
             }
             catch (const char* msg) {
                 cerr << msg << endl;
-                exit(0);
+                system("pause");
+                exit(0);                
             }
         }
         //cvSolT(); // uncomment when need tracking the specific postion in solution (used in sequential search)        
@@ -1520,7 +1521,8 @@ public:
             }
             catch (const char* msg) {
                 cerr << msg << endl;
-                exit(0);
+                system("pause");
+                exit(0);                
             }
         }
         return 1;
@@ -2100,7 +2102,8 @@ public:
             }
             catch (const char* msg) {
                 cerr << msg << endl;
-                exit(0);
+                system("pause");
+                exit(0);                
             }
         }
         return 1;       
@@ -2186,7 +2189,8 @@ public:
             }
             catch (const char* msg) {
                 cerr << msg << endl;
-                exit(0);
+                system("pause");
+                exit(0);                
             }
         }
         return 1;        
@@ -2318,7 +2322,8 @@ public:
             }
             catch (const char* msg) {
                 cerr << msg << endl;
-                exit(0);
+                system("pause");
+                exit(0);                
             }
         }
         return 1;    
@@ -2382,7 +2387,8 @@ public:
             }
             catch (const char* msg) {
                 cerr << msg << endl;                
-                exit(0);
+                system("pause");
+                exit(0);                
             }
         }
         return 1;

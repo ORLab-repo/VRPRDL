@@ -29,11 +29,11 @@ void getSamples() {
     while (fileIn)
     {
         string line;
-        getline(fileIn, line);        
+        getline(fileIn, line);
         lineCont = Util::splitString(line, ",");
         if (lineCont.size() != 120)break;
         samArr.push_back(vector<int>(120));
-        for (int i = 0; i < 120; ++i){
+        for (int i = 0; i < 120; ++i) {
             samArr.back()[i] = stoi(lineCont[i]);
         }
     }
@@ -75,7 +75,7 @@ int main(int argc, char* argv[]) {
             timeLimit = atoi(argv[i + 1]);
         }
     }*/
-    cin.tie(0); cout.tie(0);    
+    cin.tie(0); cout.tie(0);
     int numRun = 1;
     int idxIns;
     cin >> idxIns;
@@ -84,11 +84,11 @@ int main(int argc, char* argv[]) {
     int isFlex = 1;
     //cout << "isFlex: ";
     //cin >> isFlex;
-    ios::sync_with_stdio(0);    
+    ios::sync_with_stdio(0);
     //srand(seed[0]);    
     string pathIn, pathOut;
-    //pathIn = "instances_VRPHRDL\\instance_" + to_string(idxIns) + "-triangle.vrp";
-    pathIn = "instances\\instance_" + to_string(idxIns) + "-triangle.vrp";
+    pathIn = "instances_VRPHRDL\\instance_" + to_string(idxIns) + "-triangle.vrp";
+    //pathIn = "instances\\instance_" + to_string(idxIns) + "-triangle.vrp";
     //pathIn = "instances\\" + to_string(idxIns) + "-v2.vrp";
     //getSamples();    
     pathOut = "solution\\sol_" + to_string(idxIns) + ".txt";
@@ -107,10 +107,10 @@ int main(int argc, char* argv[]) {
     pr->fileOut.open(pathOut);
     cout.precision(6);
     //ckData(pr);    
-    init(pr);            
+    init(pr);
     Solution bestSol(pr);
     ///check solution    
-    ofstream fl("ckSol.txt");        
+    ofstream fl("ckSol.txt");
     /*std::chrono::time_point<std::chrono::system_clock> start, end;
     start = std::chrono::system_clock::now();
     for (int i = 1; i <= 100000; ++i) {
@@ -127,9 +127,9 @@ int main(int argc, char* argv[]) {
     */
     //for (int i = 1; i <= bestSol.n; ++i)bestSol.giantT[i] = i;     
     GA Algo;
-    Algo.init(pr);        
+    Algo.init(pr);
     int minCost = oo;
-    for (int numRun = 0; numRun < 10; ++numRun) {
+    for (int numRun = 0; numRun < 1; ++numRun) {
         pr->Rng.config(seed[numRun]);
         std::chrono::time_point<std::chrono::system_clock> start, end;
         start = std::chrono::system_clock::now();
@@ -142,7 +142,7 @@ int main(int argc, char* argv[]) {
         //int minCost = oo;
         int oldCost;
         int sumCost = 0;
-        //bestSol.R_ILS();  
+        //bestSol.R_ILS();         
         /*for (int i = 1; i <= 100; ++i) {
             for (int j = 1; j <= bestSol.n; ++j)bestSol.giantT[j] = arr[j];
             bestSol.Split();
@@ -156,21 +156,33 @@ int main(int argc, char* argv[]) {
         cout << "avg: " << (double)sumCost / 100<<"\n";*/
         //for (int i = 1; i <= bestSol.n; ++i)fl << bestSol.giantT[i] << ", ";
         //fl.close();
-        //bestSol.ELS();        
-        Algo.findGasSol();
+        //bestSol.ELS();  
+        try {
+            Algo.findGasSol();
+        }
+        catch (const char* msg) {
+            cerr << msg << endl;                       
+            exit(0);
+            system("pause");
+        }
+        catch (...) {
+            cout << "error\n";
+            exit(0);
+            system("pause");
+        }
 
         minCost = min(minCost, Algo.bestCost);
         end = std::chrono::system_clock::now();
         std::chrono::duration<double> elapsed_seconds = end - start;
-        std::time_t end_time = std::chrono::system_clock::to_time_t(end);        
+        std::time_t end_time = std::chrono::system_clock::to_time_t(end);
         std::cout << "elapsed time: " << elapsed_seconds.count() << "s\n";
         pr->fileOut << "elapsed time: " << elapsed_seconds.count() << "s\n\n";
     }
     pr->fileOut << "best run: " << minCost;
     pr->fileOut.close();
     /*bestSol.solT.clear();
-    for (int i = 0; i < sizeof(arr) / sizeof(int); ++i)bestSol.solT.push_back(arr[i]);    
-    int ckCosts = 0;    
+    for (int i = 0; i < sizeof(arr) / sizeof(int); ++i)bestSol.solT.push_back(arr[i]);
+    int ckCosts = 0;
     for (int i = 1; i < bestSol.solT.size(); ++i) {
         cout<<bestSol.solT[i - 1]<<" "<<bestSol.solT[i]<<" "<< pr->costs[bestSol.solT[i - 1]][bestSol.solT[i]]<<"\n";
         ckCosts += pr->costs[bestSol.solT[i - 1]][bestSol.solT[i]];
@@ -183,7 +195,6 @@ int main(int argc, char* argv[]) {
     //cout << (clock()-start) / CLOCKS_PER_SEC << endl;
     //pr->fileOut << (clock() - start) / CLOCKS_PER_SEC << endl;
     //pr->fileOut.close();           
-    system("pause");
-    exit(0);    
+    system("pause");    
     return 0;
 }
