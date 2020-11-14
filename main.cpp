@@ -6,9 +6,12 @@
 using namespace std;
 
 int arr[] = {
-    0, 83, 2, 34, 86, 11, 45, 120, 6, 26, 105, 79, 72, 57, 1, 110, 107, 51, 60, 78, 63, 97, 23, 91, 20, 24, 30, 116, 22, 16, 89, 85, 111, 38, 114, 7, 74, 106, 76, 54, 68, 59, 94, 35, 67, 9, 73, 77, 101, 18, 25, 29, 56, 13, 62, 82, 5, 61, 69, 103, 3, 96, 14, 39, 99, 64, 21, 98, 102, 58, 117, 90, 84, 15, 95, 28, 53, 92, 71, 112, 40, 75, 4, 80, 66, 41, 100, 37, 87, 10, 12, 46, 27, 47, 93, 49, 32, 17, 108, 44, 55, 88, 119, 19, 115, 36, 104, 8, 52, 109, 81, 65, 113, 31, 70, 43, 118, 42, 33, 48, 50
+    0, 25, 59, 91, 1, 38, 52, 5, 92, 111, 23, 10, 39, 101, 41, 11, 64, 53, 80, 100, 89, 51, 103, 61, 113, 56, 88, 8, 76, 85, 36, 117, 94, 104, 66, 77, 14, 29, 13, 9, 24, 49, 47, 87, 30, 4, 114, 95, 60, 118, 70, 81, 45, 50, 19, 67, 108, 20, 96, 69, 63, 99, 58, 109, 7, 12, 54, 32, 105, 78, 79, 21, 28, 62, 98, 112, 110, 115, 44, 74, 35, 107, 31, 16, 22, 97, 37, 75, 57, 26, 65, 33, 82, 6, 71, 83, 93, 34, 120, 86, 42, 3, 18, 40, 119, 106, 2, 15, 43, 90, 17, 48, 102, 73, 55, 116, 68, 27, 46, 72, 84
 };
 
+int arrLS[] = {
+    120, 68, 89, 33, 102, 23, 12, 116, 62, 4, 85, 108, 45, 56, 64, 21, 87, 5, 22, 65, 95, 52, 106, 59, 67, 25, 36, 41, 88, 77, 18, 3, 42, 80, 39, 44, 31, 53, 78, 13, 15, 81, 75, 29, 43, 74, 115, 61, 10, 111, 98, 112, 28, 17, 110, 9, 93, 20, 79, 24, 71, 8, 113, 50, 32, 92, 103, 69, 105, 34, 70, 46, 83, 49, 72, 2, 76, 86, 47, 101, 57, 26, 118, 11, 16, 48, 27, 73, 60, 82, 91, 117, 38, 30, 54, 66, 109, 84, 100, 119, 90, 37, 107, 35, 99, 51, 7, 19, 97, 96, 6, 58, 114, 55, 14, 104, 1, 63, 94, 40
+};
 int seed[] = {
     18319894,
     23390422,
@@ -129,7 +132,7 @@ int main(int argc, char* argv[]) {
     GA Algo;
     Algo.init(pr);
     int minCost = oo;
-    for (int numRun = 0; numRun < 1; ++numRun) {
+    for (int numRun = 0; numRun < 5; ++numRun) {
         pr->Rng.config(seed[numRun]);
         std::chrono::time_point<std::chrono::system_clock> start, end;
         start = std::chrono::system_clock::now();
@@ -143,8 +146,11 @@ int main(int argc, char* argv[]) {
         int oldCost;
         int sumCost = 0;
         //bestSol.R_ILS();         
-        /*for (int i = 1; i <= 100; ++i) {
-            for (int j = 1; j <= bestSol.n; ++j)bestSol.giantT[j] = arr[j];
+        /*for (int i = 1; i <= 1; ++i) {
+            for (int j = 1; j <= bestSol.n; ++j) {
+                bestSol.giantT[j] = arr[j];
+                bestSol.ordNodeLs[j - 1] = arrLS[j - 1];
+            }
             bestSol.Split();
             cout << bestSol.cost << "\n";
             bestSol.updateTotal();
@@ -156,7 +162,7 @@ int main(int argc, char* argv[]) {
         cout << "avg: " << (double)sumCost / 100<<"\n";*/
         //for (int i = 1; i <= bestSol.n; ++i)fl << bestSol.giantT[i] << ", ";
         //fl.close();
-        //bestSol.ELS();  
+        //bestSol.ELS();                  
         try {
             Algo.findGasSol();
         }
@@ -194,7 +200,7 @@ int main(int argc, char* argv[]) {
     ////cout << Util::round2num(bestSol.cost) << endl;    
     //cout << (clock()-start) / CLOCKS_PER_SEC << endl;
     //pr->fileOut << (clock() - start) / CLOCKS_PER_SEC << endl;
-    //pr->fileOut.close();           
-    system("pause");    
+    //pr->fileOut.close();               
+    system("pause");
     return 0;
 }

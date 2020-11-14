@@ -272,7 +272,7 @@ void GA::findGasSol(int maxNumGas)
             if (bestSol->cost != oldBestObj)numNotCha = 0;
         }
         //cout<<"best obj:\n";cout<<bestSol.obj<<endl<<endl;
-        if (numNotCha == 10) {
+        if (numNotCha == 15000) {
             bestSol->Split();
             /*bestSol.printSol();
             cout << id_test << " " << bestSol.obj << " " << (double)(clock() - be) / CLOCKS_PER_SEC << endl;

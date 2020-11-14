@@ -575,6 +575,10 @@ public:
             }
             catch (const char* msg) {
                 cerr << msg << endl;
+                for (int i = 1; i <= n; ++i)pr->fileOut << giantT[i] << ", ";
+                pr->fileOut << "\n";
+                for (auto val : ordNodeLs)pr->fileOut << val << ", ";
+                pr->fileOut.close();
                 system("pause");
                 exit(0);                
             }
@@ -642,7 +646,7 @@ public:
 
     void updateObjInter() {
         //shuffle the moves:  
-        shuffle(ordNodeLs.begin(), ordNodeLs.end(), pr->Rng.generator);
+        //shuffle(ordNodeLs.begin(), ordNodeLs.end(), pr->Rng.generator);
         /*for (int i = 1; i <= n; ++i) {            
             shuffle(nodes[i]->movesClu.begin(), nodes[i]->movesClu.end(), pr->Rng.generator);
             shuffle(nodes[i]->movesLoc.begin(), nodes[i]->movesLoc.end(), pr->Rng.generator);
@@ -1056,10 +1060,13 @@ public:
         lstLabel.clear();
         curLabel.clear();
         prvIdLb.clear();
+        //cout << "giant in rou:\n";
         for (int i = 1; i <= curNum; ++i) {
+            //cout << virGiantT[i] << " ";
             F[i] = oo;
             pred[i] = -1;
         }
+        //cout << "\n";
         F[0] = oo;
         pred[0] = -1;
         int stLb = -1, enLb = -1;
@@ -1521,6 +1528,10 @@ public:
             }
             catch (const char* msg) {
                 cerr << msg << endl;
+                for (int i = 1; i <= n; ++i)pr->fileOut << giantT[i] << ", ";
+                pr->fileOut << "\n";
+                for (auto val : ordNodeLs)pr->fileOut << val << ", ";
+                pr->fileOut.close();
                 system("pause");
                 exit(0);                
             }
@@ -1555,6 +1566,7 @@ public:
     void addRevSeqInPieces(Node* st, Node* en, vector<SeqData*>& myseqs) {
         //st and en are in the same route.        
         //st and en can't be depot
+        int preBe = myseqs.size();
         assert(st->idxClient && en->idxClient);
         if (st->posInRoute > en->posInRoute)return;
         int disInR = -1;
@@ -1568,8 +1580,9 @@ public:
             }
             SeqData* curSeq = val->seqj_i[pr->sizeSub - 1];
             myseqs.push_back(curSeq);
-            val = nodes[pr->listLoc[curSeq->firstnode].idxClient]->pred;
+            val = nodes[pr->listLoc[curSeq->firstnode].idxClient]->suc;
         }
+        reverse(myseqs.begin() + preBe, myseqs.end());
     }
 
     int intraRouteGeneralInsert() {      
@@ -2102,6 +2115,10 @@ public:
             }
             catch (const char* msg) {
                 cerr << msg << endl;
+                for (int i = 1; i <= n; ++i)pr->fileOut << giantT[i] << ", ";
+                pr->fileOut << "\n";
+                for (auto val : ordNodeLs)pr->fileOut << val << ", ";
+                pr->fileOut.close();
                 system("pause");
                 exit(0);                
             }
@@ -2189,6 +2206,10 @@ public:
             }
             catch (const char* msg) {
                 cerr << msg << endl;
+                for (int i = 1; i <= n; ++i)pr->fileOut << giantT[i] << ", ";
+                pr->fileOut << "\n";
+                for (auto val : ordNodeLs)pr->fileOut << val << ", ";
+                pr->fileOut.close();
                 system("pause");
                 exit(0);                
             }
@@ -2322,6 +2343,10 @@ public:
             }
             catch (const char* msg) {
                 cerr << msg << endl;
+                for (int i = 1; i <= n; ++i)pr->fileOut << giantT[i] << ", ";
+                pr->fileOut << "\n";
+                for (auto val : ordNodeLs)pr->fileOut << val << ", ";
+                pr->fileOut.close();
                 system("pause");
                 exit(0);                
             }
@@ -2343,7 +2368,7 @@ public:
         if(isFixed)newCost = seq->evaluation(myseqs1);
         else {
             /*flexRes = evalFlex(myseqs1);
-            newCost = flexRes.sc;*/
+            newCost = flexRes.sc;*/           
             traceLoc[0][1].clear();
             if (evalFlexRou(myseqs1, traceLoc[0][1])) {                                
                 newCost = F[traceLoc[0][1].size()];
@@ -2352,8 +2377,9 @@ public:
         if (oldCost <= newCost)return 0;                     
         if (pr->isDebug) {
             cout << "ck intra route 2Opt\n"; 
-            /*cout << boolalpha << isFixed << "\n";
-            cout << nodeU->idxClient << " " << nodeV->idxClient << "\n";*/
+            cout << boolalpha << isFixed << "\n";
+            routeU->showR();
+            cout << nodeU->idxClient << " " << nodeV->idxClient << "\n";
         }
         reinitSingleMoveInRou(routeV);
         if (!isFixed) {
@@ -2387,6 +2413,10 @@ public:
             }
             catch (const char* msg) {
                 cerr << msg << endl;                
+                for (int i = 1; i <= n; ++i)pr->fileOut << giantT[i] << ", ";
+                pr->fileOut << "\n";
+                for (auto val : ordNodeLs)pr->fileOut << val << ", ";
+                pr->fileOut.close();
                 system("pause");
                 exit(0);                
             }
@@ -2595,6 +2625,10 @@ public:
         Split();
         if (cost != oo && cost - bestObj > 0) {
             cout << "bug here\n";
+            for (int i = 1; i <= n; ++i)pr->fileOut << giantT[i] << ", ";
+            pr->fileOut << "\n";
+            for (auto val : ordNodeLs)pr->fileOut << val << ", ";
+            pr->fileOut.close();
             system("pause");
             exit(0);
         }
@@ -2613,15 +2647,15 @@ public:
         /*for (int k = 0; k <= m; ++k) {
             delete[] F[k];
             delete[] pred[k];
-        }*/
+        }*/        
         delete[] seqSet;
         delete[] F;
         delete[] pred;
         giantT.clear();
         solT.clear();  
         ordNodeLs.clear();
-        for (int i = 0; i < n + 2 * pr->numVeh + 1; ++i)delete nodes[i];
-        for (int i = 1; i <= m; ++i)delete setR[i];
+        //for (int i = 0; i < n + 2 * pr->numVeh + 1; ++i)delete nodes[i];
+        //for (int i = 1; i <= m; ++i)delete setR[i];
         //delete pr;
     }
 };
