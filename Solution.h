@@ -646,7 +646,7 @@ public:
 
     void updateObjInter() {
         //shuffle the moves:  
-        //shuffle(ordNodeLs.begin(), ordNodeLs.end(), pr->Rng.generator);
+        shuffle(ordNodeLs.begin(), ordNodeLs.end(), pr->Rng.generator);
         /*for (int i = 1; i <= n; ++i) {            
             shuffle(nodes[i]->movesClu.begin(), nodes[i]->movesClu.end(), pr->Rng.generator);
             shuffle(nodes[i]->movesLoc.begin(), nodes[i]->movesLoc.end(), pr->Rng.generator);
@@ -2100,7 +2100,7 @@ public:
             insertNode(vSuc, nodeV);
         }
 
-        count[iBest][jBest]++;
+        //count[iBest][jBest]++;
         routeU->updateRoute();        
         nodeU = tempU;
         nodeV = tempV;
