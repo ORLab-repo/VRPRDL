@@ -1,0 +1,16 @@
+5287
+elapsed time: 6938.15s
+
+5287
+elapsed time: 6163.52s
+
+5232
+elapsed time: 6589.5s
+
+5287
+elapsed time: 6396.11s
+
+5218
+elapsed time: 6159.86s
+
+best run: 5218

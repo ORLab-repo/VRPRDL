@@ -1,0 +1,16 @@
+3203
+elapsed time: 705.963s
+
+3203
+elapsed time: 649.106s
+
+3203
+elapsed time: 655.556s
+
+3203
+elapsed time: 674.844s
+
+3203
+elapsed time: 639.054s
+
+best run: 3203

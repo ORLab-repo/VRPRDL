@@ -1,0 +1,16 @@
+3885
+elapsed time: 9795.11s
+
+3885
+elapsed time: 7161.35s
+
+3885
+elapsed time: 7301.58s
+
+3885
+elapsed time: 7380.49s
+
+3885
+elapsed time: 6215.61s
+
+best run: 3885

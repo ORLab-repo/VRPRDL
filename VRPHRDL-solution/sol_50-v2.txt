@@ -1,0 +1,16 @@
+2302
+elapsed time: 786.841s
+
+2302
+elapsed time: 775.995s
+
+2302
+elapsed time: 780s
+
+2302
+elapsed time: 777.685s
+
+2302
+elapsed time: 717.817s
+
+best run: 2302

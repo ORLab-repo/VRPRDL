@@ -1,0 +1,16 @@
+3783
+elapsed time: 7153.97s
+
+3783
+elapsed time: 7028.8s
+
+3783
+elapsed time: 6788s
+
+3694
+elapsed time: 7711.42s
+
+3783
+elapsed time: 6116.32s
+
+best run: 3694

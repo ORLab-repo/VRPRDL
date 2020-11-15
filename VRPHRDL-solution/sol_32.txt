@@ -1,0 +1,16 @@
+3598
+elapsed time: 7925.91s
+
+3598
+elapsed time: 7937.07s
+
+3598
+elapsed time: 8815.75s
+
+3598
+elapsed time: 7286.39s
+
+3598
+elapsed time: 6664.49s
+
+best run: 3598
