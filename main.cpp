@@ -90,8 +90,9 @@ int main(int argc, char* argv[]) {
     ios::sync_with_stdio(0);
     //srand(seed[0]);    
     string pathIn, pathOut;
-    pathIn = "instances_VRPHRDL\\instance_" + to_string(idxIns) + "-triangle.vrp";
-    //pathIn = "instances\\instance_" + to_string(idxIns) + "-triangle.vrp";
+    //pathIn = "instances_VRPHRDL\\instance_" + to_string(idxIns) + "-triangle.vrp";
+    pathIn = "instances\\instance_" + to_string(idxIns) + "-triangle.vrp";
+    //pathIn = "instances_VRPHRDL\\" + to_string(idxIns) + "-v2.vrp";
     //pathIn = "instances\\" + to_string(idxIns) + "-v2.vrp";
     //getSamples();    
     pathOut = "solution\\sol_" + to_string(idxIns) + ".txt";
@@ -132,7 +133,7 @@ int main(int argc, char* argv[]) {
     GA Algo;
     Algo.init(pr);
     int minCost = oo;
-    for (int numRun = 0; numRun < 5; ++numRun) {
+    for (int numRun = 1; numRun < 5; ++numRun) {
         pr->Rng.config(seed[numRun]);
         std::chrono::time_point<std::chrono::system_clock> start, end;
         start = std::chrono::system_clock::now();
@@ -146,10 +147,10 @@ int main(int argc, char* argv[]) {
         int oldCost;
         int sumCost = 0;
         //bestSol.R_ILS();         
-        /*for (int i = 1; i <= 1; ++i) {
+        /*for (int i = 1; i <= 100; ++i) {
             for (int j = 1; j <= bestSol.n; ++j) {
                 bestSol.giantT[j] = arr[j];
-                bestSol.ordNodeLs[j - 1] = arrLS[j - 1];
+                //bestSol.ordNodeLs[j - 1] = arrLS[j - 1];
             }
             bestSol.Split();
             cout << bestSol.cost << "\n";
@@ -183,7 +184,7 @@ int main(int argc, char* argv[]) {
         std::time_t end_time = std::chrono::system_clock::to_time_t(end);
         std::cout << "elapsed time: " << elapsed_seconds.count() << "s\n";
         pr->fileOut << "elapsed time: " << elapsed_seconds.count() << "s\n\n";
-    }
+    }    
     pr->fileOut << "best run: " << minCost;
     pr->fileOut.close();
     /*bestSol.solT.clear();

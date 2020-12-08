@@ -26,6 +26,7 @@ public:
     void clearRouteFromRev(Node* u);
     int caculateDis();
     void updateRoute();    
+    int getCliInRou(int* arr);//return num of client in rou
     void showR();
     void showRLoc();
     void showR_rev();

@@ -8,6 +8,20 @@ GA::~GA()
 {
 }
 
+void GA::addRou(Solution* u)
+{
+    for (auto rou : u->setR) {
+        valLength = rou->getCliInRou(valRou);
+        if (valLength == 0)continue;
+        II hashVal = Util::getHash(valRou, valLength);
+        if (idWithLen[valLength][hashVal] == 0) {
+            curNumRou++;
+            idWithLen[valLength][hashVal] = curNumRou;
+            //stop here
+        }                        
+    }
+}
+
 bool GA::checkIdSol(Solution* u)
 {
     for (int i = 1; i <= n; ++i)ddID[i] = 0;
@@ -16,11 +30,25 @@ bool GA::checkIdSol(Solution* u)
     return true;
 }
 
+int GA::broken_pairs(Solution* u, Solution* v)
+{
+    //computing broken pair dis of u with v
+    int* nxt = new int[n + 1];
+    for (int i = 0; i < n - 1; ++i)nxt[u->giantT[i]] = u->giantT[i + 1];
+    nxt[u->giantT[n - 1]] = -1;
+    int numEqualEdge = 0;
+    for (int i = 0; i < n - 1; ++i)if (v->giantT[i + 1] == nxt[v->giantT[i]])numEqualEdge++;
+    delete[] nxt;
+    return n - 1 - numEqualEdge;
+}
+
 bool GA::CheckEqual(Solution* u, Solution* v)
 {    
-    for (int i = 1; i <= n; ++i)
+    /*for (int i = 1; i <= n; ++i)
         if(u->giantT[i] != v->giantT[i])return false;
-    return true;    
+    return true;*/
+    return(abs(u->cost - v->cost) <= omega)
+        || (broken_pairs(u, v) < threshold);
 }
 
 void GA::equalSol(Solution* u, Solution* v)
@@ -89,17 +117,31 @@ void GA::uni(Solution* u, Solution* v, Solution* u1, Solution* v1)
     /// test:
     //int en=be+rn-1;
     int be = pr->Rng.getNumInRan(1, n);
-    int en = pr->Rng.getNumInRan(be, n);
+    //int en = pr->Rng.getNumInRan(be, n);
+    int en = pr->Rng.getNumInRan(1, n);    
+    while (be == en)
+    {
+        en = pr->Rng.getNumInRan(1, n);
+    }
     int* dd = new int[n + 1];
     int vt;
     //born u:
     for (int i = 0; i <= n; ++i)
-        dd[i] = 0;
-    for (int i = be; i <= en; ++i) {
+        dd[i] = 0;   
+    int idI = be;
+    /*for (int i = be; i <= en; ++i) {        
         u1->giantT[i] = idu[i];
         dd[idu[i]] = 1;
-    }
-    for (int i = 1; i <= n; ++i)
+    }*/
+    while (true)
+    {        
+        if ((en + 1) % n == idI % n)break;
+        u1->giantT[idI] = idu[idI];
+        dd[idu[idI]] = 1;
+        idI++;        
+        if (idI > n) idI = 1;
+    }    
+    /*for (int i = 1; i <= n; ++i)
         if (dd[idv[i]] == 0)
             q.push_back(idv[i]);
     vt = en + 1;
@@ -110,9 +152,19 @@ void GA::uni(Solution* u, Solution* v, Solution* u1, Solution* v1)
         u1->giantT[vt] = q.front();
         q.pop_front();
         vt++;
+    }*/    
+    int curId = en;
+    for (int i = 1; i <= n; ++i) {                
+        curId++;
+        if (curId > n)curId = 1;
+        if (dd[idv[curId]] == 0) {
+            u1->giantT[idI] = idv[curId];
+            idI = (idI + 1) % n;
+            if (idI == 0)idI = n;
+        }
     }
     //born v:
-    for (int i = 0; i <= n; ++i)
+    /*for (int i = 0; i <= n; ++i)
         dd[i] = 0;
     for (int i = be; i <= en; ++i) {
         v1->giantT[i] = idv[i];
@@ -129,9 +181,10 @@ void GA::uni(Solution* u, Solution* v, Solution* u1, Solution* v1)
         v1->giantT[vt] = q.front();
         q.pop_front();
         vt++;
-    }
+    }*/
+    if (pr->Rng.genRealInRang01_muta() <= pM)u1->interchange();
     u1->Split(); u1->updateTotal();
-    v1->Split(); v1->updateTotal();
+    //v1->Split(); v1->updateTotal();
     /*if(rand()%2==0){
         u1.updateObj();v1.updateObj();
     }else{
@@ -221,13 +274,14 @@ void GA::findGasSol(int maxNumGas)
     equalSol(bestSol, pop[1]);
     //maxNumGas=500;
     numNotCha = 0;
-    //threshold = (n - 1) / 2;
+    threshold = (n - 1) / 2;
     Solution* child1 = new Solution(pr);
     Solution* child2 = new Solution(pr);    
     for (int numga = 1;; ++numga)
     {        
         numNotCha++;
         //cout<<numga<<":"<<endl;
+        cout << "name ins: " << pr->nameIns<<"\n";
         cout << numNotCha << " " << numga <<"{"<< endl;
         //out<<numga<<"{\n";
         
@@ -255,32 +309,34 @@ void GA::findGasSol(int maxNumGas)
         insertNew(child1);
         if (nPop1 == nPop + delta)
             DelPopu();
-        insertNew(child2);
+        /*insertNew(child2);
         if (nPop1 == nPop + delta)
-            DelPopu();
+            DelPopu();*/
         if (bestSol->cost > pop[1]->cost) {
             numNotCha = 0;
             equalSol(bestSol, pop[1]);
         }
         // if bestSol don't change 100 times change 25 worst sols by 25 new sols
         //if(numNotCha>=200){numNotCha=0;addPopu();}
-        if (numNotCha == 4000)
+        if (numNotCha == 3000)
         {
-            //threshold = min(threshold - 1, 1);
+            threshold = min(threshold - 1, 1);
             int oldBestObj = bestSol->cost;
             DiversifyPopu(bestSol);
             if (bestSol->cost != oldBestObj)numNotCha = 0;
         }
         //cout<<"best obj:\n";cout<<bestSol.obj<<endl<<endl;
-        if (numNotCha == 15000) {
+        if (numNotCha == 5000) {
             bestSol->Split();
             /*bestSol.printSol();
             cout << id_test << " " << bestSol.obj << " " << (double)(clock() - be) / CLOCKS_PER_SEC << endl;
             fl << bestSol.obj << " " << (double)(clock() - be) / CLOCKS_PER_SEC << "\n";*/
             bestCost = bestSol->cost;
             cout << bestSol->cost;
-            pr->fileOut<< bestSol->cost<<"\n";
-            break;
+            pr->fileOut<< bestSol->cost<<"\n";            
+            for (int i = 1; i <= n; ++i)pr->fileOut << bestSol->giantT[i] << ", ";
+            pr->fileOut << "\n";
+            //break;
         }
         //if((double)(clock()-be)/CLOCKS_PER_SEC>=600)break;
         cout<<bestSol->cost<<"}"<<endl;
