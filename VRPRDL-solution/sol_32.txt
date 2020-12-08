@@ -1,0 +1,16 @@
+5061
+elapsed time: 6617.37s
+
+5061
+elapsed time: 6277.6s
+
+5061
+elapsed time: 6219.32s
+
+5062
+elapsed time: 6053.02s
+
+5061
+elapsed time: 5605.82s
+
+best run: 5061

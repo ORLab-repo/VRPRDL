@@ -1,0 +1,16 @@
+1966
+elapsed time: 813.815s
+
+1966
+elapsed time: 809.536s
+
+1966
+elapsed time: 798.77s
+
+1966
+elapsed time: 807.109s
+
+1966
+elapsed time: 730.558s
+
+best run: 1966

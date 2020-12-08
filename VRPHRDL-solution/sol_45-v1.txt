@@ -1,0 +1,16 @@
+3172
+elapsed time: 676.476s
+
+3172
+elapsed time: 668.996s
+
+3172
+elapsed time: 670.489s
+
+3172
+elapsed time: 667.7s
+
+3172
+elapsed time: 632.661s
+
+best run: 3172

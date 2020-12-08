@@ -1,0 +1,16 @@
+1946
+elapsed time: 749.832s
+
+1946
+elapsed time: 740.538s
+
+1946
+elapsed time: 751.683s
+
+1946
+elapsed time: 748.236s
+
+1946
+elapsed time: 732.854s
+
+best run: 1946

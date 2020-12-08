@@ -1,0 +1,16 @@
+3666
+elapsed time: 7262.65s
+
+3666
+elapsed time: 7129.78s
+
+3817
+elapsed time: 7004.48s
+
+3666
+elapsed time: 7126.76s
+
+3666
+elapsed time: 6173.79s
+
+best run: 3666

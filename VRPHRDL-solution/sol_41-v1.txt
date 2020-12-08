@@ -1,0 +1,16 @@
+2662
+elapsed time: 692.079s
+
+2662
+elapsed time: 688.042s
+
+2662
+elapsed time: 687.247s
+
+2662
+elapsed time: 684.688s
+
+2662
+elapsed time: 642.737s
+
+best run: 2662

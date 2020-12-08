@@ -1,0 +1,16 @@
+4935
+elapsed time: 5870.55s
+
+4935
+elapsed time: 5839.38s
+
+4935
+elapsed time: 5810.11s
+
+4935
+elapsed time: 5879.94s
+
+4935
+elapsed time: 5739.16s
+
+best run: 4935

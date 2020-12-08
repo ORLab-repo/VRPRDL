@@ -1,0 +1,16 @@
+2380
+elapsed time: 714.236s
+
+2380
+elapsed time: 696.71s
+
+2380
+elapsed time: 696.843s
+
+2380
+elapsed time: 704.787s
+
+2380
+elapsed time: 704.529s
+
+best run: 2380

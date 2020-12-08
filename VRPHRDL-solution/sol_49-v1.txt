@@ -1,0 +1,16 @@
+3514
+elapsed time: 608.376s
+
+3514
+elapsed time: 595.244s
+
+3514
+elapsed time: 596.891s
+
+3514
+elapsed time: 598.264s
+
+3514
+elapsed time: 593.199s
+
+best run: 3514

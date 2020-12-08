@@ -1,0 +1,16 @@
+5604
+elapsed time: 5717.38s
+
+5604
+elapsed time: 5624.69s
+
+5604
+elapsed time: 5593.66s
+
+5604
+elapsed time: 5584.52s
+
+5604
+elapsed time: 5545.14s
+
+best run: 5604

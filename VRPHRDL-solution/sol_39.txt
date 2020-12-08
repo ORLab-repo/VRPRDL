@@ -1,0 +1,16 @@
+3555
+elapsed time: 7446.2s
+
+3534
+elapsed time: 7576.03s
+
+3555
+elapsed time: 9373.09s
+
+3557
+elapsed time: 7266.99s
+
+3557
+elapsed time: 6258.65s
+
+best run: 3534

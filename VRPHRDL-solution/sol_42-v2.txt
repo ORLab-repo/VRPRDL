@@ -1,0 +1,16 @@
+1927
+elapsed time: 1270.34s
+
+1927
+elapsed time: 733.884s
+
+1927
+elapsed time: 1303.37s
+
+1927
+elapsed time: 656.847s
+
+1927
+elapsed time: 1064.1s
+
+best run: 1927

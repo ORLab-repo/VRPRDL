@@ -1,0 +1,16 @@
+3339
+elapsed time: 719.53s
+
+3339
+elapsed time: 714.115s
+
+3339
+elapsed time: 710.475s
+
+3339
+elapsed time: 728.155s
+
+3339
+elapsed time: 643.659s
+
+best run: 3339

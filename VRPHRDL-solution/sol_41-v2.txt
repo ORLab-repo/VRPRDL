@@ -1,0 +1,16 @@
+1998
+elapsed time: 799.497s
+
+1998
+elapsed time: 832.489s
+
+1998
+elapsed time: 792.052s
+
+1998
+elapsed time: 809.373s
+
+1998
+elapsed time: 724.86s
+
+best run: 1998
