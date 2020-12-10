@@ -18,11 +18,14 @@ public:
 	///SCP
 	//map with hash value and index in route pool
 	vector<map<II, int> > idWithLen; // [num of customers] 
+	vector<int> lenR;
 	vector<int*> routePool; 
+	vector<int*> routePoolLoc;
 	vector<int> costR;// cost of rou
 	int* valRou;
+	int* valRouLoc;
 	int valLength;
-	int maxNumRou = 100;
+	int maxNumRou = 600;
 	int curNumRou;
 	/// 
 	int nPop1;
@@ -39,12 +42,16 @@ public:
 		n = pr->numClient - 1;
 		//init for SCP
 		valRou = new int[n + 1];
+		valRouLoc = new int[n + 1];
 		idWithLen.resize(n + 1);
 		routePool.clear();
 		costR.clear();
-		for (int i = 1; i <= maxNumRou + 1; ++i) {
+		lenR.clear();
+		for (int i = 1; i <= maxNumRou + n + 1; ++i) {
 			routePool.push_back(new int[n + 1]);
+			routePoolLoc.push_back(new int[n + 1]);
 			costR.push_back(0);
+			lenR.push_back(0);
 		}		
 
 		for (int i = 0; i <= nPop + 2*delta; ++i) {
@@ -57,6 +64,7 @@ public:
 	}
 	///SCP FUNC
 	void addRou(Solution* u);
+	int solveSCP();
 	///
 
     bool checkIdSol(Solution* u);

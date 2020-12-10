@@ -40,12 +40,13 @@ namespace Util {
         int value = (int)(var * 100 );
         return (double)value / 100;
     }
-	const int mod[] = { (int)1e9 + 2277, (int)1e9 + 5277 };
-	const int base = 311; //should bigger than num of customers
+
 	//hash function with 2 mod
-	II getHash(int* arr, int length) {
+	inline pair<int,int> getHash(int* arr, int length) {
+		int mod[] = { (int)1e9 + 2277, (int)1e9 + 5277 };
+		int base = 311; //should bigger than num of customers
 		sort(arr + 1, arr + length + 1);
-		II res = II(0, 0);
+		pair<int, int> res = make_pair(0, 0);
 		for (int i = 1; i <= length; ++i) {
 			res.first = ((long long)res.first * base + arr[i]) % mod[0];
 			res.second = ((long long)res.second * base + arr[i]) % mod[1];

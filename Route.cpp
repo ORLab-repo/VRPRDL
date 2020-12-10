@@ -77,13 +77,14 @@ void Route::updateRoute() {
     for (int i = 1; i < pr->numClient; ++i)isNodeTested[i] = false;
 }
 
-int Route::getCliInRou(int* arr)
+int Route::getCliInRou(int* arr, int* arrLoc)
 {
     Node* val = this->depot;
     int numCus = 0;
     do {
         if (val->idxClient) {
             arr[++numCus] = val->idxClient;
+            arrLoc[numCus] = val->idxLoc;
         }
         val = val->suc;
     } while (val != this->depot);

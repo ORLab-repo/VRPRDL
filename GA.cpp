@@ -10,16 +10,85 @@ GA::~GA()
 
 void GA::addRou(Solution* u)
 {
-    for (auto rou : u->setR) {
-        valLength = rou->getCliInRou(valRou);
+    for(int idR = 1;idR<=u->m;++idR){
+    //for (auto rou : u->setR) {
+        Route* rou = u->setR[idR];
+        valLength = rou->getCliInRou(valRou, valRouLoc);
         if (valLength == 0)continue;
         II hashVal = Util::getHash(valRou, valLength);
         if (idWithLen[valLength][hashVal] == 0) {
             curNumRou++;
-            idWithLen[valLength][hashVal] = curNumRou;
-            //stop here
+            idWithLen[valLength][hashVal] = curNumRou;            
+            for (int i = 1; i <= valLength; ++i) {
+                routePool[curNumRou][i] = valRou[i];
+                routePoolLoc[curNumRou][i] = valRouLoc[i];
+            }
+            costR[curNumRou] = rou->depot->seqi_n->cost;
+            lenR[curNumRou] = valLength;
         }                        
     }
+}
+
+int GA::solveSCP()
+{
+    IloEnv env;
+    int res = -1;
+    try {
+        IloModel model(env);
+        IloRangeArray cons(env);
+        IloNumVarArray x(env, curNumRou + 1);
+        //IloExpr sumX(env);
+        for (int i = 1; i <= curNumRou; ++i) {
+            x[i] = IloNumVar(env, 0, 1, ILOINT);
+            //sumX += x[i];
+        }
+        IloExprArray sum(env, n + 1);
+        for (int i = 1; i <= n; ++i) {
+            sum[i] = IloExpr(env);
+        }
+        //construct sum
+        int idCli;
+        for (int i = 1; i <= curNumRou; ++i) {
+            for (int j = 1; j <= lenR[i]; ++j) {
+                idCli = routePool[i][j];
+                sum[idCli] += x[i];
+            }
+        }
+        //add constraint:
+        for (int i = 1; i <= n; ++i)cons.add(sum[i] >= 1);
+        //add objective
+        IloExpr sumObj(env);
+        for (int i = 1; i <= curNumRou; ++i)sumObj += x[i] * costR[i];
+        model.add(IloMinimize(env, sumObj));
+        model.add(cons);
+        IloCplex cplex(model);
+        if (!cplex.solve()) {
+            //res = oo;
+            throw "can't sol";
+        }
+        //cplex.setOut(pr->fileOut);
+        //cplex.setParam(IloCplex::TiLim, 10800);
+        cplex.out() << "Solution value = " << Util::round2num(cplex.getObjValue()) << endl;                
+        //cost = Util::round2num(cplex.getObjValue());
+        cplex.out() << "Solution status = " << cplex.getStatus() << endl;        
+        //construct new solution:
+        for (int i = 1; i <= curNumRou; ++i)if (cplex.getValue(x[i]) >= 0.9) {
+            /// get route and remove duplicate customer.
+        }
+        
+    }
+    catch (IloException& e) {
+        cerr << "Concert exception caught: " << e << endl;
+        throw "Error 7";
+    }
+    catch (...)
+    {
+        cerr << "Unknown exception caught" << endl;
+        throw "Error 7";
+    }
+    env.end();
+    curNumRou = 0;
+    return res;
 }
 
 bool GA::checkIdSol(Solution* u)
@@ -259,6 +328,9 @@ void GA::DiversifyPopu(Solution* bestSol)
 
 void GA::findGasSol(int maxNumGas)
 {    
+    int scpSol = oo;
+    curNumRou = 0;
+    for (int i = 1; i <= n; ++i)idWithLen[i].clear();
     int idFa, idMo;
     Solution* bestSol = new Solution(pr);
     clock_t be = clock();
@@ -307,6 +379,7 @@ void GA::findGasSol(int maxNumGas)
         cout<<endl;*/
         //insert child:
         insertNew(child1);
+        addRou(child1);
         if (nPop1 == nPop + delta)
             DelPopu();
         /*insertNew(child2);
@@ -318,6 +391,11 @@ void GA::findGasSol(int maxNumGas)
         }
         // if bestSol don't change 100 times change 25 worst sols by 25 new sols
         //if(numNotCha>=200){numNotCha=0;addPopu();}
+        if (curNumRou >= maxNumRou) {
+            scpSol = min(scpSol, solveSCP());
+            for (int i = 1; i <= n; ++i)idWithLen[i].clear();
+            addRou(pop[1]);
+        }
         if (numNotCha == 3000)
         {
             threshold = min(threshold - 1, 1);
@@ -339,6 +417,8 @@ void GA::findGasSol(int maxNumGas)
             //break;
         }
         //if((double)(clock()-be)/CLOCKS_PER_SEC>=600)break;
+        cout << curNumRou << "\n";
+        cout << "SCP sol: " << scpSol << "\n";
         cout<<bestSol->cost<<"}"<<endl;
     }
 }
