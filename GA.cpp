@@ -18,10 +18,14 @@ void GA::addRou(Solution* u)
         II hashVal = Util::getHash(valRou, valLength);
         if (idWithLen[valLength][hashVal] == 0) {
             curNumRou++;
-            idWithLen[valLength][hashVal] = curNumRou;            
+            idWithLen[valLength][hashVal] = curNumRou;      
+            routePoolPrv[curNumRou][1] = 0;
+            routePoolNxt[curNumRou][valLength] = 0;
             for (int i = 1; i <= valLength; ++i) {
                 routePool[curNumRou][i] = valRou[i];
                 routePoolLoc[curNumRou][i] = valRouLoc[i];
+                if (i != 1)routePoolPrv[curNumRou][i] = valRouLoc[i - 1];
+                if (i != valLength)routePoolNxt[curNumRou][i] = valRouLoc[i + 1];
             }
             costR[curNumRou] = rou->depot->seqi_n->cost;
             lenR[curNumRou] = valLength;
@@ -30,7 +34,7 @@ void GA::addRou(Solution* u)
 }
 
 int GA::solveSCP()
-{
+{    
     IloEnv env;
     int res = -1;
     try {
@@ -71,11 +75,23 @@ int GA::solveSCP()
         cplex.out() << "Solution value = " << Util::round2num(cplex.getObjValue()) << endl;                
         //cost = Util::round2num(cplex.getObjValue());
         cplex.out() << "Solution status = " << cplex.getStatus() << endl;        
-        //construct new solution:
+        //construct new solution:                      
         for (int i = 1; i <= curNumRou; ++i)if (cplex.getValue(x[i]) >= 0.9) {
-            /// get route and remove duplicate customer.
-        }
-        
+            //cout << i << "\n";
+            /// get route containing duplicate customer.    
+            for (int j = 1; j <= lenR[i]; ++j) {
+                idRouBelong[routePool[i][j]].push_back(i);
+                //cout << routePool[i][j] << " ";
+            }
+            //cout << "\n";
+        }   
+        /// remove duplicate customer
+        int minIdRou = -1;
+        int minImproved = oo;
+        for (int i = 1; i <= n; ++i)if (idRouBelong[i].size() > 1) {
+            //for(auto idDup: idRouBelong[i])            
+            ///stop here
+        }        
     }
     catch (IloException& e) {
         cerr << "Concert exception caught: " << e << endl;
@@ -86,7 +102,11 @@ int GA::solveSCP()
         cerr << "Unknown exception caught" << endl;
         throw "Error 7";
     }
-    env.end();
+    env.end();    
+    for (int i = 1; i <= n; ++i) {
+        idWithLen[i].clear();
+        idRouBelong[i].clear();
+    }
     curNumRou = 0;
     return res;
 }
@@ -330,7 +350,10 @@ void GA::findGasSol(int maxNumGas)
 {    
     int scpSol = oo;
     curNumRou = 0;
-    for (int i = 1; i <= n; ++i)idWithLen[i].clear();
+    for (int i = 1; i <= n; ++i) {
+        idWithLen[i].clear();
+        idRouBelong[i].clear();
+    }
     int idFa, idMo;
     Solution* bestSol = new Solution(pr);
     clock_t be = clock();
@@ -392,8 +415,7 @@ void GA::findGasSol(int maxNumGas)
         // if bestSol don't change 100 times change 25 worst sols by 25 new sols
         //if(numNotCha>=200){numNotCha=0;addPopu();}
         if (curNumRou >= maxNumRou) {
-            scpSol = min(scpSol, solveSCP());
-            for (int i = 1; i <= n; ++i)idWithLen[i].clear();
+            scpSol = min(scpSol, solveSCP());            
             addRou(pop[1]);
         }
         if (numNotCha == 3000)

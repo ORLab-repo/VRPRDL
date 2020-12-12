@@ -19,8 +19,11 @@ public:
 	//map with hash value and index in route pool
 	vector<map<II, int> > idWithLen; // [num of customers] 
 	vector<int> lenR;
+	vector<vector<int> > idRouBelong;
 	vector<int*> routePool; 
 	vector<int*> routePoolLoc;
+	vector<int*> routePoolPrv;// previous location of node
+	vector<int*> routePoolNxt;// next location of node
 	vector<int> costR;// cost of rou
 	int* valRou;
 	int* valRouLoc;
@@ -44,12 +47,18 @@ public:
 		valRou = new int[n + 1];
 		valRouLoc = new int[n + 1];
 		idWithLen.resize(n + 1);
+		idRouBelong.resize(n + 1);
 		routePool.clear();
+		routePoolLoc.clear();
+		routePoolPrv.clear();
+		routePoolNxt.clear();
 		costR.clear();
 		lenR.clear();
 		for (int i = 1; i <= maxNumRou + n + 1; ++i) {
 			routePool.push_back(new int[n + 1]);
 			routePoolLoc.push_back(new int[n + 1]);
+			routePoolPrv.push_back(new int[n + 1]);
+			routePoolNxt.push_back(new int[n + 1]);
 			costR.push_back(0);
 			lenR.push_back(0);
 		}		
