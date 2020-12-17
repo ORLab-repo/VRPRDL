@@ -7,9 +7,9 @@ class GA
 public:
 	int n;
 	int bestCost;
-	const int nPop = 25;
-	//const int delta = 100;
-	const int delta = 83;
+	const int nPop = 40;
+	const int delta = 100;
+	//const int delta = 83;
 	vector<Solution*> pop;// [nPop + 200];
 	Solution* valPop;
 	vector<int> adapt;// [nPop + 200] ;
@@ -19,7 +19,7 @@ public:
 	//map with hash value and index in route pool
 	vector<map<II, int> > idWithLen; // [num of customers] 
 	vector<int> lenR;
-	vector<vector<int> > idRouBelong;
+	vector<vector<II> > idRouBelong;
 	vector<int*> routePool; 
 	vector<int*> routePoolLoc;
 	vector<int*> routePoolPrv;// previous location of node
@@ -28,7 +28,7 @@ public:
 	int* valRou;
 	int* valRouLoc;
 	int valLength;
-	int maxNumRou = 600;
+	int maxNumRou = 10000;
 	int curNumRou;
 	/// 
 	int nPop1;

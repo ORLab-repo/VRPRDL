@@ -9,27 +9,33 @@ GA::~GA()
 }
 
 void GA::addRou(Solution* u)
-{
-    for(int idR = 1;idR<=u->m;++idR){
+{   
+    for (int idR = 1; idR <= u->m; ++idR) {
     //for (auto rou : u->setR) {
         Route* rou = u->setR[idR];
-        valLength = rou->getCliInRou(valRou, valRouLoc);
-        if (valLength == 0)continue;
-        II hashVal = Util::getHash(valRou, valLength);
-        if (idWithLen[valLength][hashVal] == 0) {
-            curNumRou++;
-            idWithLen[valLength][hashVal] = curNumRou;      
-            routePoolPrv[curNumRou][1] = 0;
-            routePoolNxt[curNumRou][valLength] = 0;
-            for (int i = 1; i <= valLength; ++i) {
-                routePool[curNumRou][i] = valRou[i];
-                routePoolLoc[curNumRou][i] = valRouLoc[i];
-                if (i != 1)routePoolPrv[curNumRou][i] = valRouLoc[i - 1];
-                if (i != valLength)routePoolNxt[curNumRou][i] = valRouLoc[i + 1];
+        valLength = rou->getCliInRou(valRou, valRouLoc);        
+        if (valLength == 0)continue;        
+        II hashVal = Util::getHash(valRou, valLength);    
+        int existID = idWithLen[valLength][hashVal];
+        if (existID == 0 || costR[existID] > rou->depot->seqi_n->cost){            
+            if (existID == 0) {
+                existID = ++curNumRou;
+                idWithLen[valLength][hashVal] = curNumRou;
+            }            
+            routePoolPrv[existID][1] = -1;
+            routePoolNxt[existID][valLength] = -1;
+            for (int i = 1; i <= valLength; ++i) {               
+                routePool[existID][i] = valRou[i];
+                routePoolLoc[existID][i] = valRouLoc[i];
+                if (i != 1)routePoolPrv[existID][i] = i - 1;
+                if (i != valLength)routePoolNxt[existID][i] = i + 1;
+            }            
+            costR[existID] = rou->depot->seqi_n->cost;
+            if(rou->caculateDis() != rou->depot->seqi_n->cost){
+                throw "error cost route";
             }
-            costR[curNumRou] = rou->depot->seqi_n->cost;
-            lenR[curNumRou] = valLength;
-        }                        
+            lenR[existID] = valLength;
+        }        
     }
 }
 
@@ -59,7 +65,7 @@ int GA::solveSCP()
             }
         }
         //add constraint:
-        for (int i = 1; i <= n; ++i)cons.add(sum[i] >= 1);
+        for (int i = 1; i <= n; ++i)cons.add(sum[i] == 1);// set to "=1" for using SPP
         //add objective
         IloExpr sumObj(env);
         for (int i = 1; i <= curNumRou; ++i)sumObj += x[i] * costR[i];
@@ -80,7 +86,7 @@ int GA::solveSCP()
             //cout << i << "\n";
             /// get route containing duplicate customer.    
             for (int j = 1; j <= lenR[i]; ++j) {
-                idRouBelong[routePool[i][j]].push_back(i);
+                idRouBelong[routePool[i][j]].push_back(II(i,j));
                 //cout << routePool[i][j] << " ";
             }
             //cout << "\n";
@@ -88,14 +94,83 @@ int GA::solveSCP()
         /// remove duplicate customer
         int minIdRou = -1;
         int minImproved = oo;
+        int idValRou, idValPos, valReduced;
+        int idPrv, idNxt;
+        int nodeU, prvU, nxtU;        
         for (int i = 1; i <= n; ++i)if (idRouBelong[i].size() > 1) {
-            //for(auto idDup: idRouBelong[i])            
-            ///stop here
+            //cout << "client: " << i << "\n";
+            minIdRou = -1;
+            minImproved = oo;
+            //find min route
+            for (auto val : idRouBelong[i]) {
+                idValRou = val.ft;
+                idValPos = val.sc;
+                nodeU = routePoolLoc[idValRou][idValPos];
+                idPrv = routePoolPrv[idValRou][idValPos];
+                idNxt = routePoolNxt[idValRou][idValPos];
+                prvU = (idPrv == -1) ? 0 : routePoolLoc[idValRou][idPrv];
+                nxtU = (idNxt == -1) ? 0 : routePoolLoc[idValRou][idNxt];
+                /*cout << idValPos << " " << idValRou << " ";
+                cout << prvU << " " << nodeU << " " << nxtU << "\n";*/
+                valReduced = pr->costs[prvU][nxtU] - pr->costs[prvU][nodeU] - pr->costs[nodeU][nxtU];
+                if (minImproved > valReduced) {
+                    minImproved = valReduced;
+                    minIdRou = idValRou;
+                }
+            }            
+            //keep this route and remove the remains            
+            for (auto val : idRouBelong[i]) {
+                idValRou = val.ft;
+                idValPos = val.sc;
+                if (idValRou == minIdRou)continue;
+                /*valPop->setR[1]->clearNode();
+                valPop->setR[1]->updateRoute();
+                cout << valPop->setR[1]->depot->pred->seq0_i->load << "\n";
+                for (int i1 = 1; i1 <= lenR[idValRou]; ++i1) if(routePool[idValRou][i1] != -1){
+                    valPop->nodes[routePool[idValRou][i1]]->idxClient = routePool[idValRou][i1];
+                    valPop->nodes[routePool[idValRou][i1]]->idxLoc = routePoolLoc[idValRou][i1];
+                    valPop->setR[1]->insertToRou(valPop->nodes[routePool[idValRou][i1]]);                                        
+                }                
+                valPop->setR[1]->showR();
+                valPop->setR[1]->showRLoc();
+                valPop->setR[1]->updateRoute();                
+                valPop->setR[1]->ckRoute();                */
+                idPrv = routePoolPrv[idValRou][idValPos];
+                idNxt = routePoolNxt[idValRou][idValPos];
+                routePoolNxt[idValRou][idPrv] = idNxt;
+                routePoolPrv[idValRou][idNxt] = idPrv;
+                routePool[idValRou][idValPos] = -1;//remove it
+            }            
+        }
+        int valCount = 0;
+        int ckCost = 0;
+        for (int i = 1; i <= curNumRou; ++i)if (cplex.getValue(x[i]) >= 0.9) {
+            ckCost += costR[i];
+            for (int j = 1; j <= lenR[i]; ++j) if (routePool[i][j] != -1) {
+                valPop->giantT[++valCount] = routePool[i][j];
+            }
         }        
+        if (valCount != n) {
+            throw "Error in solve SCP";
+        }
+        else {
+            for (int i = 1; i <= n; ++i)pr->fl << valPop->giantT[i] << ", ";
+            pr->fl.close();
+        }
+        valPop->Split();        
+        res = valPop->cost;
+        if (res > (int)ceil(cplex.getObjValue())) {
+            throw "error cost in SCP";
+        }
     }
     catch (IloException& e) {
         cerr << "Concert exception caught: " << e << endl;
         throw "Error 7";
+    }
+    catch (const char* msg) {
+        cerr << msg << endl;
+        exit(0);
+        system("pause");
     }
     catch (...)
     {
@@ -106,7 +181,7 @@ int GA::solveSCP()
     for (int i = 1; i <= n; ++i) {
         idWithLen[i].clear();
         idRouBelong[i].clear();
-    }
+    }   
     curNumRou = 0;
     return res;
 }
@@ -133,11 +208,12 @@ int GA::broken_pairs(Solution* u, Solution* v)
 
 bool GA::CheckEqual(Solution* u, Solution* v)
 {    
+    if (abs(u->cost - v->cost) <= omega) return true;
     /*for (int i = 1; i <= n; ++i)
-        if(u->giantT[i] != v->giantT[i])return false;
-    return true;*/
-    return(abs(u->cost - v->cost) <= omega)
-        || (broken_pairs(u, v) < threshold);
+        if(u->giantT[i] != v->giantT[i])return false;*/
+    return false;
+    /*return(abs(u->cost - v->cost) <= omega)
+        || (broken_pairs(u, v) < threshold);*/
 }
 
 void GA::equalSol(Solution* u, Solution* v)
@@ -271,8 +347,10 @@ void GA::uni(Solution* u, Solution* v, Solution* u1, Solution* v1)
         q.pop_front();
         vt++;
     }*/
-    if (pr->Rng.genRealInRang01_muta() <= pM)u1->interchange();
-    u1->Split(); u1->updateTotal();
+    u1->Split();
+    if (pr->Rng.genRealInRang01_muta() > pM) {//u1->interchange();
+        u1->updateTotal();
+    }
     //v1->Split(); v1->updateTotal();
     /*if(rand()%2==0){
         u1.updateObj();v1.updateObj();
@@ -401,8 +479,8 @@ void GA::findGasSol(int maxNumGas)
         for(int i=0;i<n;++i)cout<<child2.id[i]<<" ";
         cout<<endl;*/
         //insert child:
-        insertNew(child1);
-        addRou(child1);
+        insertNew(child1);       
+        addRou(child1);       
         if (nPop1 == nPop + delta)
             DelPopu();
         /*insertNew(child2);
@@ -415,8 +493,12 @@ void GA::findGasSol(int maxNumGas)
         // if bestSol don't change 100 times change 25 worst sols by 25 new sols
         //if(numNotCha>=200){numNotCha=0;addPopu();}
         if (curNumRou >= maxNumRou) {
-            scpSol = min(scpSol, solveSCP());            
-            addRou(pop[1]);
+            scpSol = min(scpSol, solveSCP());
+            insertNew(valPop);
+            if (nPop1 == nPop + delta)
+                DelPopu();
+            /*pop[1]->Split();
+            addRou(pop[1]);*/
         }
         if (numNotCha == 3000)
         {
@@ -436,6 +518,7 @@ void GA::findGasSol(int maxNumGas)
             pr->fileOut<< bestSol->cost<<"\n";            
             for (int i = 1; i <= n; ++i)pr->fileOut << bestSol->giantT[i] << ", ";
             pr->fileOut << "\n";
+            pr->fileOut <<(double)(clock() - be) / CLOCKS_PER_SEC << "\n";
             //break;
         }
         //if((double)(clock()-be)/CLOCKS_PER_SEC>=600)break;

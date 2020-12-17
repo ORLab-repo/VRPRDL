@@ -564,7 +564,7 @@ public:
                 setR[numVeh]->insertToRou(nodes[idCus]);
             }
         }
-        for (int i = 1; i <= min(m + 1, n); ++i) {
+        for (int i = 1; i <= min(m + 1, n); ++i) {            
             setR[i]->updateRoute();
             //setR[i]->showR();
         }
@@ -2642,6 +2642,19 @@ public:
         delete[] curGiantT;
     }
 
+    void printSol(ostream& os) {
+        os << "Cost: " << cost << "\n\n";
+        os << "Giant Tour\n";
+        for (int i = 1; i <= n; ++i)os << giantT[i] << ", ";
+        os << "\n\nClients in Route:\n";
+        for (int i = 1; i <= m; ++i) {
+            setR[i]->showRInFile(os);
+        }
+        os << "\nLocations in Route:\n";
+        for (int i = 1; i <= m; ++i) {
+            setR[i]->showRLocInFile(os);
+        }
+    }
     //deconstructor:
     ~Solution(){        
         /*for (int k = 0; k <= m; ++k) {

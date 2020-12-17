@@ -11,6 +11,7 @@ class Param {
 public:
 	std::string nameIns;
 	ofstream fileOut;
+	ofstream fl;
 	int Q;// capacity
 	int T;// time horizon	
 	int numVeh = int(1e9);// number of vehicle

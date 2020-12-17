@@ -6,7 +6,7 @@
 using namespace std;
 
 int arr[] = {
-    0, 25, 59, 91, 1, 38, 52, 5, 92, 111, 23, 10, 39, 101, 41, 11, 64, 53, 80, 100, 89, 51, 103, 61, 113, 56, 88, 8, 76, 85, 36, 117, 94, 104, 66, 77, 14, 29, 13, 9, 24, 49, 47, 87, 30, 4, 114, 95, 60, 118, 70, 81, 45, 50, 19, 67, 108, 20, 96, 69, 63, 99, 58, 109, 7, 12, 54, 32, 105, 78, 79, 21, 28, 62, 98, 112, 110, 115, 44, 74, 35, 107, 31, 16, 22, 97, 37, 75, 57, 26, 65, 33, 82, 6, 71, 83, 93, 34, 120, 86, 42, 3, 18, 40, 119, 106, 2, 15, 43, 90, 17, 48, 102, 73, 55, 116, 68, 27, 46, 72, 84
+    0, 68, 53, 80, 100, 89, 51, 103, 22, 97, 37, 115, 75, 57, 26, 44, 74, 65, 82, 71, 83, 34, 19, 96, 6, 35, 107, 31, 16, 112, 120, 39, 23, 10, 101, 67, 20, 94, 104, 66, 77, 14, 29, 13, 9, 63, 99, 50, 85, 45, 36, 4, 117, 70, 60, 118, 81, 95, 114, 30, 47, 119, 27, 46, 86, 48, 59, 91, 1, 38, 52, 5, 110, 92, 69, 111, 106, 2, 15, 43, 90, 17, 33, 102, 73, 55, 116, 98, 28, 21, 78, 84, 88, 56, 8, 76, 41, 79, 62, 93, 72, 105, 32, 54, 12, 25, 7, 109, 64, 58, 24, 49, 87, 42, 3, 18, 11, 113, 61, 40, 108
 };
 
 int arrLS[] = {
@@ -43,13 +43,11 @@ void getSamples() {
     fileIn.close();
 }
 //exe -ni -nc -pmin -pmax -ld - bi -TL -method
-string typeIns[] = { "C", "R", "RC" };
+//string typeIns[] = { "C", "R", "RC" };
+string typeIns;
 int _numI = 100, _numC = 20, _pMin = 1, _pMax = 2, _ld = 2, timeLimit = oo;
 string method = "ELS";
 bool _bi = true;
-void ckChanged(vector<int> arr) {
-    arr.push_back(0);
-}
 int main(int argc, char* argv[]) {
     //freopen("log.txt", "w", stdout);
     /*for (int i = 1; i < argc; ++i) {
@@ -78,20 +76,28 @@ int main(int argc, char* argv[]) {
             timeLimit = atoi(argv[i + 1]);
         }
     }*/
-    cin.tie(0); cout.tie(0);
-    int numRun = 1;
-    int idxIns;
-    cin >> idxIns;
+    //int numRun = 1;
+    int idxIns = 1;
+    typeIns = "VRPRDL";
+    string pathIn, pathOut;
+    for (int i = 1; i < argc; ++i) {
+        if (string(argv[i]) == "-type") {            
+            typeIns = argv[i + 1];
+        }
+        if (string(argv[i]) == "-id") {
+            idxIns = atoi(argv[i + 1]);
+        }
+    }
+    cin.tie(0); cout.tie(0);//cin >> idxIns;
     //cout << "Num of runs: ";
     //cin >> numRun;    
     int isFlex = 1;
     //cout << "isFlex: ";
     //cin >> isFlex;
     ios::sync_with_stdio(0);
-    //srand(seed[0]);    
-    string pathIn, pathOut;
-    //pathIn = "instances_VRPHRDL\\instance_" + to_string(idxIns) + "-triangle.vrp";
-    pathIn = "instances\\instance_" + to_string(idxIns) + "-triangle.vrp";
+    //srand(seed[0]);        
+    if(typeIns == "HRDL")pathIn = "instances_VRPHRDL\\instance_" + to_string(idxIns) + "-triangle.vrp";
+    else pathIn = "instances\\instance_" + to_string(idxIns) + "-triangle.vrp";
     //pathIn = "instances_VRPHRDL\\" + to_string(idxIns) + "-v2.vrp";
     //pathIn = "instances\\" + to_string(idxIns) + "-v2.vrp";
     //getSamples();    
@@ -109,12 +115,21 @@ int main(int argc, char* argv[]) {
     //pr->maxE *= 10;             
     //init(pr);
     pr->fileOut.open(pathOut);
+    pr->fl.open("ckSol.txt");
     cout.precision(6);
     //ckData(pr);    
     init(pr);
     Solution bestSol(pr);
     ///check solution    
-    ofstream fl("ckSol.txt");
+    /*for (int i = 1; i <= bestSol.n; ++i) {
+        bestSol.giantT[i] = arr[i];
+    }
+    bestSol.Split();
+    bestSol.printSol(pr->fileOut);
+    pr->fileOut.close();
+    //Display();
+    system("pause");
+    return 0;*/
     /*std::chrono::time_point<std::chrono::system_clock> start, end;
     start = std::chrono::system_clock::now();
     for (int i = 1; i <= 100000; ++i) {
@@ -133,7 +148,7 @@ int main(int argc, char* argv[]) {
     GA Algo;
     Algo.init(pr);
     int minCost = oo;
-    for (int numRun = 1; numRun < 5; ++numRun) {
+    for (int numRun = 0; numRun < 5; ++numRun) {
         pr->Rng.config(seed[numRun]);
         std::chrono::time_point<std::chrono::system_clock> start, end;
         start = std::chrono::system_clock::now();

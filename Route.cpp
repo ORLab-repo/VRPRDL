@@ -31,10 +31,11 @@ void Route::updateRoute() {
         u = val->idxLoc;
         val = val->suc;
         val->rou = this;
-        v = val->idxLoc;
+        v = val->idxLoc;        
+        if(pr->isDebug)cout << v << " " << val->demand <<" "<<pr->listLoc[v].demand<<"\n";
         val->seq0_i->concatOneAfter(val->pred->seq0_i, v);
         val->seqi_0->concatOneBefore(val->pred->seqi_0, v);
-        length = i;
+        length = i;       
         //if(pr->isDebug)cout << v << " " << E[i] << endl;
         val->posInRoute = i;
         if (v == 0)break;        
@@ -83,7 +84,7 @@ int Route::getCliInRou(int* arr, int* arrLoc)
     int numCus = 0;
     do {
         if (val->idxClient) {
-            arr[++numCus] = val->idxClient;
+            arr[++numCus] = val->idxClient;            
             arrLoc[numCus] = val->idxLoc;
         }
         val = val->suc;
@@ -100,6 +101,16 @@ void Route::showR() {
     cout << "\n";
 }
 
+void Route::showRInFile(ostream& os)
+{
+    Node* val = this->depot;
+    do {
+        os << val->idxClient << " ";
+        val = val->suc;
+    } while (val != this->depot);
+    os << "\n";
+}
+
 void Route::showRLoc()
 {
     Node* val = this->depot;
@@ -108,6 +119,16 @@ void Route::showRLoc()
         val = val->suc;
     } while (val != this->depot);
     cout << "\n";
+}
+
+void Route::showRLocInFile(ostream& os)
+{
+    Node* val = this->depot;
+    do {
+        os << val->idxLoc << " ";
+        val = val->suc;
+    } while (val != this->depot);
+    os << "\n";
 }
 
 void Route::showR_rev() {
