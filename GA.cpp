@@ -65,7 +65,7 @@ int GA::solveSCP()
             }
         }
         //add constraint:
-        for (int i = 1; i <= n; ++i)cons.add(sum[i] == 1);// set to "=1" for using SPP
+        for (int i = 1; i <= n; ++i)cons.add(sum[i] >= 1);// set to "=1" for using SPP
         //add objective
         IloExpr sumObj(env);
         for (int i = 1; i <= curNumRou; ++i)sumObj += x[i] * costR[i];
