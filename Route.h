@@ -26,8 +26,11 @@ public:
     void clearRouteFromRev(Node* u);
     int caculateDis();
     void updateRoute();    
+    int getCliInRou(int* arr, int* arrLoc);//return num of client in rou    
     void showR();
+    void showRInFile(ostream& os);
     void showRLoc();
+    void showRLocInFile(ostream& os);
     void showR_rev();
     void reverse1Dep();
     void reverse();

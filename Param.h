@@ -1,14 +1,17 @@
 #pragma once
 #include "Client.h"
+#include "RandomGenerator.h"
 #include "Location.h"
 
 class Client;
 class Location;
+class RandomGenerator;
 
 class Param {
 public:
 	std::string nameIns;
 	ofstream fileOut;
+	ofstream fl;
 	int Q;// capacity
 	int T;// time horizon	
 	int numVeh = int(1e9);// number of vehicle
@@ -25,6 +28,7 @@ public:
 	int lambda = 2;	
 	clock_t start, end;
 	double total = 0;
+	double totalIntra = 0;
 	int ldTw = 5;// coff for TW
 	//int maxNeibor = 40;// max size of neigbor vertex set for granular search (can be used for dynamically sertification).
 	int maxNeibor = 120;// max size of neigbor vertex set for granular search (can be used for dynamically sertification).
@@ -45,6 +49,7 @@ public:
 	bool moveor = false;
 	bool stringex = false;
 	string pathOut;
+	RandomGenerator Rng;
 	Param() {
 		cout << "clear param\n";
 		listCL.clear();

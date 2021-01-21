@@ -40,4 +40,20 @@ namespace Util {
         int value = (int)(var * 100 );
         return (double)value / 100;
     }
+
+	//hash function with 2 mod
+	inline pair<int,int> getHash(int* arr, int length) {
+		int* arrSort = new int[length];
+		for (int i = 0; i < length; ++i)arrSort[i] = arr[i + 1];
+		int mod[] = { (int)1e9 + 2277, (int)1e9 + 5277 };	
+		int base = 311; //should bigger than num of customers
+		sort(arrSort, arrSort + length);
+		pair<int, int> res = make_pair(0, 0);
+		for (int i = 0; i < length; ++i) {
+			res.first = ((long long)res.first * base + arrSort[i]) % mod[0];
+			res.second = ((long long)res.second * base + arrSort[i]) % mod[1];
+		}
+		delete[] arrSort;
+		return res;
+	}
 }

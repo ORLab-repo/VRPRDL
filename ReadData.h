@@ -13,12 +13,14 @@ Param* read_Ins(string path){
     pr->listLoc.clear();
     while(filein){
         string line;
-        getline(filein,line);
+        getline(filein,line);        
         lineCont = Util::splitString(line, "\t");        
-        /*if (lineCont[0] == "NAME:") {
-            countLine++;
+        if (lineCont[0] == "NAME:") {          
+            //countLine++;
+            pr->nameIns = lineCont[1];
             continue;
         }
+        /*
         if (lineCont[0] == "TYPE:") {
             countLine++;
             continue;
@@ -276,8 +278,8 @@ void init(Param* pr) {
                 num_reduced++;
             }
         }
-        cout << num_reduced << endl;
-        cout << flag << endl;
+        /*cout << num_reduced << endl;
+        cout << flag << endl;*/
         if (flag)break;
     }    
 }

@@ -1,32 +1,7 @@
 #pragma once
 #include "lib.h"
-#include "Rng.h"
 #include "Node.h"
 #include "Route.h"
-
-bool notDominatePop(II &label, II &labelA, II &labelB, II &labelC)
-{
-    if (label.first >= labelA.first && label.second >= labelA.second)
-        if (label.first != labelA.first || label.second != labelA.second) return false;
-    if (label.first >= labelB.first && label.second >= labelB.second)
-        if (label.first != labelB.first || label.second != labelB.second) return false;
-    if (label.first >= labelC.first && label.second >= labelC.second)
-        if (label.first != labelC.first || label.second != labelC.second) return false;
-    return true;
-}
-bool notDominatePush(II &label, II &labelA, II &labelB, II &labelC)
-{
-    if (label.first >= labelA.first && label.second >= labelA.second) return false;
-    if (label.first >= labelB.first && label.second >= labelB.second) return false;
-    if (label.first >= labelC.first && label.second >= labelC.second) return false;
-    return true;
-}
-void updateLabel(II label, II& labelA, II& labelB, II& labelC)
-{
-    if (label.first <= labelA.first && label.second <= labelA.second) labelA = label;
-    if (label.first < labelB.first) labelB = label;
-    if (label.second < labelC.second) labelC = label;
-}
 
 class Solution {
 public:
@@ -40,6 +15,11 @@ public:
     vector<int>* lstNeig;// getting current list of neiborhood;
     SeqData* seqSet;// init sequences for each node.    
     SeqData* seqDep;// only contain depot
+    //GA parts:
+    vector<int> predecessors; // store prev node of each client  
+    vector<int> successors; // store next node of each client  
+    multiset<pair<int, Solution*>> indivsPerProximity;
+    double biasedFitness; // Biased fitness of the solution
     /*
     * Variables for dealing with LS
     */
@@ -62,7 +42,7 @@ public:
     Node* vSuc;
     Route* routeU;
     Route* routeV;
-    bool isFixed;// for identifying the type of LS;
+    bool isFixed = false;// for identifying the type of LS;
 
     Param* pr;
     int cost;// objective
@@ -192,17 +172,77 @@ public:
             nodes[i]->movesClu.resize(pr->maxNeibor);
         }
 
+        indivsPerProximity.clear();
+        predecessors.resize(n + 1);
+        successors.resize(n + 1);
         /*
         * init for split
-        */
+        */               
         F = new int[n + 1];
         pred = new int[n + 1];
     }
 
+    bool notDominatePop(II& label, II& labelA, II& labelB, II& labelC)
+    {
+        if (label.first >= labelA.first && label.second >= labelA.second)
+            if (label.first != labelA.first || label.second != labelA.second) return false;
+        if (label.first >= labelB.first && label.second >= labelB.second)
+            if (label.first != labelB.first || label.second != labelB.second) return false;
+        if (label.first >= labelC.first && label.second >= labelC.second)
+            if (label.first != labelC.first || label.second != labelC.second) return false;
+        return true;
+    }
+    bool notDominatePush(II& label, II& labelA, II& labelB, II& labelC)
+    {
+        if (label.first >= labelA.first && label.second >= labelA.second) return false;
+        if (label.first >= labelB.first && label.second >= labelB.second) return false;
+        if (label.first >= labelC.first && label.second >= labelC.second) return false;
+        return true;
+    }
+    void updateLabel(II label, II& labelA, II& labelB, II& labelC)
+    {
+        if (label.first <= labelA.first && label.second <= labelA.second) labelA = label;
+        if (label.first < labelB.first) labelB = label;
+        if (label.second < labelC.second) labelC = label;
+    }
+
     void genGiantT() {
         for (int i = 1; i <= n; ++i)giantT[i] = i;
-        //shuffle(giantT.begin() + 1, giantT.end(), Rng::generator);
+        shuffle(giantT.begin() + 1, giantT.end(), pr->Rng.generator);
+        //random_shuffle(giantT.begin() + 1, giantT.end());
     }
+
+    /*diversity contribution in GA*/
+    void removeProximity(Solution* indiv)
+    {
+        auto it = indivsPerProximity.begin();
+        while (it->second != indiv) ++it;
+        indivsPerProximity.erase(it);
+    }
+
+
+    double brokenPairsDistance(Solution* valSol) {
+        int differences = 0;
+        for (int j = 1; j <= n; j++)
+        {
+            if (successors[j] != valSol->successors[j] && successors[j] != valSol->predecessors[j]) differences++;
+            if (predecessors[j] == 0 && valSol ->predecessors[j] != 0 && valSol->successors[j] != 0) differences++;
+        }
+        return (double)differences / (double)n;
+    }
+
+    double averageBrokenPairsDistanceClosest(int nbClosest) {
+        double result = 0;
+        int maxSize = min<int>(nbClosest, indivsPerProximity.size());
+        auto it = indivsPerProximity.begin();
+        for (int i = 0; i < maxSize; i++)
+        {
+            result += it->first;
+            ++it;
+        }
+        return result / (double)maxSize;
+    }
+    /**/
 
     void cvGiantT() {
         int pos = 0;
@@ -564,18 +604,27 @@ public:
                 setR[numVeh]->insertToRou(nodes[idCus]);
             }
         }
-        for (int i = 1; i <= min(m + 1, n); ++i) {
+        for (int i = 1; i <= min(m + 1, n); ++i) {            
             setR[i]->updateRoute();
             //setR[i]->showR();
         }
-        reinitNegiborSet();
+        reinitNegiborSet();        
+        for (int i = 1; i <= n; ++i) {
+            predecessors[i] = nodes[i]->pred->idxClient;
+            successors[i] = nodes[i]->suc->idxClient;
+        }
         if (pr->isTurnCkSol) {
             try {
                 ckSol();
             }
             catch (const char* msg) {
                 cerr << msg << endl;
-                exit(0);
+                for (int i = 1; i <= n; ++i)pr->fileOut << giantT[i] << ", ";
+                pr->fileOut << "\n";
+                for (auto val : ordNodeLs)pr->fileOut << val << ", ";
+                pr->fileOut.close();
+                system("pause");
+                exit(0);                
             }
         }
         //cvSolT(); // uncomment when need tracking the specific postion in solution (used in sequential search)        
@@ -633,6 +682,7 @@ public:
     }
 
     bool isCorrelated(Node* u, Node* v) {
+        return true;
         if (u->idxClient == 0 || v->idxClient == 0)return true;
         if (isFixed)return v->idxLocMoves[u->idxClient];
         else return v->idxCluMoves[u->idxClient];
@@ -640,10 +690,10 @@ public:
 
     void updateObjInter() {
         //shuffle the moves:  
-        shuffle(ordNodeLs.begin(), ordNodeLs.end(), Rng::generator);
+        shuffle(ordNodeLs.begin(), ordNodeLs.end(), pr->Rng.generator);
         /*for (int i = 1; i <= n; ++i) {            
-            shuffle(nodes[i]->movesClu.begin(), nodes[i]->movesClu.end(), Rng::generator);
-            shuffle(nodes[i]->movesLoc.begin(), nodes[i]->movesLoc.end(), Rng::generator);
+            shuffle(nodes[i]->movesClu.begin(), nodes[i]->movesClu.end(), pr->Rng.generator);
+            shuffle(nodes[i]->movesLoc.begin(), nodes[i]->movesLoc.end(), pr->Rng.generator);
         }*/
         //reset all moves on route:
         reinitAllMovesInRou();
@@ -696,7 +746,7 @@ public:
                     }
                     else /*if (isFixed)*/ {
                         //intra route general insert (only consider with fixed version):                        
-                        isFixed = false;
+                        //isFixed = false;
                         tempNode = nodeV;
                         nodeV = nodeV->suc;
                         vSuc = nodeV->suc;
@@ -705,7 +755,7 @@ public:
                         if (isMoved != 1) {
                             isMoved = intraRouteGeneralInsert();
                         }
-                        isFixed = false;
+                        //isFixed = false;
                         nodeV = tempNode;
                         routeV = nodeV->rou;
                         vSuc = nodeV->suc;
@@ -718,7 +768,7 @@ public:
                 nodeV = nodeU->suc;
                 routeV = nodeV->rou;
                 if (!routeV->isNodeTested[nodeU->idxClient]) {
-                    isFixed = false;
+                    //isFixed = false;
                     while (isMoved != 1 && nodeV->idxClient)
                     {
                         vPred = nodeV->pred;
@@ -727,7 +777,7 @@ public:
                             isMoved = intraRoute2Opt();
                         nodeV = nodeV->suc;
                     }
-                    isFixed = false;
+                    //isFixed = false;
                 }
 
                 // Special cases : testing the insertions behind the depot, and the empty routes
@@ -763,7 +813,7 @@ public:
                     }
                     else /*if (isFixed)*/ {
                         //intra route general insert (only consider with fixed version):                        
-                        isFixed = false;
+                        //isFixed = false;
                         tempNode = nodeV;
                         nodeV = nodeV->suc;
                         vSuc = nodeV->suc;
@@ -771,7 +821,7 @@ public:
                         if (isMoved != 1) {
                             isMoved = intraRouteGeneralInsert();
                         }
-                        isFixed = false;
+                        //isFixed = false;
                         nodeV = tempNode;
                         routeV = nodeV->rou;
                         vSuc = nodeV->suc;
@@ -795,8 +845,7 @@ public:
 
     //flexSeq must have larger than 2 sequences
     //with flexible version, it will change locations of the last node of first sequence and first node of last sequence .
-    III evalFlex(vector<SeqData*> flexSeq) {
-        pr->start = clock();
+    III evalFlex(vector<SeqData*> flexSeq) {        
         III res = III(II(-1, -1), oo);// (location of 2 changed node and result)        
         SeqData* firstE = flexSeq.front();
         SeqData* lastE = flexSeq.back();
@@ -843,12 +892,11 @@ public:
             }
         }        
         delete seqTempU;
-        delete seqTempV;
-        pr->total += (double)(clock() - pr->start) / CLOCKS_PER_SEC;
+        delete seqTempV;        
         return res;
     }
 
-    int evalSpecFlex(vector<SeqData*>& flexSeq, vector<int>& trace) {
+    int evalSpecFlex(vector<SeqData*>& flexSeq, vector<int>& trace) {        
         int* virGiantT = new int[6];
         int curNum = 0;
         int totalLoad = 0;
@@ -872,7 +920,10 @@ public:
         }        
         if (cliAf != -1)virGiantT[++curNum] = cliLast;
         else cliAf = cliLast;
-        if (curNum == 0)return 0;
+        if (curNum == 0) {
+            delete[] virGiantT;
+            return 0;
+        }        
         //find min:
         int stT = 0, enT = pr->T;
         int resCost = 0;
@@ -911,7 +962,10 @@ public:
             pred[i] = -1;
             totalLoad += pr->listCL[virGiantT[i]].demand;
         }
-        if (totalLoad > pr->Q)return oo;
+        if (totalLoad > pr->Q) {            
+            delete[] virGiantT;
+            return oo;
+        }
         F[0] = oo;
         pred[0] = -1;
         int stLb = -1, enLb = -1;
@@ -980,10 +1034,13 @@ public:
             enLb = lstLabel.size() - 1;
             if (stLb > enLb)break;
         }        
+        lstLabel.clear();
+        curLabel.clear();
+        prvIdLb.clear();        
         if (F[curNum] >= oo) {
             delete[] virGiantT;
             return oo;
-        }
+        }        
         resCost += F[curNum];
         int indexLb = pred[curNum];// index of last label.
        ///construct solution
@@ -1000,11 +1057,11 @@ public:
             changeLocCli(val);
         }*/
         trace = tourLoc;
-        delete[] virGiantT;       
+        delete[] virGiantT;               
         return resCost;
     }
     //split seq:
-    bool evalFlexRou(vector<SeqData*> &flexSeq, vector<int>& trace) {        
+    bool evalFlexRou(vector<SeqData*> &flexSeq, vector<int>& trace) {                  
         int* virGiantT = new int[routeU->length + 3];
         int curNum = 0;
         //get order cus in route.            
@@ -1045,10 +1102,13 @@ public:
         lstLabel.clear();
         curLabel.clear();
         prvIdLb.clear();
+        //cout << "giant in rou:\n";
         for (int i = 1; i <= curNum; ++i) {
+            //cout << virGiantT[i] << " ";
             F[i] = oo;
             pred[i] = -1;
         }
+        //cout << "\n";
         F[0] = oo;
         pred[0] = -1;
         int stLb = -1, enLb = -1;
@@ -1117,7 +1177,7 @@ public:
             enLb = lstLabel.size() - 1;
             if (stLb > enLb)break;
         }           
-        int oldCost = routeU->depot->seqi_n->cost;           
+        int oldCost = routeU->depot->seqi_n->cost;              
         if (F[curNum] >= oldCost) {                                       
             delete[] virGiantT;            
             return false;
@@ -1142,14 +1202,14 @@ public:
     }
     //change location of client 
     //input: location used to change
-    void changeLocCli(int idLoc) {
+    void changeLocCli(int idLoc) {        
         if (idLoc == 0)return;
         if (nodes[pr->listLoc[idLoc].idxClient]->idxLoc == idLoc)return;
         nodes[pr->listLoc[idLoc].idxClient]->idxLoc = idLoc;
-        reinitCluSet(nodes[pr->listLoc[idLoc].idxClient]);
+        reinitCluSet(nodes[pr->listLoc[idLoc].idxClient]);        
     }
 
-    int interRouteGeneralInsert() {
+    int interRouteGeneralInsert() {        
         int iBest = 0, jBest = 0;
         int moveMin;
         // 0 -> send nothing
@@ -1454,7 +1514,7 @@ public:
                     jBest = j;
                 }
             }
-        }
+        }        
         if (iBest == 0 && jBest == 0)
             return 0;
         //reinitSingleMoveInRou(routeU);
@@ -1510,7 +1570,12 @@ public:
             }
             catch (const char* msg) {
                 cerr << msg << endl;
-                exit(0);
+                for (int i = 1; i <= n; ++i)pr->fileOut << giantT[i] << ", ";
+                pr->fileOut << "\n";
+                for (auto val : ordNodeLs)pr->fileOut << val << ", ";
+                pr->fileOut.close();
+                system("pause");
+                exit(0);                
             }
         }
         return 1;
@@ -1543,6 +1608,7 @@ public:
     void addRevSeqInPieces(Node* st, Node* en, vector<SeqData*>& myseqs) {
         //st and en are in the same route.        
         //st and en can't be depot
+        int preBe = myseqs.size();
         assert(st->idxClient && en->idxClient);
         if (st->posInRoute > en->posInRoute)return;
         int disInR = -1;
@@ -1556,8 +1622,9 @@ public:
             }
             SeqData* curSeq = val->seqj_i[pr->sizeSub - 1];
             myseqs.push_back(curSeq);
-            val = nodes[pr->listLoc[curSeq->firstnode].idxClient]->pred;
+            val = nodes[pr->listLoc[curSeq->firstnode].idxClient]->suc;
         }
+        reverse(myseqs.begin() + preBe, myseqs.end());
     }
 
     int intraRouteGeneralInsert() {      
@@ -2075,7 +2142,7 @@ public:
             insertNode(vSuc, nodeV);
         }
 
-        count[iBest][jBest]++;
+        //count[iBest][jBest]++;
         routeU->updateRoute();        
         nodeU = tempU;
         nodeV = tempV;
@@ -2090,7 +2157,12 @@ public:
             }
             catch (const char* msg) {
                 cerr << msg << endl;
-                exit(0);
+                for (int i = 1; i <= n; ++i)pr->fileOut << giantT[i] << ", ";
+                pr->fileOut << "\n";
+                for (auto val : ordNodeLs)pr->fileOut << val << ", ";
+                pr->fileOut.close();
+                system("pause");
+                exit(0);                
             }
         }
         return 1;       
@@ -2176,7 +2248,12 @@ public:
             }
             catch (const char* msg) {
                 cerr << msg << endl;
-                exit(0);
+                for (int i = 1; i <= n; ++i)pr->fileOut << giantT[i] << ", ";
+                pr->fileOut << "\n";
+                for (auto val : ordNodeLs)pr->fileOut << val << ", ";
+                pr->fileOut.close();
+                system("pause");
+                exit(0);                
             }
         }
         return 1;        
@@ -2308,7 +2385,12 @@ public:
             }
             catch (const char* msg) {
                 cerr << msg << endl;
-                exit(0);
+                for (int i = 1; i <= n; ++i)pr->fileOut << giantT[i] << ", ";
+                pr->fileOut << "\n";
+                for (auto val : ordNodeLs)pr->fileOut << val << ", ";
+                pr->fileOut.close();
+                system("pause");
+                exit(0);                
             }
         }
         return 1;    
@@ -2328,7 +2410,7 @@ public:
         if(isFixed)newCost = seq->evaluation(myseqs1);
         else {
             /*flexRes = evalFlex(myseqs1);
-            newCost = flexRes.sc;*/
+            newCost = flexRes.sc;*/           
             traceLoc[0][1].clear();
             if (evalFlexRou(myseqs1, traceLoc[0][1])) {                                
                 newCost = F[traceLoc[0][1].size()];
@@ -2337,8 +2419,9 @@ public:
         if (oldCost <= newCost)return 0;                     
         if (pr->isDebug) {
             cout << "ck intra route 2Opt\n"; 
-            /*cout << boolalpha << isFixed << "\n";
-            cout << nodeU->idxClient << " " << nodeV->idxClient << "\n";*/
+            cout << boolalpha << isFixed << "\n";
+            routeU->showR();
+            cout << nodeU->idxClient << " " << nodeV->idxClient << "\n";
         }
         reinitSingleMoveInRou(routeV);
         if (!isFixed) {
@@ -2364,7 +2447,7 @@ public:
         cost += newCost - oldCost;
         uSuc = nodeU->suc;
         uPred = nodeU->pred;        
-        count[1][1]++;
+        //count[1][1]++;
         //check sol
         if (pr->isTurnCkSol) {
             try {
@@ -2372,28 +2455,33 @@ public:
             }
             catch (const char* msg) {
                 cerr << msg << endl;                
-                exit(0);
+                for (int i = 1; i <= n; ++i)pr->fileOut << giantT[i] << ", ";
+                pr->fileOut << "\n";
+                for (auto val : ordNodeLs)pr->fileOut << val << ", ";
+                pr->fileOut.close();
+                system("pause");
+                exit(0);                
             }
         }
         return 1;
     }
     ///ELSALGO:
     void exchange() {
-        int posU = Rng::getNumInRan(1, n);
-        int posV = Rng::getNumInRan(1, n);
+        int posU = pr->Rng.getNumInRan(1, n);
+        int posV = pr->Rng.getNumInRan(1, n);
         while (posU == posV)
         {
-            posV = Rng::getNumInRan(1, n);
+            posV = pr->Rng.getNumInRan(1, n);
         }
         swap(giantT[posU], giantT[posV]);
     }
 
     void interchange() {
-        int posU = Rng::getNumInRan(1, n);
-        int posV = Rng::getNumInRan(1, n);
+        int posU = pr->Rng.getNumInRan(1, n);
+        int posV = pr->Rng.getNumInRan(1, n);
         while (posU == posV)
         {
-            posV = Rng::getNumInRan(1, n);
+            posV = pr->Rng.getNumInRan(1, n);
         }
         if (posU < posV) {
             for (int i = posU + 1; i <= posV; ++i) {
@@ -2415,9 +2503,9 @@ public:
     
     /*void LocalSearch() {
         for (int i = 1; i <= n; ++i) {
-            shuffle(ordNodeLs.begin(), ordNodeLs.end(), Rng::generator);
-            shuffle(nodes[i]->movesClu.begin(), nodes[i]->movesClu.end(), Rng::generator);
-            shuffle(nodes[i]->movesLoc.begin(), nodes[i]->movesLoc.end(), Rng::generator);
+            shuffle(ordNodeLs.begin(), ordNodeLs.end(), pr->Rng.generator);
+            shuffle(nodes[i]->movesClu.begin(), nodes[i]->movesClu.end(), pr->Rng.generator);
+            shuffle(nodes[i]->movesLoc.begin(), nodes[i]->movesLoc.end(), pr->Rng.generator);
         }
         int isImproved = 1;
         while (isImproved)
@@ -2511,12 +2599,19 @@ public:
         updateObjInter();
         cvGiantT();
         Split();
+        /*isFixed = true;
+        for (int i = 0; i <= 1; ++i) {
+            updateObjInter();
+            cvGiantT();
+            Split();
+            isFixed = !isFixed;
+        }*/
     }
 
     void ELS() {
-        genGiantT();
-        Split();
-        //initSol();//        
+        //genGiantT();
+        //Split();
+        initSol();//        
         updateTotal();
         cout << "improved: " << cost << "\n";
         int* resGiantT = new int[n + 1];
@@ -2579,6 +2674,10 @@ public:
         Split();
         if (cost != oo && cost - bestObj > 0) {
             cout << "bug here\n";
+            for (int i = 1; i <= n; ++i)pr->fileOut << giantT[i] << ", ";
+            pr->fileOut << "\n";
+            for (auto val : ordNodeLs)pr->fileOut << val << ", ";
+            pr->fileOut.close();
             system("pause");
             exit(0);
         }
@@ -2592,20 +2691,33 @@ public:
         delete[] curGiantT;
     }
 
+    void printSol(ostream& os) {
+        os << "Cost: " << cost << "\n\n";
+        os << "Giant Tour\n";
+        for (int i = 1; i <= n; ++i)os << giantT[i] << ", ";
+        os << "\n\nClients in Route:\n";
+        for (int i = 1; i <= m; ++i) {
+            setR[i]->showRInFile(os);
+        }
+        os << "\nLocations in Route:\n";
+        for (int i = 1; i <= m; ++i) {
+            setR[i]->showRLocInFile(os);
+        }
+    }
     //deconstructor:
     ~Solution(){        
         /*for (int k = 0; k <= m; ++k) {
             delete[] F[k];
             delete[] pred[k];
-        }*/
+        }*/        
         delete[] seqSet;
         delete[] F;
         delete[] pred;
         giantT.clear();
         solT.clear();  
         ordNodeLs.clear();
-        for (int i = 0; i < n + 2 * pr->numVeh + 1; ++i)delete nodes[i];
-        for (int i = 1; i <= m; ++i)delete setR[i];
+        //for (int i = 0; i < n + 2 * pr->numVeh + 1; ++i)delete nodes[i];
+        //for (int i = 1; i <= m; ++i)delete setR[i];
         //delete pr;
     }
 };
