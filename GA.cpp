@@ -281,6 +281,7 @@ void GA::equalSol(Solution* u, Solution* v)
     }
 }
 
+//For Roulette Wheel Selection
 void GA::FindAdapt()
 {
     sumAdapt = 0;
@@ -406,12 +407,12 @@ void GA::uni(Solution* u, Solution* v, Solution* u1, Solution* v1)
         v1->giantT[vt] = q.front();
         q.pop_front();
         vt++;
-    }*/
+    }*/    
+    if (pr->Rng.genRealInRang01_muta() > pM) {
+        for (int i = 1; i <= nMut; ++i)u1->exchange();
+    }  
     u1->Split();
-    //u1->updateTotal();
-    if (pr->Rng.genRealInRang01_muta() > pM) {//u1->interchange();
-        u1->updateTotal();
-    }
+    u1->updateTotal();
     //v1->Split(); v1->updateTotal();
     /*if(rand()%2==0){
         u1.updateObj();v1.updateObj();
@@ -517,7 +518,7 @@ void GA::findGasSol(int maxNumGas)
     clock_t be = clock();
     // generate population with 50 sols
     curNPop = 0;
-    InitPopu();
+    InitPopu(false);
     /*for(int i=1;i<=25;++i){
         for(int j=0;j<n;++j)out<<pop[i].id[j]<<" ";
         out<<endl;

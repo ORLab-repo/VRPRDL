@@ -7,12 +7,13 @@ class GA
 public:
 	int n;
 	int bestCost;
-	const int nClose = 3;
-	const int nElite = 8;	
-	const int nPop = 25;
-	const int delta = 40;
+	const int nClose = 5;
+	const int nElite = 20;	
+	const int nPop = 40;
+	const int delta = 80;
 	const int ItSCP = 2000;
 	const int ItNI = 5000;
+	const int nMut = 10;
 	//const int delta = 83;
 	vector<Solution*> pop;// [nPop + 200];
 	Solution* valPop;
