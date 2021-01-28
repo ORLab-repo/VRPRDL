@@ -707,7 +707,7 @@ public:
             isEndSearch = true;
             isMoved = 0;                        
             for (int posU = 0; posU < ordNodeLs.size(); ++posU) {
-                //cout << "posU: " << posU << " " << isMoved << "\n";;
+                //cout << "posU: " << posU << " " << isMoved << "\n";
                 posU -= isMoved;
                 isMoved = 0;
                 isMetEmpRou = false;
@@ -746,7 +746,7 @@ public:
                     }
                     else /*if (isFixed)*/ {
                         //intra route general insert (only consider with fixed version):                        
-                        //isFixed = false;
+                        //isFixed = true;
                         tempNode = nodeV;
                         nodeV = nodeV->suc;
                         vSuc = nodeV->suc;
@@ -768,7 +768,7 @@ public:
                 nodeV = nodeU->suc;
                 routeV = nodeV->rou;
                 if (!routeV->isNodeTested[nodeU->idxClient]) {
-                    //isFixed = false;
+                    //isFixed = true;
                     while (isMoved != 1 && nodeV->idxClient)
                     {
                         vPred = nodeV->pred;
@@ -813,7 +813,7 @@ public:
                     }
                     else /*if (isFixed)*/ {
                         //intra route general insert (only consider with fixed version):                        
-                        //isFixed = false;
+                        //isFixed = true;
                         tempNode = nodeV;
                         nodeV = nodeV->suc;
                         vSuc = nodeV->suc;
@@ -2405,7 +2405,8 @@ public:
         myseqs1.push_back(uPred->seq0_i);        
         addRevSeqInPieces(nodeU, nodeV, myseqs1);
         myseqs1.push_back(vSuc->seqi_n);
-        int newCost = oo;
+        int newCost = oo; 
+        int newCostFixed = oo;
         III flexRes;
         if(isFixed)newCost = seq->evaluation(myseqs1);
         else {
@@ -2415,7 +2416,7 @@ public:
             if (evalFlexRou(myseqs1, traceLoc[0][1])) {                                
                 newCost = F[traceLoc[0][1].size()];
             }
-        }        
+        }                
         if (oldCost <= newCost)return 0;                     
         if (pr->isDebug) {
             cout << "ck intra route 2Opt\n"; 

@@ -36,7 +36,7 @@ public:
 	int nbIls = 100;
 	int nbF = 20;
 	int sizeSub = 10;// max size of subsequence for using concatenation
-	int TL = -1;// time limit
+	int TL = 1800;// time limit (default for 120-cus ins)
 	bool bi = true;//cheking best improvement
 	int nI = 10;
 	int nC = 10;

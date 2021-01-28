@@ -200,19 +200,24 @@ int GA::solveSCP()
 
 void GA::updateBiasedFitnesses()
 {
-    vector<DI> ranking;
-    for (int i = 1; i <= curNPop; i++)
-    {
-        ranking.push_back({ -pop[i]->averageBrokenPairsDistanceClosest(nClose), i - 1 });
+    //vector<DI> ranking;
+    //for (int i = 1; i <= curNPop; i++)
+    //{
+    //    ranking.push_back({ -pop[i]->averageBrokenPairsDistanceClosest(nClose), i});
+    //}
+    //sort(ranking.begin(), ranking.end());    
+    //
+    //for (int i = 0; i < curNPop; ++i) {
+    //    double divRank = (double)(i + 1) / (curNPop);
+    //    double fitRank = (double)ranking[i].second / (curNPop);
+    //    if (curNPop <= nElite)pop[ranking[i].second]->biasedFitness = fitRank;
+    //    else pop[ranking[i].second]->biasedFitness = fitRank /*+ (1.0 - (double)nElite / curNPop) * divRank*/;
+    //}
+    for (int i = 1; i <= curNPop; ++i) {
+        double fitRank = (double)(i) / (curNPop);        
+        pop[i]->biasedFitness = fitRank;
     }
-    sort(ranking.begin(), ranking.end());    
-    
-    for (int i = 0; i < curNPop; ++i) {
-        double divRank = (double)(i) / (curNPop - 1);
-        double fitRank = (double)ranking[i].second / (curNPop - 1);
-        if (curNPop <= nElite)pop[ranking[i].second + 1]->biasedFitness = fitRank;
-        else pop[ranking[i].second + 1]->biasedFitness = fitRank + (1.0 - (double)nElite / curNPop) * divRank;
-    }
+    FindAdapt();
 }
 
 void GA::removeWorstIndv()
@@ -253,7 +258,7 @@ int GA::broken_pairs(Solution* u, Solution* v)
     //computing broken pair dis of u with v
     int* nxt = new int[n + 1];
     for (int i = 0; i < n - 1; ++i)nxt[u->giantT[i]] = u->giantT[i + 1];
-    nxt[u->giantT[n - 1]] = -1;
+    nxt[u->giantT[n - 1]] = -1; 
     int numEqualEdge = 0;
     for (int i = 0; i < n - 1; ++i)if (v->giantT[i + 1] == nxt[v->giantT[i]])numEqualEdge++;
     delete[] nxt;
@@ -283,12 +288,9 @@ void GA::equalSol(Solution* u, Solution* v)
 
 //For Roulette Wheel Selection
 void GA::FindAdapt()
-{
-    sumAdapt = 0;
+{    
     for (int i = 1; i <= curNPop; ++i)
-        sumAdapt += pop[i]->cost;
-    for (int i = 1; i <= curNPop; ++i)
-        adapt[i] = sumAdapt - pop[i]->cost;
+        adapt[i] = 1.0 / pop[i]->biasedFitness;
     sumAdapt = 0;
     for (int i = 1; i <= curNPop; ++i)
         sumAdapt += adapt[i];
@@ -296,22 +298,24 @@ void GA::FindAdapt()
 
 int GA::getChild()
 {
-    int u = pr->Rng.getNumInRan(1, curNPop);
-    int v = pr->Rng.getNumInRan(1, curNPop);
-    //return (pop[u]->cost < pop[v]->cost) ? u : v;
-    return (pop[u]->biasedFitness < pop[v]->biasedFitness) ? u : v;
-    /*double percent = pr->Rng.genRealInRang01();
-    int sum1 = 0;
+    /// binary tournament
+    //int u = pr->Rng.getNumInRan(1, curNPop);
+    //int v = pr->Rng.getNumInRan(1, curNPop);
+    //////return (pop[u]->cost < pop[v]->cost) ? u : v;
+    //return (pop[u]->biasedFitness < pop[v]->biasedFitness) ? u : v;
+    ///routle wheel selection
+    double percent = pr->Rng.genRealInRang01();
+    double sum1 = 0;
     for (int i = 1; i <= curNPop; ++i) {
         sum1 += adapt[i];
-        if (sumAdapt * percent <= (double)sum1)return i;
+        if (sumAdapt * percent <= sum1)return i;
     }
-    return 1;*/
+    return 1;
 }
 
 void GA::choose(int& u, int& v)
 {
-    updateBiasedFitnesses();
+    updateBiasedFitnesses();    
     /// new selection
     u = getChild();
     v = getChild();
@@ -541,7 +545,7 @@ void GA::findGasSol(int maxNumGas)
 
         //exit(0);
         // calc adaptation
-        FindAdapt();
+        //FindAdapt();
         // selection
         choose(idFa, idMo);
         /*cout<<"parent"<<endl;
@@ -591,8 +595,9 @@ void GA::findGasSol(int maxNumGas)
             }            
         }
         //cout<<"best obj:\n";cout<<bestSol.obj<<endl<<endl;
-        if (numNotCha == ItNI || (double)(clock() - be) / CLOCKS_PER_SEC > 1800) {
+        if (numNotCha == ItNI || (double)(clock() - be) / CLOCKS_PER_SEC > pr->TL) {
             bestSol->Split();
+            bestSol->ckSol();
             /*bestSol.printSol();
             cout << id_test << " " << bestSol.obj << " " << (double)(clock() - be) / CLOCKS_PER_SEC << endl;
             fl << bestSol.obj << " " << (double)(clock() - be) / CLOCKS_PER_SEC << "\n";*/
