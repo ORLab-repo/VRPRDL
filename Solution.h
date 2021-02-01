@@ -1033,10 +1033,7 @@ public:
             stLb = enLb + 1;
             enLb = lstLabel.size() - 1;
             if (stLb > enLb)break;
-        }        
-        lstLabel.clear();
-        curLabel.clear();
-        prvIdLb.clear();        
+        }                
         if (F[curNum] >= oo) {
             delete[] virGiantT;
             return oo;

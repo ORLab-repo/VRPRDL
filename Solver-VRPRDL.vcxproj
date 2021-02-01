@@ -147,17 +147,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GA.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Route.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h" />
+    <ClInclude Include="Ga.h" />
     <ClInclude Include="lib.h" />
     <ClInclude Include="Location.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="Param.h" />
     <ClInclude Include="ReadData.h" />
-    <ClInclude Include="Rng.h" />
+    <ClInclude Include="RandomGenerator.h" />
     <ClInclude Include="Route.h" />
     <ClInclude Include="SeqData.h" />
     <ClInclude Include="Solution.h" />
