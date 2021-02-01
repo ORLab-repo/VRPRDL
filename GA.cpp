@@ -278,6 +278,7 @@ bool GA::CheckEqual(Solution* u, Solution* v)
 void GA::equalSol(Solution* u, Solution* v)
 {
     u->cost = v->cost;
+    u->curVeh = v->curVeh;
     u->biasedFitness = v->biasedFitness;
     for (int i = 1; i <= n; ++i) {
         u->giantT[i] = v->giantT[i];
@@ -414,9 +415,9 @@ void GA::uni(Solution* u, Solution* v, Solution* u1, Solution* v1)
     }*/    
     if (pr->Rng.genRealInRang01_muta() > pM) {
         for (int i = 1; i <= nMut; ++i)u1->exchange();
-    }  
+    }      
     u1->Split();
-    u1->updateTotal();
+    u1->updateTotal();    
     //v1->Split(); v1->updateTotal();
     /*if(rand()%2==0){
         u1.updateObj();v1.updateObj();
@@ -519,6 +520,7 @@ void GA::findGasSol(int maxNumGas)
     }
     int idFa, idMo;
     Solution* bestSol = new Solution(pr);
+    Solution* bestFeaSol = new Solution(pr);
     clock_t be = clock();
     // generate population with 50 sols
     curNPop = 0;
@@ -572,6 +574,7 @@ void GA::findGasSol(int maxNumGas)
         if (bestSol->cost > pop[1]->cost) {
             numNotCha = 0;
             equalSol(bestSol, pop[1]);
+            if (bestSol->curVeh <= pr->maxVeh)equalSol(bestFeaSol, bestSol);
             pr->fileOut << (double)(clock() - be) / CLOCKS_PER_SEC << "\n";
         }
         // if bestSol don't change 100 times change 25 worst sols by 25 new sols
@@ -584,6 +587,7 @@ void GA::findGasSol(int maxNumGas)
             DiversifyPopu(bestSol);
             if (bestSol->cost != oldBestObj) {
                 numNotCha = 0;
+                if (bestSol->curVeh <= pr->maxVeh)equalSol(bestFeaSol, bestSol);
                 pr->fileOut << (double)(clock() - be) / CLOCKS_PER_SEC << "\n";
             }
         }
@@ -594,6 +598,7 @@ void GA::findGasSol(int maxNumGas)
             if (bestSol->cost > pop[1]->cost) {
                 numNotCha = 0;
                 equalSol(bestSol, pop[1]);
+                if (bestSol->curVeh <= pr->maxVeh)equalSol(bestFeaSol, bestSol);
                 pr->fileOut << (double)(clock() - be) / CLOCKS_PER_SEC << "\n";
                 /*pop[1]->Split();
                 addRou(pop[1]);*/
@@ -601,6 +606,7 @@ void GA::findGasSol(int maxNumGas)
         }
         //cout<<"best obj:\n";cout<<bestSol.obj<<endl<<endl;
         if (numNotCha == ItNI || (double)(clock() - be) / CLOCKS_PER_SEC > pr->TL) {
+            equalSol(bestSol, bestFeaSol);
             bestSol->Split();
             bestSol->ckSol();
             /*bestSol.printSol();

@@ -48,6 +48,7 @@ public:
     int cost;// objective
     int n;// number of customer
     int m;// number of vehicle (use when limit number of vehicle)
+    int curVeh; // used for transfering solution 
     /*
     * using when limiting the num of Veh
     double** F;
@@ -500,10 +501,10 @@ public:
             }
         }
         //init split phase:
-        for (int i = 1; i <= n; ++i) {
+        for (int i = 1; i <= n; ++i) {            
             F[i] = oo;
             pred[i] = -1;
-        }
+        }        
         F[0] = 0;
         pred[0] = -1;
         int stLb = -1, enLb = -1;
@@ -535,7 +536,7 @@ public:
                         idLocU = lbU.sc;
                         timeV = max(timeU + pr->times[idLocU][idLocV], pr->listLoc[idLocV].stTime);
                         if (timeV > pr->listLoc[idLocV].enTime
-                            || timeV + pr->times[idLocV][0] > pr->T // only true when travel times satisfy triangle inequality 
+                            //|| timeV + pr->times[idLocV][0] > pr->T // only true when travel times satisfy triangle inequality 
                             ) {
                             continue;
                         }
@@ -558,7 +559,7 @@ public:
                             lstLabel.pb(III(val.ft, idLocV));
                             prvIdLb.pb(val.sc);
                             //update F function
-                            if (//val.ft.sc + pr->times[idLocV][0] < pr->T // uncomment when travel times does not satisfy triangle inequality
+                            if (val.ft.sc + pr->times[idLocV][0] < pr->T && // uncomment when travel times does not satisfy triangle inequality
                                 F[v] > val.ft.ft + pr->costs[idLocV][0] + F[st - 1]) {
                                 F[v] = val.ft.ft + pr->costs[idLocV][0] + F[st - 1];
                                 pred[v] = lstLabel.size() - 1;
@@ -593,9 +594,9 @@ public:
         }
         reverse(tourLoc.begin(), tourLoc.end());
         numVeh = 0;
-        for (auto val : tourLoc) {
+        for (auto val : tourLoc) {            
             if (val == 0) {
-                numVeh++;
+                numVeh++;                
             }
             else {
                 idCus = pr->listLoc[val].idxClient;
@@ -604,7 +605,8 @@ public:
                 setR[numVeh]->insertToRou(nodes[idCus]);
             }
         }
-        for (int i = 1; i <= min(m + 1, n); ++i) {            
+        curVeh = numVeh;
+        for (int i = 1; i <= min(m + 1, n); ++i) {               
             setR[i]->updateRoute();
             //setR[i]->showR();
         }
@@ -961,7 +963,7 @@ public:
             F[i] = oo;
             pred[i] = -1;
             totalLoad += pr->listCL[virGiantT[i]].demand;
-        }
+        }        
         if (totalLoad > pr->Q) {            
             delete[] virGiantT;
             return oo;
@@ -997,7 +999,7 @@ public:
                     idLocU = lbU.sc;
                     timeV = max(timeU + pr->times[idLocU][idLocV], pr->listLoc[idLocV].stTime);
                     if (timeV > pr->listLoc[idLocV].enTime
-                        || timeV + pr->times[idLocV][0] > pr->T // only true when travel times satisfy triangle inequality 
+                        //|| timeV + pr->times[idLocV][0] > pr->T // only true when travel times satisfy triangle inequality 
                         ) {
                         continue;
                     }
@@ -1033,10 +1035,7 @@ public:
             stLb = enLb + 1;
             enLb = lstLabel.size() - 1;
             if (stLb > enLb)break;
-        }        
-        lstLabel.clear();
-        curLabel.clear();
-        prvIdLb.clear();        
+        }                
         if (F[curNum] >= oo) {
             delete[] virGiantT;
             return oo;
@@ -1045,13 +1044,13 @@ public:
         int indexLb = pred[curNum];// index of last label.
        ///construct solution
        //vector<int> tourLoc;       
-        tourLoc.clear();
+        tourLoc.clear();        
         while (indexLb != 0)
-        {
+        {            
             tourLoc.pb(lstLabel[indexLb].second);
-            indexLb = prvIdLb[indexLb];
+            indexLb = prvIdLb[indexLb];            
         }
-        reverse(tourLoc.begin(), tourLoc.end());
+        reverse(tourLoc.begin(), tourLoc.end());        
         //change location
         /*for (auto val : tourLoc) {
             changeLocCli(val);
@@ -1140,7 +1139,7 @@ public:
                     idLocU = lbU.sc;
                     timeV = max(timeU + pr->times[idLocU][idLocV], pr->listLoc[idLocV].stTime);
                     if (timeV > pr->listLoc[idLocV].enTime
-                        || timeV + pr->times[idLocV][0] > pr->T // only true when travel times satisfy triangle inequality 
+                        //|| timeV + pr->times[idLocV][0] > pr->T // only true when travel times satisfy triangle inequality 
                         ) {
                         continue;
                     }
@@ -1164,7 +1163,7 @@ public:
                         prvIdLb.pb(val.sc);
                         //update F function (only consider last client)                        
                         if (v == curNum) {
-                            if (//val.ft.sc + pr->times[idLocV][0] < pr->T // uncomment when travel times does not satisfy triangle inequality
+                            if (val.ft.sc + pr->times[idLocV][0] < pr->T&& // uncomment when travel times does not satisfy triangle inequality
                                 F[v] > val.ft.ft + pr->costs[idLocV][0]) {
                                 F[v] = val.ft.ft + pr->costs[idLocV][0];
                                 pred[v] = lstLabel.size() - 1;
@@ -1235,9 +1234,13 @@ public:
         resGenInMoves[0][0] = routeU->depot->seqi_n->cost + routeV->depot->seqi_n->cost;
         //condition for remain cases
         if (nodeU->idxClient == 0)return 0;
-        if (pr->isDebug)cout << "ck inter Insert\n";
+        if (pr->isDebug)cout << "ck inter Insert\n";        
+        if (pr->isDebug) {
+            cout << nodeU->idxClient << " " << nodeV->idxClient << "\n";
+            routeU->showR();
+            routeV->showR();
+        }
         //1-0                
-
         myseqs1.clear();
         myseqs1.push_back(uPred->seq0_i);
         myseqs1.push_back(uSuc->seqi_n);
@@ -1245,9 +1248,9 @@ public:
         else {            
             //resSubFlex1[1][0] = evalFlex(myseqs1);
             int testCost1 = evalSpecFlex(myseqs1, traceLoc1[1][0]);                       
-            resSubFlex1[1][0].sc = testCost1;
             assert(resSubFlex1[1][0].sc >= testCost1);
-        }
+            resSubFlex1[1][0].sc = testCost1;            
+        }                
         myseqs2.clear();
         myseqs2.push_back(vPred->seq0_i);
         myseqs2.push_back(nodeU->seqi_j[0]);
@@ -1258,7 +1261,7 @@ public:
             int testCost2 = evalSpecFlex(myseqs2, traceLoc2[1][0]);            
             assert(resSubFlex2[1][0].sc >= testCost2);
             resSubFlex2[1][0].sc = testCost2;            
-        }
+        }        
         //2-0        
         myseqs2.clear();
         myseqs2.push_back(vPred->seq0_i);
@@ -1283,7 +1286,7 @@ public:
                 assert(resSubFlex2[2][0].sc >= testCost2);
                 resSubFlex2[2][0].sc = testCost2;                
             }
-        }
+        }        
         //3-0        
         if (uPred->idxClient) {
             myseqs1.clear();
@@ -1304,7 +1307,7 @@ public:
                 assert(resSubFlex2[3][0].sc >= testCost2);
                 resSubFlex2[3][0].sc = testCost2;                
             }
-        }
+        }        
         //condition for remain cases
         if (nodeV->idxClient == 0)goto line1;
         //1-1                    
@@ -1515,6 +1518,9 @@ public:
                 }
             }
         }        
+        if (pr->isDebug) {
+            cout << iBest << " " << jBest << "\n";
+        }
         if (iBest == 0 && jBest == 0)
             return 0;
         //reinitSingleMoveInRou(routeU);

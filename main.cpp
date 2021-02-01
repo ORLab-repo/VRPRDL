@@ -45,6 +45,7 @@ void getSamples() {
 //exe -ni -nc -pmin -pmax -ld - bi -TL -method
 //string typeIns[] = { "C", "R", "RC" };
 string typeIns;
+string nameIns;
 int _numI = 100, _numC = 20, _pMin = 1, _pMax = 2, _ld = 2, timeLimit = oo;
 string method = "ELS";
 bool _bi = true;
@@ -78,19 +79,17 @@ int main(int argc, char* argv[]) {
     }*/
     //int numRun = 1;
     int idxIns = 32;
-    typeIns = "HRDL";
+    typeIns = "GVRPTW";
+    nameIns = "i-030-04-08";
     int typeMed = 0;
     string pathIn, pathOut;
     for (int i = 1; i < argc; ++i) {
         if (string(argv[i]) == "-type") {
             typeIns = argv[i + 1];
         }        
-        if (string(argv[i]) == "-id") {
-            idxIns = atoi(argv[i + 1]);
-        }
-        if (string(argv[i]) == "-med") {
-            typeMed = atoi(argv[i + 1]);
-        }
+        if (string(argv[i]) == "-name") {
+            nameIns = argv[i + 1];
+        }        
     }
     cin.tie(0); cout.tie(0);//cin >> idxIns;
     //cout << "Num of runs: ";
@@ -100,20 +99,12 @@ int main(int argc, char* argv[]) {
     //cin >> isFlex;
     ios::sync_with_stdio(0);
     //srand(seed[0]);        
-    if (typeMed == 0) {
-        if (typeIns == "HRDL")pathIn = "instances_VRPHRDL\\instance_" + to_string(idxIns) + "-triangle.vrp";
-        else pathIn = "instances\\instance_" + to_string(idxIns) + "-triangle.vrp";
-    }
-    else {
-        if (typeIns == "HRDL")pathIn = "instances_VRPHRDL\\" + to_string(idxIns) + "-v" +to_string(typeMed) + ".vrp";
-        else pathIn = "instances\\" + to_string(idxIns) + "-v" +to_string(typeMed) +  ".vrp";
-    }
+    pathIn = "instances_GVRPTW\\" + nameIns + ".vrp";    
     //getSamples();    
-    if(typeMed == 0)pathOut = "solution\\sol_" + to_string(idxIns) + ".txt";
-    else pathOut = "solution\\sol_" + to_string(idxIns) +"-v" + to_string(typeMed) + ".txt";
+    pathOut = "solution\\sol_" + nameIns + ".txt";    
     //cin >> pathIn;
-    Param* pr = read_Ins(pathIn);
-    if (idxIns < 30) pr->TL = 360;
+    Param* pr = read_Ins_GVRPTW(pathIn);
+    //if (idxIns < 30) pr->TL = 360;
     //set up param for algo:
     pr->nI = _numI;
     pr->nC = _numC;
@@ -121,6 +112,9 @@ int main(int argc, char* argv[]) {
     pr->pMax = _pMax;
     pr->lambda = _ld;
     pr->bi = _bi;
+    pr->isDebug = false;
+    pr->debugLS = false;
+    pr->isTurnCkSol = true;
     //pr->Rng.config(seed[0]);   
     //pr->maxE *= 10;             
     //init(pr);
@@ -128,8 +122,8 @@ int main(int argc, char* argv[]) {
     pr->fl.open("ckSol.txt");
     cout.precision(6);    
     //ckData(pr);
-    init(pr);    
-    Solution bestSol(pr);
+    init_GVRPTW(pr);    
+    Solution bestSol(pr);            
     ///check solution    
     /*for (int i = 1; i <= bestSol.n; ++i) {
         bestSol.giantT[i] = arr[i];
@@ -166,10 +160,7 @@ int main(int argc, char* argv[]) {
         start = std::chrono::system_clock::now();
         bestSol.isFixed = false;
         for (int i = 0; i < 4; ++i)
-            for (int j = 0; j < 4; ++j)bestSol.count[i][j] = 0LL;
-        pr->isDebug = false;
-        pr->debugLS = false;
-        pr->isTurnCkSol = false;
+            for (int j = 0; j < 4; ++j)bestSol.count[i][j] = 0LL;        
         //int minCost = oo;
         int oldCost;
         int sumCost = 0;
