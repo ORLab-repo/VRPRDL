@@ -572,6 +572,7 @@ void GA::findGasSol(int maxNumGas)
         if (bestSol->cost > pop[1]->cost) {
             numNotCha = 0;
             equalSol(bestSol, pop[1]);
+            pr->fileOut << (double)(clock() - be) / CLOCKS_PER_SEC << "\n";
         }
         // if bestSol don't change 100 times change 25 worst sols by 25 new sols
         //if(numNotCha>=200){numNotCha=0;addPopu();}
@@ -581,7 +582,10 @@ void GA::findGasSol(int maxNumGas)
             //threshold = min(threshold - 1, 1);
             int oldBestObj = bestSol->cost;
             DiversifyPopu(bestSol);
-            if (bestSol->cost != oldBestObj)numNotCha = 0;
+            if (bestSol->cost != oldBestObj) {
+                numNotCha = 0;
+                pr->fileOut << (double)(clock() - be) / CLOCKS_PER_SEC << "\n";
+            }
         }
         
         if (numga % ItSCP == 0 || curNumRou >= maxNumRou) {
@@ -590,6 +594,7 @@ void GA::findGasSol(int maxNumGas)
             if (bestSol->cost > pop[1]->cost) {
                 numNotCha = 0;
                 equalSol(bestSol, pop[1]);
+                pr->fileOut << (double)(clock() - be) / CLOCKS_PER_SEC << "\n";
                 /*pop[1]->Split();
                 addRou(pop[1]);*/
             }            

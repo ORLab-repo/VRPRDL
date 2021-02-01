@@ -14,7 +14,8 @@ public:
 	ofstream fl;
 	int Q;// capacity
 	int T;// time horizon	
-	int numVeh = int(1e9);// number of vehicle
+	int numVeh = int(1e9);// number of vehicles
+	int maxVeh;// max number of vehicles (used for Moccia 2012 instances).
 	int numClient;//number of client (containing depot)	
 	int numLoc;// number of node
 	vector<Client> listCL;

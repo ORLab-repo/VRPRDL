@@ -11,12 +11,12 @@ public:
 	const int nElite = 20;	
 	const int nPop = 40;
 	const int delta = 80;
-	/*const int ItSCP = 2000;
+	/*const int ItSCP = 1000;
+	const int ItNI = 3000;
+	const int nMut = 10;*/
+	const int ItSCP = 2000;
 	const int ItNI = 5000;
-	const int nMut = 10;*/	
-	const int ItSCP = 1000;
-	const int ItNI = 2000;
-	const int nMut = 5;
+	const int nMut = 10;
 	//const int delta = 83;
 	vector<Solution*> pop;// [nPop + 200];
 	Solution* valPop;
@@ -44,7 +44,7 @@ public:
 	int ddID[1000];
 	int omega = 0;
 	int threshold;	
-	double pM = 0.1;
+	double pM = 0.2;
 	Param* pr;
 	GA();
 	~GA();

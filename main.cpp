@@ -84,7 +84,7 @@ int main(int argc, char* argv[]) {
     for (int i = 1; i < argc; ++i) {
         if (string(argv[i]) == "-type") {
             typeIns = argv[i + 1];
-        }
+        }        
         if (string(argv[i]) == "-id") {
             idxIns = atoi(argv[i + 1]);
         }
@@ -126,9 +126,9 @@ int main(int argc, char* argv[]) {
     //init(pr);
     pr->fileOut.open(pathOut);
     pr->fl.open("ckSol.txt");
-    cout.precision(6);
-    //ckData(pr);    
-    init(pr);
+    cout.precision(6);    
+    //ckData(pr);
+    init(pr);    
     Solution bestSol(pr);
     ///check solution    
     /*for (int i = 1; i <= bestSol.n; ++i) {
