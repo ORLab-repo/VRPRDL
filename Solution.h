@@ -270,7 +270,10 @@ public:
 
 
     bool ckSol() {
-        if (pr->isDebug)cout << "Current Check\n";
+        if (pr->isDebug) {
+            pr->fl << cost << "\n";
+            cout << "Current Check\n";            
+        }
         vector<int> arrSol;
         int* dd = new int[n + 1];
         for (int i = 1; i <= n; ++i)dd[i] = 0;
@@ -558,7 +561,7 @@ public:
                             lstLabel.pb(III(val.ft, idLocV));
                             prvIdLb.pb(val.sc);
                             //update F function
-                            if (//val.ft.sc + pr->times[idLocV][0] < pr->T // uncomment when travel times does not satisfy triangle inequality
+                            if (//val.ft.sc + pr->times[idLocV][0] <= pr->T&& // uncomment when travel times does not satisfy triangle inequality
                                 F[v] > val.ft.ft + pr->costs[idLocV][0] + F[st - 1]) {
                                 F[v] = val.ft.ft + pr->costs[idLocV][0] + F[st - 1];
                                 pred[v] = lstLabel.size() - 1;
@@ -1161,7 +1164,7 @@ public:
                         prvIdLb.pb(val.sc);
                         //update F function (only consider last client)                        
                         if (v == curNum) {
-                            if (//val.ft.sc + pr->times[idLocV][0] < pr->T // uncomment when travel times does not satisfy triangle inequality
+                            if (//val.ft.sc + pr->times[idLocV][0] < pr->T&& // uncomment when travel times does not satisfy triangle inequality
                                 F[v] > val.ft.ft + pr->costs[idLocV][0]) {
                                 F[v] = val.ft.ft + pr->costs[idLocV][0];
                                 pred[v] = lstLabel.size() - 1;
@@ -2594,7 +2597,7 @@ public:
     }
 
     void updateTotal() {
-        updateObjInter();
+        updateObjInter();       
         cvGiantT();
         Split();
         /*isFixed = true;

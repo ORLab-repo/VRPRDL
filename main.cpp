@@ -6,23 +6,35 @@
 using namespace std;
 
 int arr[] = {
-    0, 56, 43, 69, 11, 61, 99, 58, 57, 13, 93, 66, 17, 82, 102, 109, 63, 76, 116, 108, 78, 26, 111, 2, 115, 55, 16, 101, 117, 6, 89, 112, 5, 1, 114, 106, 47, 8, 25, 44, 113, 75, 29, 30, 77, 72, 4, 41, 14, 31, 45, 105, 40, 42, 49, 97, 46, 3, 7, 34, 52, 83, 36, 23, 119, 73, 33, 59, 92, 67, 90, 50, 28, 37, 20, 91, 81, 19, 51, 94, 74, 18, 48, 38, 118, 21, 64, 103, 85, 96, 53, 88, 35, 107, 32, 9, 68, 84, 120, 100, 87, 70, 39, 98, 24, 10, 22, 12, 95, 86, 65, 71, 80, 54, 62, 110, 27, 60, 104, 79, 15
+    0, 39, 23, 10, 101, 53, 80, 100, 89, 51, 111, 106, 2, 109, 15, 43, 110, 17, 33, 102, 73, 55, 116, 68, 50, 85, 36, 4, 117, 70, 60, 118, 81, 95, 114, 119, 27, 46, 86, 48, 59, 91, 1, 38, 52, 5, 92, 41, 64, 84, 25, 58, 7, 12, 54, 32, 105, 72, 78, 79, 21, 28, 113, 56, 88, 8, 76, 19, 96, 20, 67, 69, 120, 22, 97, 37, 115, 44, 35, 107, 31, 16, 112, 98, 99, 63, 9, 29, 14, 104, 94, 66, 77, 13, 62, 24, 49, 47, 87, 45, 30, 42, 3, 18, 11, 61, 40, 108, 34, 103, 75, 57, 26, 74, 65, 82, 6, 71, 83, 93, 90
 };
 
 int arrLS[] = {
     120, 68, 89, 33, 102, 23, 12, 116, 62, 4, 85, 108, 45, 56, 64, 21, 87, 5, 22, 65, 95, 52, 106, 59, 67, 25, 36, 41, 88, 77, 18, 3, 42, 80, 39, 44, 31, 53, 78, 13, 15, 81, 75, 29, 43, 74, 115, 61, 10, 111, 98, 112, 28, 17, 110, 9, 93, 20, 79, 24, 71, 8, 113, 50, 32, 92, 103, 69, 105, 34, 70, 46, 83, 49, 72, 2, 76, 86, 47, 101, 57, 26, 118, 11, 16, 48, 27, 73, 60, 82, 91, 117, 38, 30, 54, 66, 109, 84, 100, 119, 90, 37, 107, 35, 99, 51, 7, 19, 97, 96, 6, 58, 114, 55, 14, 104, 1, 63, 94, 40
 };
+//int seed[] = {
+//    18319894,
+//    23390422,
+//    36197069,
+//    45945346,
+//    54500951,
+//    63196367,
+//    71110057,
+//    89578146,
+//    96527670,
+//    10415237,
+//};
 int seed[] = {
-    18319894,
-    23390422,
-    36197069,
-    45945346,
-    54500951,
     63196367,
     71110057,
     89578146,
     96527670,
     10415237,
+    18319894,
+    23390422,
+    36197069,
+    45945346,
+    54500951,    
 };
 
 vector<vector<int>> samArr;
@@ -77,9 +89,11 @@ int main(int argc, char* argv[]) {
         }
     }*/
     //int numRun = 1;
-    int idxIns = 32;
-    typeIns = "HRDL";
+    int idxIns = 39;
+    typeIns = "RDL";
     int typeMed = 0;
+    double rateMut = 0.8;
+    int initItSCP = 2000;
     string pathIn, pathOut;
     for (int i = 1; i < argc; ++i) {
         if (string(argv[i]) == "-type") {
@@ -90,6 +104,14 @@ int main(int argc, char* argv[]) {
         }
         if (string(argv[i]) == "-med") {
             typeMed = atoi(argv[i + 1]);
+        }
+        if (string(argv[i]) == "-pmut") {
+            rateMut = atof(argv[i + 1]);
+            cout << "rate mut: " << rateMut << "\n";
+        }
+        if (string(argv[i]) == "-itscp") {
+            initItSCP = atoi(argv[i + 1]);
+            cout << "num of scp: " << initItSCP << "\n";
         }
     }
     cin.tie(0); cout.tie(0);//cin >> idxIns;
@@ -120,7 +142,12 @@ int main(int argc, char* argv[]) {
     pr->pMin = _pMin;
     pr->pMax = _pMax;
     pr->lambda = _ld;
-    pr->bi = _bi;
+    pr->bi = _bi;   
+    pr->isDebug = false;
+    pr->debugLS = false;
+    pr->isTurnCkSol = false;
+    pr->rateMut = rateMut;
+    pr->initItSCP = initItSCP;
     //pr->Rng.config(seed[0]);   
     //pr->maxE *= 10;             
     //init(pr);
@@ -131,17 +158,18 @@ int main(int argc, char* argv[]) {
     init(pr);    
     Solution bestSol(pr);
     ///check solution    
-    /*for (int i = 1; i <= bestSol.n; ++i) {
-        bestSol.giantT[i] = arr[i];
-    }
-    bestSol.Split();
-    bestSol.updateTotal();
-    cout << bestSol.cost << "\n";
-    bestSol.printSol(pr->fileOut);
-    pr->fileOut.close();
-    //Display();
-    system("pause");
-    return 0;*/
+    //for (int i = 1; i <= bestSol.n; ++i) {
+    //    bestSol.giantT[i] = arr[i];
+    //}
+    //bestSol.Split();
+    //cout << bestSol.cost << "\n";
+    //bestSol.updateTotal();
+    //cout << bestSol.cost << "\n";
+    //bestSol.printSol(pr->fileOut);
+    //pr->fileOut.close();
+    ////Display();
+    //system("pause");
+    //return 0;
     /*std::chrono::time_point<std::chrono::system_clock> start, end;
     start = std::chrono::system_clock::now();
     for (int i = 1; i <= 100000; ++i) {
@@ -160,16 +188,14 @@ int main(int argc, char* argv[]) {
     GA Algo;
     Algo.init(pr);
     int minCost = oo;
+    int sumCost = 0;
     for (int numRun = 0; numRun < 5; ++numRun) {
         pr->Rng.config(seed[numRun]);
         std::chrono::time_point<std::chrono::system_clock> start, end;
         start = std::chrono::system_clock::now();
         bestSol.isFixed = false;
         for (int i = 0; i < 4; ++i)
-            for (int j = 0; j < 4; ++j)bestSol.count[i][j] = 0LL;
-        pr->isDebug = false;
-        pr->debugLS = false;
-        pr->isTurnCkSol = false;
+            for (int j = 0; j < 4; ++j)bestSol.count[i][j] = 0LL;      
         //int minCost = oo;
         int oldCost;
         int sumCost = 0;
@@ -206,13 +232,15 @@ int main(int argc, char* argv[]) {
         }
 
         minCost = min(minCost, Algo.bestCost);
+        sumCost += Algo.bestCost;
         end = std::chrono::system_clock::now();
         std::chrono::duration<double> elapsed_seconds = end - start;
         std::time_t end_time = std::chrono::system_clock::to_time_t(end);
         std::cout << "elapsed time: " << elapsed_seconds.count() << "s\n";
         pr->fileOut << "elapsed time: " << elapsed_seconds.count() << "s\n\n";
     }
-    pr->fileOut << "best run: " << minCost;
+    pr->fileOut << "best run: " << minCost << "\n";
+    pr->fileOut << fixed << setprecision(2) << "avg run: " << (double)sumCost / 5;
     pr->fileOut.close();
     /*bestSol.solT.clear();
     for (int i = 0; i < sizeof(arr) / sizeof(int); ++i)bestSol.solT.push_back(arr[i]);

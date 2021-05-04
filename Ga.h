@@ -17,6 +17,9 @@ public:
 	const int ItSCP = 2000;
 	const int ItNI = 5000;
 	const int nMut = 10;
+	const int ItMut = 500;
+	double pMinMut = 0.3;
+	const double pMaxMut = 0.6;
 	//const int delta = 83;
 	vector<Solution*> pop;// [nPop + 200];
 	Solution* valPop;
@@ -44,13 +47,15 @@ public:
 	int ddID[1000];
 	int omega = 0;
 	int threshold;	
-	double pM = 0.2;
+	double pM = 0.8;
 	Param* pr;
 	GA();
 	~GA();
 	void init(Param* _pr) {
 		pr = _pr;
 		n = pr->numClient - 1;
+		pM = pr->rateMut;
+		//pMinMut = pr->rateMut;
 		//init for SCP
 		valRou = new int[n + 1];
 		valRouLoc = new int[n + 1];

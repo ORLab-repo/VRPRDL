@@ -191,11 +191,11 @@ void Route::ckRoute()
     int load = 0;
     Node* val = this->depot;
     Node* valSuc = this->depot->suc;
-    int u, v;
+    int u, v;    
     do
     {
         u = val->idxLoc;
-        v = valSuc->idxLoc;
+        v = valSuc->idxLoc;                
         cost += pr->costs[u][v];        
         time += pr->times[u][v];        
         time = max(time, pr->listLoc[v].stTime);        

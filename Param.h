@@ -30,9 +30,11 @@ public:
 	clock_t start, end;
 	double total = 0;
 	double totalIntra = 0;
-	int ldTw = 5;// coff for TW
+	double rateMut = 0.2;
+	int initItSCP = 2000;
 	//int maxNeibor = 40;// max size of neigbor vertex set for granular search (can be used for dynamically sertification).
-	int maxNeibor = 120;// max size of neigbor vertex set for granular search (can be used for dynamically sertification).
+	int maxNeibor = 120;// max size of nei
+	int ldTw = 5;// coff for TWgbor vertex set for granular search (can be used for dynamically sertification).
 	int nbR = 20;
 	int nbIls = 100;
 	int nbF = 20;
