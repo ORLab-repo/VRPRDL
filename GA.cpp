@@ -76,7 +76,9 @@ int GA::solveSCP()
         model.add(IloMinimize(env, sumObj));
         model.add(cons);
         IloCplex cplex(model);
-        //cplex.setParam(IloCplex::Param::Threads, 1);
+        
+        cplex.setParam(IloCplex::Param::Threads, 1);        
+        cplex.setOut(env.getNullStream());
         if (!cplex.solve()) {
             //res = oo;
             throw "can't sol";
@@ -173,13 +175,13 @@ int GA::solveSCP()
         }*/
         valPop->Split();        
         res = valPop->cost;
-        /*pr->fileOut << "split cost: " << res << "\n";*/
+        //pr->fileOut << "split cost: " << res << "\n";
         if (res > (int)ceil(cplex.getObjValue())) {
             throw "error cost in SCP";
         }        
         valPop->updateTotal();        
-        /*res = valPop->cost;
-        pr->fileOut << "local search cost: " << res << "\n";*/
+        res = valPop->cost;
+        //pr->fileOut << "local search cost: " << res << "\n";
     }
     catch (IloException& e) {
         cerr << "Concert exception caught: " << e << endl;
@@ -423,9 +425,9 @@ void GA::uni(Solution* u, Solution* v, Solution* u1, Solution* v1)
         vt++;
     }*/  
 
-    if (pr->Rng.genRealInRang01_muta() > 1-pM) {
+    /*if (pr->Rng.genRealInRang01_muta() > 1-pM) {
         for (int i = 1; i <= nMut; ++i)u1->exchange();
-    }
+    }*/
     u1->Split();
     u1->updateTotal();
     //v1->Split(); v1->updateTotal();
@@ -552,8 +554,8 @@ void GA::findGasSol(int maxNumGas)
         else if (numNotCha % ItMut == 0)pM = min(pM + 0.1, pMaxMut);*/
         numNotCha++;
         //cout<<numga<<":"<<endl;
-        cout << "name ins: " << pr->nameIns << "\n";
-        cout << numNotCha << " " << numga << "{" << endl;
+        /*cout << "name ins: " << pr->nameIns << "\n";
+        cout << numNotCha << " " << numga << "{" << endl;*/
         //out<<numga<<"{\n";
 
         //exit(0);
@@ -604,20 +606,20 @@ void GA::findGasSol(int maxNumGas)
             }
         }*/
         
-        if (numga % ItSCP == 0 || curNumRou >= maxNumRou) {
-            //pr->fileOut << "itreation: " << numga << "\n";
-            scpSol = min(scpSol, solveSCP());
-            if(valPop->cost != pop[1]->cost)insertNew(valPop);            
-            //pr->fileOut << "SCP SOL: " << valPop->cost << "\n";            
-            pr->fileOut << (double)(clock() - be) / CLOCKS_PER_SEC << "\n";
-            if (bestSol->cost > pop[1]->cost) {
-                numNotCha = 0;
-                equalSol(bestSol, pop[1]);
-                //pr->fileOut << (double)(clock() - be) / CLOCKS_PER_SEC << "\n";
-                //pop[1]->Split();
-                //addRou(pop[1]);
-            }            
-        }
+        //if (numga % ItSCP == 0 || curNumRou >= maxNumRou) {
+        //    //pr->fileOut << "itreation: " << numga << "\n";
+        //    scpSol = min(scpSol, solveSCP());
+        //    if(valPop->cost != pop[1]->cost)insertNew(valPop);            
+        //    //pr->fileOut << "SCP SOL: " << valPop->cost << "\n";            
+        //    pr->fileOut << (double)(clock() - be) / CLOCKS_PER_SEC << "\n";
+        //    if (bestSol->cost > pop[1]->cost) {
+        //        numNotCha = 0;
+        //        equalSol(bestSol, pop[1]);
+        //        //pr->fileOut << (double)(clock() - be) / CLOCKS_PER_SEC << "\n";
+        //        //pop[1]->Split();
+        //        //addRou(pop[1]);
+        //    }            
+        //}
         //cout<<"best obj:\n";cout<<bestSol.obj<<endl<<endl;
         if (numNotCha == ItNI || (double)(clock() - be) / CLOCKS_PER_SEC > pr->TL) {
             bestSol->Split();
@@ -634,8 +636,8 @@ void GA::findGasSol(int maxNumGas)
             break;
         }
         //if((double)(clock()-be)/CLOCKS_PER_SEC>=600)break;
-        cout << curNumRou << "\n";
+        /*cout << curNumRou << "\n";
         cout << "SCP sol: " << scpSol << "\n";
-        cout << bestSol->cost << "}" << endl;
+        cout << bestSol->cost << "}" << endl;*/
     }
 }

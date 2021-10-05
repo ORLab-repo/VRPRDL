@@ -25,16 +25,16 @@ int arrLS[] = {
 //    10415237,
 //};
 int seed[] = {
+    18319894,
+    23390422,
+    36197069,    
+    45945346,
+    54500951,
     63196367,
     71110057,
     89578146,
     96527670,
-    10415237,
-    18319894,
-    23390422,
-    36197069,
-    45945346,
-    54500951,    
+    10415237,   
 };
 
 vector<vector<int>> samArr;
@@ -146,7 +146,8 @@ int main(int argc, char* argv[]) {
     pr->isDebug = false;
     pr->debugLS = false;
     pr->isTurnCkSol = false;
-    pr->rateMut = rateMut;
+    //pr->rateMut = rateMut;
+    pr->rateMut = 0.8;
     pr->initItSCP = initItSCP;
     //pr->Rng.config(seed[0]);   
     //pr->maxE *= 10;             
@@ -189,7 +190,7 @@ int main(int argc, char* argv[]) {
     Algo.init(pr);
     int minCost = oo;
     int sumCost = 0;
-    for (int numRun = 0; numRun < 5; ++numRun) {
+    for (int numRun = 0; numRun < 5; ++numRun) {        
         pr->Rng.config(seed[numRun]);
         std::chrono::time_point<std::chrono::system_clock> start, end;
         start = std::chrono::system_clock::now();
@@ -231,8 +232,9 @@ int main(int argc, char* argv[]) {
             system("pause");
         }
 
-        minCost = min(minCost, Algo.bestCost);
+        minCost = min(minCost, Algo.bestCost);        
         sumCost += Algo.bestCost;
+        cout << "name ins: " << pr->nameIns << " "<<numRun<<" "<< Algo.bestCost<< "\n";
         end = std::chrono::system_clock::now();
         std::chrono::duration<double> elapsed_seconds = end - start;
         std::time_t end_time = std::chrono::system_clock::to_time_t(end);
@@ -240,7 +242,7 @@ int main(int argc, char* argv[]) {
         pr->fileOut << "elapsed time: " << elapsed_seconds.count() << "s\n\n";
     }
     pr->fileOut << "best run: " << minCost << "\n";
-    pr->fileOut << fixed << setprecision(2) << "avg run: " << (double)sumCost / 5;
+    pr->fileOut << fixed << setprecision(2) << "avg run: " << (double)sumCost / 10;
     pr->fileOut.close();
     /*bestSol.solT.clear();
     for (int i = 0; i < sizeof(arr) / sizeof(int); ++i)bestSol.solT.push_back(arr[i]);
