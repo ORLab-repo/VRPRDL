@@ -29,6 +29,9 @@ public:
 	int lambda = 2;	
 	clock_t start, end;
 	double total = 0;
+	int nPop = 40;
+	int delta = 80;
+	int nMut = 10;
 	double totalIntra = 0;
 	double rateMut = 0.2;
 	int initItSCP = 2000;

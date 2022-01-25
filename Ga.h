@@ -9,15 +9,15 @@ public:
 	int bestCost;
 	const int nClose = 5;
 	const int nElite = 20;	
-	const int nPop = 40;
-	const int delta = 80;
+	int nPop = 40;
+	int delta = 80;
 	/*const int ItSCP = 1000;
 	const int ItNI = 3000;
 	const int nMut = 10;*/
-	const int ItSCP = 2000;
+	int ItSCP = 2000;
 	const int ItNI = 5000;
-	const int nMut = 10;
-	const int ItMut = 500;
+	int nMut = 10;
+	//const int ItMut = 500;
 	double pMinMut = 0.3;
 	const double pMaxMut = 0.6;
 	//const int delta = 83;
@@ -54,9 +54,13 @@ public:
 	void init(Param* _pr) {
 		pr = _pr;
 		n = pr->numClient - 1;
+		nPop = pr->nPop;
+		delta = pr->delta;
 		pM = pr->rateMut;
+		nMut = pr->nMut;
 		//pMinMut = pr->rateMut;
 		//init for SCP
+		ItSCP = pr->initItSCP;
 		valRou = new int[n + 1];
 		valRouLoc = new int[n + 1];
 		idWithLen.resize(n + 1);

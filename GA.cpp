@@ -425,9 +425,9 @@ void GA::uni(Solution* u, Solution* v, Solution* u1, Solution* v1)
         vt++;
     }*/  
 
-    /*if (pr->Rng.genRealInRang01_muta() > 1-pM) {
+    if (pr->Rng.genRealInRang01_muta() > 1-pM) {
         for (int i = 1; i <= nMut; ++i)u1->exchange();
-    }*/
+    }
     u1->Split();
     u1->updateTotal();
     //v1->Split(); v1->updateTotal();
@@ -547,15 +547,16 @@ void GA::findGasSol(int maxNumGas)
     numNotCha = 0;
     threshold = (n - 1) / 2;
     Solution* child1 = new Solution(pr);
-    Solution* child2 = new Solution(pr);    
+    Solution* child2 = new Solution(pr);        
     for (int numga = 1;; ++numga)
     {
+        /*cout << "time: " << (double)(clock() - be) / CLOCKS_PER_SEC << "\n";*/
         /*if (numNotCha == 0)pM = pMinMut;
         else if (numNotCha % ItMut == 0)pM = min(pM + 0.1, pMaxMut);*/
         numNotCha++;
         //cout<<numga<<":"<<endl;
-        /*cout << "name ins: " << pr->nameIns << "\n";
-        cout << numNotCha << " " << numga << "{" << endl;*/
+        //cout << "name ins: " << pr->nameIns << "\n";
+        /*cout << numNotCha << " " << numga << "{" << endl;*/
         //out<<numga<<"{\n";
 
         //exit(0);
@@ -589,7 +590,7 @@ void GA::findGasSol(int maxNumGas)
             equalSol(bestSol, pop[1]);
             /*pr->fileOut << "itreation: " << numga << "\n";
             pr->fileOut << "new best: " << bestSol->cost << "\n";            */
-            pr->fileOut << (double)(clock() - be) / CLOCKS_PER_SEC << "\n";
+            //pr->fileOut << (double)(clock() - be) / CLOCKS_PER_SEC << "\n";
         }
         // if bestSol don't change 100 times change 25 worst sols by 25 new sols
         //if(numNotCha>=200){numNotCha=0;addPopu();}
@@ -606,20 +607,20 @@ void GA::findGasSol(int maxNumGas)
             }
         }*/
         
-        //if (numga % ItSCP == 0 || curNumRou >= maxNumRou) {
-        //    //pr->fileOut << "itreation: " << numga << "\n";
-        //    scpSol = min(scpSol, solveSCP());
-        //    if(valPop->cost != pop[1]->cost)insertNew(valPop);            
-        //    //pr->fileOut << "SCP SOL: " << valPop->cost << "\n";            
-        //    pr->fileOut << (double)(clock() - be) / CLOCKS_PER_SEC << "\n";
-        //    if (bestSol->cost > pop[1]->cost) {
-        //        numNotCha = 0;
-        //        equalSol(bestSol, pop[1]);
-        //        //pr->fileOut << (double)(clock() - be) / CLOCKS_PER_SEC << "\n";
-        //        //pop[1]->Split();
-        //        //addRou(pop[1]);
-        //    }            
-        //}
+        if (numga % ItSCP == 0 || curNumRou >= maxNumRou) {
+            //pr->fileOut << "itreation: " << numga << "\n";
+            scpSol = min(scpSol, solveSCP());
+            if(valPop->cost != pop[1]->cost)insertNew(valPop);            
+            //pr->fileOut << "SCP SOL: " << valPop->cost << "\n";            
+            //pr->fileOut << (double)(clock() - be) / CLOCKS_PER_SEC << "\n";
+            if (bestSol->cost > pop[1]->cost) {
+                numNotCha = 0;
+                equalSol(bestSol, pop[1]);
+                //pr->fileOut << (double)(clock() - be) / CLOCKS_PER_SEC << "\n";
+                //pop[1]->Split();
+                //addRou(pop[1]);
+            }            
+        }
         //cout<<"best obj:\n";cout<<bestSol.obj<<endl<<endl;
         if (numNotCha == ItNI || (double)(clock() - be) / CLOCKS_PER_SEC > pr->TL) {
             bestSol->Split();
@@ -628,10 +629,10 @@ void GA::findGasSol(int maxNumGas)
             cout << id_test << " " << bestSol.obj << " " << (double)(clock() - be) / CLOCKS_PER_SEC << endl;
             fl << bestSol.obj << " " << (double)(clock() - be) / CLOCKS_PER_SEC << "\n";*/
             bestCost = bestSol->cost;
-            cout << bestSol->cost;
-            pr->fileOut << bestSol->cost << "\n";
+            //cout << bestSol->cost;
+            /*pr->fileOut << bestSol->cost << "\n";
             for (int i = 1; i <= n; ++i)pr->fileOut << bestSol->giantT[i] << ", ";
-            pr->fileOut << "\n";
+            pr->fileOut << "\n";*/
             //pr->fileOut <<(double)(clock() - be) / CLOCKS_PER_SEC << "\n";
             break;
         }

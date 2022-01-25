@@ -606,7 +606,7 @@ public:
                 nodes[idCus]->idxLoc = val;
                 setR[numVeh]->insertToRou(nodes[idCus]);
             }
-        }
+        }        
         for (int i = 1; i <= min(m + 1, n); ++i) {            
             setR[i]->updateRoute();
             //setR[i]->showR();
