@@ -89,8 +89,8 @@ int main(int argc, char* argv[]) {
         }
     }*/
     //int numRun = 1;
-    int idxIns = 39;
-    typeIns = "HRDL";
+    int idxIns = 0;
+    typeIns = "HRDL-var";
     int typeMed = 0;
     double rateMut = 0.8;    
     int initItSCP = 2000;
@@ -136,7 +136,9 @@ int main(int argc, char* argv[]) {
     //srand(seed[0]);      
     if (pathIn.empty()) {
         if (typeMed == 0) {
-            if (typeIns == "HRDL")pathIn = "instances_VRPHRDL\\instance_" + to_string(idxIns) + "-triangle.vrp";
+            if (typeIns == "RDL-var")pathIn = "instances-VRPRDL-var\\instance_" + to_string(idxIns) + "-triangle.vrp"; else
+            if (typeIns == "HRDL-var")pathIn = "instances-VRPHRDL-var\\instance_" + to_string(idxIns) + "-triangle.vrp"; else
+            if(typeIns == "HRDL")pathIn = "instances_VRPHRDL\\instance_" + to_string(idxIns) + "-triangle.vrp";
             else pathIn = "instances\\instance_" + to_string(idxIns) + "-triangle.vrp";
         }
         else {
@@ -170,20 +172,20 @@ int main(int argc, char* argv[]) {
     //pr->Rng.config(seed[0]);   
     //pr->maxE *= 10;             
     //init(pr);    
-    //pr->fileOut.open(pathOut);
+    pr->fileOut.open(pathOut);
     //pr->fl.open("ckSol.txt");
     cout.precision(6);    
     //ckData(pr);
     init(pr);    
     Solution bestSol(pr);
     ///check solution    
-    for (int i = 1; i <= bestSol.n; ++i) {
+    /*for (int i = 1; i <= bestSol.n; ++i) {
         bestSol.giantT[i] = arr[i];
     }
     bestSol.Split();
     cout << bestSol.cost << "\n";
     cout << bestSol.m << "\n";
-    exit(0);
+    exit(0);*/
     //bestSol.updateTotal();
     //cout << bestSol.cost << "\n";
     //bestSol.printSol(pr->fileOut);
@@ -240,7 +242,7 @@ int main(int argc, char* argv[]) {
         //bestSol.ELS();                  
         try {
             Algo.findGasSol();
-        }
+        } 
         catch (const char* msg) {
             cerr << msg << endl;
             exit(0);
@@ -251,19 +253,18 @@ int main(int argc, char* argv[]) {
             exit(0);
             //system("pause");
         }
-
         minCost = min(minCost, Algo.bestCost);        
         sumCost += Algo.bestCost;
         cout << "name ins: " << pr->nameIns << " "<<numRun<<" "<< Algo.bestCost<< "\n";
         end = std::chrono::system_clock::now();
         std::chrono::duration<double> elapsed_seconds = end - start;
         std::time_t end_time = std::chrono::system_clock::to_time_t(end);        
-        //pr->fileOut << "elapsed time: " << elapsed_seconds.count() << "s\n\n";
+        pr->fileOut << "elapsed time: " << elapsed_seconds.count() << "s\n\n";
     }        
-    /*pr->fileOut << "best run: " << minCost << "\n";
+    pr->fileOut << "best run: " << minCost << "\n";
     pr->fileOut << fixed << setprecision(2) << "avg run: " << (double)sumCost / 10 << "\n";
-    pr->fileOut.close();*/     
-    cout << (double)sumCost / 100000 + minCost;
+    pr->fileOut.close();
+    //cout << (double)sumCost / 100000 + minCost;    
     /*bestSol.solT.clear();
     for (int i = 0; i < sizeof(arr) / sizeof(int); ++i)bestSol.solT.push_back(arr[i]);
     int ckCosts = 0;

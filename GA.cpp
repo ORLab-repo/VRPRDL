@@ -623,6 +623,7 @@ void GA::findGasSol(int maxNumGas)
         }
         //cout<<"best obj:\n";cout<<bestSol.obj<<endl<<endl;
         if (numNotCha == ItNI || (double)(clock() - be) / CLOCKS_PER_SEC > pr->TL) {
+        /*if(numga == 7000){*/
             bestSol->Split();
             bestSol->ckSol();
             /*bestSol.printSol();
@@ -630,10 +631,11 @@ void GA::findGasSol(int maxNumGas)
             fl << bestSol.obj << " " << (double)(clock() - be) / CLOCKS_PER_SEC << "\n";*/
             bestCost = bestSol->cost;
             //cout << bestSol->cost;
-            /*pr->fileOut << bestSol->cost << "\n";
+            pr->fileOut << bestSol->cost << "\n";
             for (int i = 1; i <= n; ++i)pr->fileOut << bestSol->giantT[i] << ", ";
-            pr->fileOut << "\n";*/
+            pr->fileOut << "\n";
             //pr->fileOut <<(double)(clock() - be) / CLOCKS_PER_SEC << "\n";
+            pr->fileOut << "num_iterations: " << numga << "\n";
             break;
         }
         //if((double)(clock()-be)/CLOCKS_PER_SEC>=600)break;
