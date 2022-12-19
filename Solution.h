@@ -15,6 +15,11 @@ public:
     vector<int>* lstNeig;// getting current list of neiborhood;
     SeqData* seqSet;// init sequences for each node.    
     SeqData* seqDep;// only contain depot
+    //GA parts:
+    vector<int> predecessors; // store prev node of each client  
+    vector<int> successors; // store next node of each client  
+    multiset<pair<int, Solution*>> indivsPerProximity;
+    double biasedFitness; // Biased fitness of the solution
     /*
     * Variables for dealing with LS
     */
@@ -167,9 +172,12 @@ public:
             nodes[i]->movesClu.resize(pr->maxNeibor);
         }
 
+        indivsPerProximity.clear();
+        predecessors.resize(n + 1);
+        successors.resize(n + 1);
         /*
         * init for split
-        */
+        */               
         F = new int[n + 1];
         pred = new int[n + 1];
     }
@@ -204,6 +212,38 @@ public:
         //random_shuffle(giantT.begin() + 1, giantT.end());
     }
 
+    /*diversity contribution in GA*/
+    void removeProximity(Solution* indiv)
+    {
+        auto it = indivsPerProximity.begin();
+        while (it->second != indiv) ++it;
+        indivsPerProximity.erase(it);
+    }
+
+
+    double brokenPairsDistance(Solution* valSol) {
+        int differences = 0;
+        for (int j = 1; j <= n; j++)
+        {
+            if (successors[j] != valSol->successors[j] && successors[j] != valSol->predecessors[j]) differences++;
+            if (predecessors[j] == 0 && valSol ->predecessors[j] != 0 && valSol->successors[j] != 0) differences++;
+        }
+        return (double)differences / (double)n;
+    }
+
+    double averageBrokenPairsDistanceClosest(int nbClosest) {
+        double result = 0;
+        int maxSize = min<int>(nbClosest, indivsPerProximity.size());
+        auto it = indivsPerProximity.begin();
+        for (int i = 0; i < maxSize; i++)
+        {
+            result += it->first;
+            ++it;
+        }
+        return result / (double)maxSize;
+    }
+    /**/
+
     void cvGiantT() {
         int pos = 0;
         for (int i = 1; i <= min(m + 1, n); ++i) {
@@ -230,7 +270,10 @@ public:
 
 
     bool ckSol() {
-        if (pr->isDebug)cout << "Current Check\n";
+        if (pr->isDebug) {
+            pr->fl << cost << "\n";
+            cout << "Current Check\n";            
+        }
         vector<int> arrSol;
         int* dd = new int[n + 1];
         for (int i = 1; i <= n; ++i)dd[i] = 0;
@@ -373,13 +416,13 @@ public:
 
     //reset neigborhood cluster set (run when changing location)
     void reinitCluSet(Node* nod) {
-        /*for (auto val : nod->movesClu) {
+        for (auto val : nod->movesClu) {
             nod->idxCluMoves[val] = false;
-        }*/
+        }
         nod->movesClu = nod->rou->pr->listLoc[nod->idxLoc].moves;
-        /*for (auto val : nod->movesClu) {
+        for (auto val : nod->movesClu) {
             nod->idxCluMoves[val] = true;
-        }*/
+        }
     }
 
     //reset neigborhood set for each node
@@ -518,7 +561,7 @@ public:
                             lstLabel.pb(III(val.ft, idLocV));
                             prvIdLb.pb(val.sc);
                             //update F function
-                            if (//val.ft.sc + pr->times[idLocV][0] < pr->T // uncomment when travel times does not satisfy triangle inequality
+                            if (//val.ft.sc + pr->times[idLocV][0] <= pr->T&& // uncomment when travel times does not satisfy triangle inequality
                                 F[v] > val.ft.ft + pr->costs[idLocV][0] + F[st - 1]) {
                                 F[v] = val.ft.ft + pr->costs[idLocV][0] + F[st - 1];
                                 pred[v] = lstLabel.size() - 1;
@@ -563,12 +606,16 @@ public:
                 nodes[idCus]->idxLoc = val;
                 setR[numVeh]->insertToRou(nodes[idCus]);
             }
-        }
+        }        
         for (int i = 1; i <= min(m + 1, n); ++i) {            
             setR[i]->updateRoute();
             //setR[i]->showR();
         }
-        reinitNegiborSet();
+        reinitNegiborSet();        
+        for (int i = 1; i <= n; ++i) {
+            predecessors[i] = nodes[i]->pred->idxClient;
+            successors[i] = nodes[i]->suc->idxClient;
+        }
         if (pr->isTurnCkSol) {
             try {
                 ckSol();
@@ -663,7 +710,7 @@ public:
             isEndSearch = true;
             isMoved = 0;                        
             for (int posU = 0; posU < ordNodeLs.size(); ++posU) {
-                //cout << "posU: " << posU << " " << isMoved << "\n";;
+                //cout << "posU: " << posU << " " << isMoved << "\n";
                 posU -= isMoved;
                 isMoved = 0;
                 isMetEmpRou = false;
@@ -702,7 +749,7 @@ public:
                     }
                     else /*if (isFixed)*/ {
                         //intra route general insert (only consider with fixed version):                        
-                        isFixed = false;
+                        //isFixed = true;
                         tempNode = nodeV;
                         nodeV = nodeV->suc;
                         vSuc = nodeV->suc;
@@ -711,7 +758,7 @@ public:
                         if (isMoved != 1) {
                             isMoved = intraRouteGeneralInsert();
                         }
-                        isFixed = false;
+                        //isFixed = false;
                         nodeV = tempNode;
                         routeV = nodeV->rou;
                         vSuc = nodeV->suc;
@@ -724,7 +771,7 @@ public:
                 nodeV = nodeU->suc;
                 routeV = nodeV->rou;
                 if (!routeV->isNodeTested[nodeU->idxClient]) {
-                    isFixed = false;
+                    //isFixed = true;
                     while (isMoved != 1 && nodeV->idxClient)
                     {
                         vPred = nodeV->pred;
@@ -733,7 +780,7 @@ public:
                             isMoved = intraRoute2Opt();
                         nodeV = nodeV->suc;
                     }
-                    isFixed = false;
+                    //isFixed = false;
                 }
 
                 // Special cases : testing the insertions behind the depot, and the empty routes
@@ -769,7 +816,7 @@ public:
                     }
                     else /*if (isFixed)*/ {
                         //intra route general insert (only consider with fixed version):                        
-                        isFixed = false;
+                        //isFixed = true;
                         tempNode = nodeV;
                         nodeV = nodeV->suc;
                         vSuc = nodeV->suc;
@@ -777,7 +824,7 @@ public:
                         if (isMoved != 1) {
                             isMoved = intraRouteGeneralInsert();
                         }
-                        isFixed = false;
+                        //isFixed = false;
                         nodeV = tempNode;
                         routeV = nodeV->rou;
                         vSuc = nodeV->suc;
@@ -801,8 +848,7 @@ public:
 
     //flexSeq must have larger than 2 sequences
     //with flexible version, it will change locations of the last node of first sequence and first node of last sequence .
-    III evalFlex(vector<SeqData*> flexSeq) {
-        pr->start = clock();
+    III evalFlex(vector<SeqData*> flexSeq) {        
         III res = III(II(-1, -1), oo);// (location of 2 changed node and result)        
         SeqData* firstE = flexSeq.front();
         SeqData* lastE = flexSeq.back();
@@ -849,12 +895,11 @@ public:
             }
         }        
         delete seqTempU;
-        delete seqTempV;
-        pr->total += (double)(clock() - pr->start) / CLOCKS_PER_SEC;
+        delete seqTempV;        
         return res;
     }
 
-    int evalSpecFlex(vector<SeqData*>& flexSeq, vector<int>& trace) {
+    int evalSpecFlex(vector<SeqData*>& flexSeq, vector<int>& trace) {        
         int* virGiantT = new int[6];
         int curNum = 0;
         int totalLoad = 0;
@@ -920,7 +965,7 @@ public:
             pred[i] = -1;
             totalLoad += pr->listCL[virGiantT[i]].demand;
         }
-        if (totalLoad > pr->Q) {
+        if (totalLoad > pr->Q) {            
             delete[] virGiantT;
             return oo;
         }
@@ -991,10 +1036,7 @@ public:
             stLb = enLb + 1;
             enLb = lstLabel.size() - 1;
             if (stLb > enLb)break;
-        }        
-        lstLabel.clear();
-        curLabel.clear();
-        prvIdLb.clear();
+        }                
         if (F[curNum] >= oo) {
             delete[] virGiantT;
             return oo;
@@ -1015,11 +1057,11 @@ public:
             changeLocCli(val);
         }*/
         trace = tourLoc;
-        delete[] virGiantT;       
+        delete[] virGiantT;               
         return resCost;
     }
     //split seq:
-    bool evalFlexRou(vector<SeqData*> &flexSeq, vector<int>& trace) {        
+    bool evalFlexRou(vector<SeqData*> &flexSeq, vector<int>& trace) {                  
         int* virGiantT = new int[routeU->length + 3];
         int curNum = 0;
         //get order cus in route.            
@@ -1122,7 +1164,7 @@ public:
                         prvIdLb.pb(val.sc);
                         //update F function (only consider last client)                        
                         if (v == curNum) {
-                            if (//val.ft.sc + pr->times[idLocV][0] < pr->T // uncomment when travel times does not satisfy triangle inequality
+                            if (//val.ft.sc + pr->times[idLocV][0] < pr->T&& // uncomment when travel times does not satisfy triangle inequality
                                 F[v] > val.ft.ft + pr->costs[idLocV][0]) {
                                 F[v] = val.ft.ft + pr->costs[idLocV][0];
                                 pred[v] = lstLabel.size() - 1;
@@ -1135,7 +1177,7 @@ public:
             enLb = lstLabel.size() - 1;
             if (stLb > enLb)break;
         }           
-        int oldCost = routeU->depot->seqi_n->cost;           
+        int oldCost = routeU->depot->seqi_n->cost;              
         if (F[curNum] >= oldCost) {                                       
             delete[] virGiantT;            
             return false;
@@ -1160,14 +1202,14 @@ public:
     }
     //change location of client 
     //input: location used to change
-    void changeLocCli(int idLoc) {
+    void changeLocCli(int idLoc) {        
         if (idLoc == 0)return;
         if (nodes[pr->listLoc[idLoc].idxClient]->idxLoc == idLoc)return;
         nodes[pr->listLoc[idLoc].idxClient]->idxLoc = idLoc;
-        reinitCluSet(nodes[pr->listLoc[idLoc].idxClient]);
+        reinitCluSet(nodes[pr->listLoc[idLoc].idxClient]);        
     }
 
-    int interRouteGeneralInsert() {
+    int interRouteGeneralInsert() {        
         int iBest = 0, jBest = 0;
         int moveMin;
         // 0 -> send nothing
@@ -1472,7 +1514,7 @@ public:
                     jBest = j;
                 }
             }
-        }
+        }        
         if (iBest == 0 && jBest == 0)
             return 0;
         //reinitSingleMoveInRou(routeU);
@@ -2363,7 +2405,8 @@ public:
         myseqs1.push_back(uPred->seq0_i);        
         addRevSeqInPieces(nodeU, nodeV, myseqs1);
         myseqs1.push_back(vSuc->seqi_n);
-        int newCost = oo;
+        int newCost = oo; 
+        int newCostFixed = oo;
         III flexRes;
         if(isFixed)newCost = seq->evaluation(myseqs1);
         else {
@@ -2373,7 +2416,7 @@ public:
             if (evalFlexRou(myseqs1, traceLoc[0][1])) {                                
                 newCost = F[traceLoc[0][1].size()];
             }
-        }        
+        }                
         if (oldCost <= newCost)return 0;                     
         if (pr->isDebug) {
             cout << "ck intra route 2Opt\n"; 
@@ -2405,7 +2448,7 @@ public:
         cost += newCost - oldCost;
         uSuc = nodeU->suc;
         uPred = nodeU->pred;        
-        count[1][1]++;
+        //count[1][1]++;
         //check sol
         if (pr->isTurnCkSol) {
             try {
@@ -2554,9 +2597,16 @@ public:
     }
 
     void updateTotal() {
-        updateObjInter();
+        updateObjInter();       
         cvGiantT();
         Split();
+        /*isFixed = true;
+        for (int i = 0; i <= 1; ++i) {
+            updateObjInter();
+            cvGiantT();
+            Split();
+            isFixed = !isFixed;
+        }*/
     }
 
     void ELS() {

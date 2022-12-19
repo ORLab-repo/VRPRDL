@@ -9,38 +9,42 @@ GA::~GA()
 }
 
 void GA::addRou(Solution* u)
-{   
+{
     for (int idR = 1; idR <= u->m; ++idR) {
-    //for (auto rou : u->setR) {
+        //for (auto rou : u->setR) {
         Route* rou = u->setR[idR];
-        valLength = rou->getCliInRou(valRou, valRouLoc);        
-        if (valLength == 0)continue;        
-        II hashVal = Util::getHash(valRou, valLength);    
+        valLength = rou->getCliInRou(valRou, valRouLoc);
+        if (valLength == 0)continue;
+        II hashVal = Util::getHash(valRou, valLength);
         int existID = idWithLen[valLength][hashVal];
-        if (existID == 0 || costR[existID] > rou->depot->seqi_n->cost){            
+        if (existID == 0 || costR[existID] > rou->depot->seqi_n->cost) {
             if (existID == 0) {
                 existID = ++curNumRou;
                 idWithLen[valLength][hashVal] = curNumRou;
-            }            
+            }
             routePoolPrv[existID][1] = -1;
             routePoolNxt[existID][valLength] = -1;
-            for (int i = 1; i <= valLength; ++i) {               
+            for (int i = 1; i <= valLength; ++i) {
+                //cout << i << " " << valRou[i] << "\n";
                 routePool[existID][i] = valRou[i];
                 routePoolLoc[existID][i] = valRouLoc[i];
                 if (i != 1)routePoolPrv[existID][i] = i - 1;
                 if (i != valLength)routePoolNxt[existID][i] = i + 1;
-            }            
+            }
             costR[existID] = rou->depot->seqi_n->cost;
-            if(rou->caculateDis() != rou->depot->seqi_n->cost){
+            if (rou->caculateDis() != rou->depot->seqi_n->cost) {
                 throw "error cost route";
             }
             lenR[existID] = valLength;
-        }        
+        }
     }
 }
 
 int GA::solveSCP()
-{    
+{
+    for (int i = 1; i <= n; ++i) {
+        idRouBelong[i].clear();
+    }
     IloEnv env;
     int res = -1;
     try {
@@ -72,31 +76,34 @@ int GA::solveSCP()
         model.add(IloMinimize(env, sumObj));
         model.add(cons);
         IloCplex cplex(model);
+        
+        cplex.setParam(IloCplex::Param::Threads, 1);        
+        cplex.setOut(env.getNullStream());
         if (!cplex.solve()) {
             //res = oo;
             throw "can't sol";
         }
         //cplex.setOut(pr->fileOut);
         //cplex.setParam(IloCplex::TiLim, 10800);
-        cplex.out() << "Solution value = " << Util::round2num(cplex.getObjValue()) << endl;                
+        cplex.out() << "Solution value = " << Util::round2num(cplex.getObjValue()) << endl;
         //cost = Util::round2num(cplex.getObjValue());
-        cplex.out() << "Solution status = " << cplex.getStatus() << endl;        
+        cplex.out() << "Solution status = " << cplex.getStatus() << endl;
         //construct new solution:                      
-        for (int i = 1; i <= curNumRou; ++i)if (cplex.getValue(x[i]) >= 0.9) {
+        for (int i = 1; i <= curNumRou; ++i)if (cplex.getIntValue(x[i]) != 0) {
             //cout << i << "\n";
             /// get route containing duplicate customer.    
             for (int j = 1; j <= lenR[i]; ++j) {
-                idRouBelong[routePool[i][j]].push_back(II(i,j));
+                idRouBelong[routePool[i][j]].push_back(II(i, j));
                 //cout << routePool[i][j] << " ";
             }
             //cout << "\n";
-        }   
+        }
         /// remove duplicate customer
         int minIdRou = -1;
         int minImproved = oo;
         int idValRou, idValPos, valReduced;
         int idPrv, idNxt;
-        int nodeU, prvU, nxtU;        
+        int nodeU, prvU, nxtU;
         for (int i = 1; i <= n; ++i)if (idRouBelong[i].size() > 1) {
             //cout << "client: " << i << "\n";
             minIdRou = -1;
@@ -117,7 +124,7 @@ int GA::solveSCP()
                     minImproved = valReduced;
                     minIdRou = idValRou;
                 }
-            }            
+            }
             //keep this route and remove the remains            
             for (auto val : idRouBelong[i]) {
                 idValRou = val.ft;
@@ -129,39 +136,52 @@ int GA::solveSCP()
                 for (int i1 = 1; i1 <= lenR[idValRou]; ++i1) if(routePool[idValRou][i1] != -1){
                     valPop->nodes[routePool[idValRou][i1]]->idxClient = routePool[idValRou][i1];
                     valPop->nodes[routePool[idValRou][i1]]->idxLoc = routePoolLoc[idValRou][i1];
-                    valPop->setR[1]->insertToRou(valPop->nodes[routePool[idValRou][i1]]);                                        
-                }                
+                    valPop->setR[1]->insertToRou(valPop->nodes[routePool[idValRou][i1]]);
+                }
                 valPop->setR[1]->showR();
                 valPop->setR[1]->showRLoc();
-                valPop->setR[1]->updateRoute();                
+                valPop->setR[1]->updateRoute();
                 valPop->setR[1]->ckRoute();                */
                 idPrv = routePoolPrv[idValRou][idValPos];
                 idNxt = routePoolNxt[idValRou][idValPos];
                 routePoolNxt[idValRou][idPrv] = idNxt;
                 routePoolPrv[idValRou][idNxt] = idPrv;
-                routePool[idValRou][idValPos] = -1;//remove it
-            }            
+                routePool[idValRou][idValPos] = -routePool[idValRou][idValPos];// make the index negative implying that removing it
+            }
         }
         int valCount = 0;
         int ckCost = 0;
-        for (int i = 1; i <= curNumRou; ++i)if (cplex.getValue(x[i]) >= 0.9) {
+        for (int i = 1; i <= curNumRou; ++i)if (cplex.getIntValue(x[i]) != 0) {
             ckCost += costR[i];
-            for (int j = 1; j <= lenR[i]; ++j) if (routePool[i][j] != -1) {
-                valPop->giantT[++valCount] = routePool[i][j];
-            }
-        }        
+            for (int j = 1; j <= lenR[i]; ++j) {
+                if (routePool[i][j] > 0) {
+                    valPop->giantT[++valCount] = routePool[i][j];
+                }//recover info
+                else routePool[i][j] = abs(routePool[i][j]);
+                if (j != 1)routePoolPrv[i][j] = j - 1;
+                if (j != lenR[i])routePoolNxt[i][j] = j + 1;
+            }            
+        }
         if (valCount != n) {
             throw "Error in solve SCP";
         }
-        else {
+        /*else {
             for (int i = 1; i <= n; ++i)pr->fl << valPop->giantT[i] << ", ";
+            pr->fileOut << "solution of SCP: \n";
+            pr->fileOut << Util::round2num(cplex.getObjValue()) << "\n";
+            for (int i = 1; i <= n; ++i)pr->fileOut << valPop->giantT[i] << ", ";
+            pr->fileOut << "\n";
             pr->fl.close();
-        }
+        }*/
         valPop->Split();        
         res = valPop->cost;
+        //pr->fileOut << "split cost: " << res << "\n";
         if (res > (int)ceil(cplex.getObjValue())) {
             throw "error cost in SCP";
-        }
+        }        
+        valPop->updateTotal();        
+        res = valPop->cost;
+        //pr->fileOut << "local search cost: " << res << "\n";
     }
     catch (IloException& e) {
         cerr << "Concert exception caught: " << e << endl;
@@ -177,13 +197,62 @@ int GA::solveSCP()
         cerr << "Unknown exception caught" << endl;
         throw "Error 7";
     }
-    env.end();    
-    for (int i = 1; i <= n; ++i) {
-        idWithLen[i].clear();
-        idRouBelong[i].clear();
-    }   
-    curNumRou = 0;
+    env.end();
+    if (curNumRou > maxNumRou) {
+        for (int i = 1; i <= n; ++i) {
+            idWithLen[i].clear();            
+        }
+        curNumRou = 0;
+    }
     return res;
+}
+
+void GA::updateBiasedFitnesses()
+{
+    //vector<DI> ranking;
+    //for (int i = 1; i <= curNPop; i++)
+    //{
+    //    ranking.push_back({ -pop[i]->averageBrokenPairsDistanceClosest(nClose), i});
+    //}
+    //sort(ranking.begin(), ranking.end());    
+    //
+    //for (int i = 0; i < curNPop; ++i) {
+    //    double divRank = (double)(i + 1) / (curNPop);
+    //    double fitRank = (double)ranking[i].second / (curNPop);
+    //    if (curNPop <= nElite)pop[ranking[i].second]->biasedFitness = fitRank;
+    //    else pop[ranking[i].second]->biasedFitness = fitRank /*+ (1.0 - (double)nElite / curNPop) * divRank*/;
+    //}
+    for (int i = 1; i <= curNPop; ++i) {
+        //double fitRank = (double)(i) / (curNPop);        
+        double fitRank = i;
+        pop[i]->biasedFitness = fitRank;
+    }
+    FindAdapt();
+}
+
+void GA::removeWorstIndv()
+{
+    updateBiasedFitnesses();
+    Solution* worstIndividual = NULL;
+    int worstIndividualPosition = -1;
+    bool isWorstIndividualClone = false;
+    double worstIndividualBiasedFitness = -1.e30;
+    for (int i = 1; i <= curNPop; i++)
+    {
+        bool isClone = (pop[i]->averageBrokenPairsDistanceClosest(1) < MY_EPSILON); // A distance equal to 0 indicates that a clone exists
+        if ((isClone && !isWorstIndividualClone) || (isClone == isWorstIndividualClone && pop[i]->biasedFitness > worstIndividualBiasedFitness))
+        {
+            worstIndividualBiasedFitness = pop[i]->biasedFitness;
+            isWorstIndividualClone = isClone;
+            worstIndividualPosition = i;
+            worstIndividual = pop[i];
+        }
+    }
+    for (int i = worstIndividualPosition; i < curNPop; ++i) {
+        swap(pop[i], pop[i + 1]);
+    }
+    curNPop--;
+    for (int i = 1; i <= curNPop; ++i)pop[i]->removeProximity(worstIndividual);
 }
 
 bool GA::checkIdSol(Solution* u)
@@ -199,7 +268,7 @@ int GA::broken_pairs(Solution* u, Solution* v)
     //computing broken pair dis of u with v
     int* nxt = new int[n + 1];
     for (int i = 0; i < n - 1; ++i)nxt[u->giantT[i]] = u->giantT[i + 1];
-    nxt[u->giantT[n - 1]] = -1;
+    nxt[u->giantT[n - 1]] = -1; 
     int numEqualEdge = 0;
     for (int i = 0; i < n - 1; ++i)if (v->giantT[i + 1] == nxt[v->giantT[i]])numEqualEdge++;
     delete[] nxt;
@@ -208,7 +277,7 @@ int GA::broken_pairs(Solution* u, Solution* v)
 
 bool GA::CheckEqual(Solution* u, Solution* v)
 {    
-    if (abs(u->cost - v->cost) <= omega) return true;
+    //if (abs(u->cost - v->cost) <= omega) return true;
     /*for (int i = 1; i <= n; ++i)
         if(u->giantT[i] != v->giantT[i])return false;*/
     return false;
@@ -219,44 +288,52 @@ bool GA::CheckEqual(Solution* u, Solution* v)
 void GA::equalSol(Solution* u, Solution* v)
 {
     u->cost = v->cost;
+    u->biasedFitness = v->biasedFitness;
     for (int i = 1; i <= n; ++i) {
         u->giantT[i] = v->giantT[i];
+        u->predecessors[i] = v->predecessors[i];
+        u->successors[i] = v->successors[i];
     }
 }
 
+//For Roulette Wheel Selection
 void GA::FindAdapt()
-{
+{    
+    for (int i = 1; i <= curNPop; ++i)
+        adapt[i] = curNPop + 1 - pop[i]->biasedFitness;
+        //adapt[i] = (double)(curNPop + 1 - pop[i]->biasedFitness) / curNPop;        
+        //adapt[i] = 1.0 / pop[i]->biasedFitness;
     sumAdapt = 0;
-    for (int i = 1; i <= nPop1; ++i)
-        sumAdapt += pop[i]->cost;
-    for (int i = 1; i <= nPop1; ++i)
-        adapt[i] = sumAdapt - pop[i]->cost;
-    sumAdapt = 0;
-    for (int i = 1; i <= nPop1; ++i)
+    for (int i = 1; i <= curNPop; ++i)
         sumAdapt += adapt[i];
 }
 
 int GA::getChild()
 {
-    int u = pr->Rng.getNumInRan(1, nPop1);
-    int v = pr->Rng.getNumInRan(1, nPop1);
-    return (pop[u]->cost < pop[v]->cost) ? u : v;
-    /*double percent = pr->Rng.genRealInRang01();
-    int sum1 = 0;
-    for (int i = 1; i <= nPop1; ++i) {
+    /// binary tournament
+    //int u = pr->Rng.getNumInRan(1, curNPop);
+    //int v = pr->Rng.getNumInRan(1, curNPop);
+    //return (pop[u]->cost < pop[v]->cost) ? u : v;
+    //return (pop[u]->biasedFitness < pop[v]->biasedFitness) ? u : v;
+    ///routle wheel selection
+    double percent = pr->Rng.genRealInRang01();
+    double sum1 = 0;
+    for (int i = 1; i <= curNPop; ++i) {
         sum1 += adapt[i];
-        if (sumAdapt * percent <= (double)sum1)return i;
+        if (sumAdapt * percent <= sum1)return i;
     }
-    return 1;*/
+    return 1;
 }
 
 void GA::choose(int& u, int& v)
 {
+    updateBiasedFitnesses();    
     /// new selection
     u = getChild();
-    do {
+    v = getChild();
+    /*do {
         v = getChild();
-    } while (u == v);
+    } while (u == v);*/
     /*double avg=sumAdapt/2;
     percent=randomdN(0,1);
     double sum1=percent*avg;
@@ -346,11 +423,13 @@ void GA::uni(Solution* u, Solution* v, Solution* u1, Solution* v1)
         v1->giantT[vt] = q.front();
         q.pop_front();
         vt++;
-    }*/
-    u1->Split();
-    if (pr->Rng.genRealInRang01_muta() > pM) {//u1->interchange();
-        u1->updateTotal();
+    }*/  
+
+    if (pr->Rng.genRealInRang01_muta() > 1-pM) {
+        for (int i = 1; i <= nMut; ++i)u1->exchange();
     }
+    u1->Split();
+    u1->updateTotal();
     //v1->Split(); v1->updateTotal();
     /*if(rand()%2==0){
         u1.updateObj();v1.updateObj();
@@ -362,26 +441,31 @@ void GA::uni(Solution* u, Solution* v, Solution* u1, Solution* v1)
     delete[] idv;
 }
 
+/*diversity constribution*/
+
+
 void GA::insertNew(Solution* u)
 {
     int maxObj = oo;
-    int posIns = nPop1 + 1;
+    int posIns = curNPop + 1;    
 
-    if (nPop1 == 0) {
-        equalSol(pop[++nPop1], u);        
+    if (curNPop == 0) {
+        equalSol(pop[++curNPop], u);     
+        pop[curNPop]->indivsPerProximity.clear();
         return;
     }    
+    
     if (u->cost < pop[1]->cost)posIns = 1;
     else {
-        for (int i = 1; i <= nPop1; ++i)
+        /*for (int i = 1; i <= curNPop; ++i)
         {
             if (CheckEqual(u, pop[i]))
             {                                
                 return;
             }
-        }
+        }*/
 
-        for (int i = 1; i <= nPop1; ++i)
+        for (int i = 1; i <= curNPop; ++i)
         {
             if (pop[i]->cost > u->cost) {
                 posIns = i;
@@ -389,25 +473,37 @@ void GA::insertNew(Solution* u)
             }
         }
     }        
-    //pop[nPop1 + 1] = u;
-    equalSol(pop[nPop1 + 1], u);
-    for (int i = nPop1; i >= posIns; --i) {
+    //pop[curNPop + 1] = u;
+    equalSol(pop[curNPop + 1], u);
+    pop[curNPop + 1]->indivsPerProximity.clear();
+    for (int i = 1; i <= curNPop; ++i) {
+        double disBrokPair = pop[curNPop + 1]->brokenPairsDistance(pop[i]);
+        pop[i]->indivsPerProximity.insert({ disBrokPair, pop[curNPop + 1] });
+        pop[curNPop + 1]->indivsPerProximity.insert({disBrokPair, pop[i]});
+    }
+
+    for (int i = curNPop; i >= posIns; --i) {
         swap(pop[i], pop[i + 1]);
     }
-    nPop1++;
+    curNPop++;
+    if (curNPop > nPop + delta) {
+        DelPopu();
+    }
 }
 
 void GA::DelPopu()
 {
-    nPop1 = nPop;
+    while (curNPop > nPop) {
+        removeWorstIndv();
+    }
 }
 
-void GA::InitPopu()
+void GA::InitPopu(bool isEdu = true)
 {        
-    while (nPop1 != nPop) {                
+    while (curNPop != nPop) {                
         valPop->genGiantT();
         valPop->Split();
-        //valPop->updateTotal();
+        if(isEdu)valPop->updateTotal();
         //cout<<valPop->cost<<endl;
         insertNew(valPop);
     }
@@ -416,8 +512,10 @@ void GA::InitPopu()
 void GA::DiversifyPopu(Solution* bestSol)
 {
     int newPop = nPop / 3;    
-    nPop1 = newPop;
-    InitPopu();
+    while (curNPop > newPop) {
+        removeWorstIndv();
+    }
+    InitPopu(false);
     if (bestSol->cost > pop[1]->cost) {
         //pop[i].printSol();
         equalSol(bestSol, pop[1]);
@@ -425,7 +523,7 @@ void GA::DiversifyPopu(Solution* bestSol)
 }
 
 void GA::findGasSol(int maxNumGas)
-{    
+{
     int scpSol = oo;
     curNumRou = 0;
     for (int i = 1; i <= n; ++i) {
@@ -436,8 +534,8 @@ void GA::findGasSol(int maxNumGas)
     Solution* bestSol = new Solution(pr);
     clock_t be = clock();
     // generate population with 50 sols
-    nPop1 = 0;
-    InitPopu();
+    curNPop = 0;
+    InitPopu(false);
     /*for(int i=1;i<=25;++i){
         for(int j=0;j<n;++j)out<<pop[i].id[j]<<" ";
         out<<endl;
@@ -449,18 +547,21 @@ void GA::findGasSol(int maxNumGas)
     numNotCha = 0;
     threshold = (n - 1) / 2;
     Solution* child1 = new Solution(pr);
-    Solution* child2 = new Solution(pr);    
+    Solution* child2 = new Solution(pr);        
     for (int numga = 1;; ++numga)
-    {        
+    {
+        /*cout << "time: " << (double)(clock() - be) / CLOCKS_PER_SEC << "\n";*/
+        /*if (numNotCha == 0)pM = pMinMut;
+        else if (numNotCha % ItMut == 0)pM = min(pM + 0.1, pMaxMut);*/
         numNotCha++;
         //cout<<numga<<":"<<endl;
-        cout << "name ins: " << pr->nameIns<<"\n";
-        cout << numNotCha << " " << numga <<"{"<< endl;
+        //cout << "name ins: " << pr->nameIns << "\n";
+        /*cout << numNotCha << " " << numga << "{" << endl;*/
         //out<<numga<<"{\n";
-        
+
         //exit(0);
         // calc adaptation
-        FindAdapt();
+        //FindAdapt();
         // selection
         choose(idFa, idMo);
         /*cout<<"parent"<<endl;
@@ -479,51 +580,67 @@ void GA::findGasSol(int maxNumGas)
         for(int i=0;i<n;++i)cout<<child2.id[i]<<" ";
         cout<<endl;*/
         //insert child:
-        insertNew(child1);       
-        addRou(child1);       
-        if (nPop1 == nPop + delta)
-            DelPopu();
+        insertNew(child1);
+        addRou(child1);      
         /*insertNew(child2);
         if (nPop1 == nPop + delta)
             DelPopu();*/
         if (bestSol->cost > pop[1]->cost) {
             numNotCha = 0;
             equalSol(bestSol, pop[1]);
+            /*pr->fileOut << "itreation: " << numga << "\n";
+            pr->fileOut << "new best: " << bestSol->cost << "\n";            */
+            //pr->fileOut << (double)(clock() - be) / CLOCKS_PER_SEC << "\n";
         }
         // if bestSol don't change 100 times change 25 worst sols by 25 new sols
         //if(numNotCha>=200){numNotCha=0;addPopu();}
-        if (curNumRou >= maxNumRou) {
-            scpSol = min(scpSol, solveSCP());
-            insertNew(valPop);
-            if (nPop1 == nPop + delta)
-                DelPopu();
-            /*pop[1]->Split();
-            addRou(pop[1]);*/
-        }
-        if (numNotCha == 3000)
+        //if (curNumRou >= maxNumRou) {      
+        /*
+        if (numNotCha == (int)(0.4*ItNI))
         {
-            threshold = min(threshold - 1, 1);
+            //threshold = min(threshold - 1, 1);
             int oldBestObj = bestSol->cost;
             DiversifyPopu(bestSol);
-            if (bestSol->cost != oldBestObj)numNotCha = 0;
+            if (bestSol->cost != oldBestObj) {
+                numNotCha = 0;
+                pr->fileOut << (double)(clock() - be) / CLOCKS_PER_SEC << "\n";
+            }
+        }*/
+        
+        if (numga % ItSCP == 0 || curNumRou >= maxNumRou) {
+            //pr->fileOut << "itreation: " << numga << "\n";
+            scpSol = min(scpSol, solveSCP());
+            if(valPop->cost != pop[1]->cost)insertNew(valPop);            
+            //pr->fileOut << "SCP SOL: " << valPop->cost << "\n";            
+            //pr->fileOut << (double)(clock() - be) / CLOCKS_PER_SEC << "\n";
+            if (bestSol->cost > pop[1]->cost) {
+                numNotCha = 0;
+                equalSol(bestSol, pop[1]);
+                //pr->fileOut << (double)(clock() - be) / CLOCKS_PER_SEC << "\n";
+                //pop[1]->Split();
+                //addRou(pop[1]);
+            }            
         }
         //cout<<"best obj:\n";cout<<bestSol.obj<<endl<<endl;
-        if (numNotCha == 5000) {
+        if (numNotCha == ItNI || (double)(clock() - be) / CLOCKS_PER_SEC > pr->TL) {
+        /*if(numga == 7000){*/
             bestSol->Split();
+            bestSol->ckSol();
             /*bestSol.printSol();
             cout << id_test << " " << bestSol.obj << " " << (double)(clock() - be) / CLOCKS_PER_SEC << endl;
             fl << bestSol.obj << " " << (double)(clock() - be) / CLOCKS_PER_SEC << "\n";*/
             bestCost = bestSol->cost;
-            cout << bestSol->cost;
-            pr->fileOut<< bestSol->cost<<"\n";            
+            //cout << bestSol->cost;
+            pr->fileOut << bestSol->cost << "\n";
             for (int i = 1; i <= n; ++i)pr->fileOut << bestSol->giantT[i] << ", ";
             pr->fileOut << "\n";
-            pr->fileOut <<(double)(clock() - be) / CLOCKS_PER_SEC << "\n";
-            //break;
+            //pr->fileOut <<(double)(clock() - be) / CLOCKS_PER_SEC << "\n";
+            pr->fileOut << "num_iterations: " << numga << "\n";
+            break;
         }
         //if((double)(clock()-be)/CLOCKS_PER_SEC>=600)break;
-        cout << curNumRou << "\n";
+        /*cout << curNumRou << "\n";
         cout << "SCP sol: " << scpSol << "\n";
-        cout<<bestSol->cost<<"}"<<endl;
+        cout << bestSol->cost << "}" << endl;*/
     }
 }

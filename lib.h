@@ -28,6 +28,7 @@
 #define sc second
 #define EP 1e-6
 #define oo 1e9
+#define MY_EPSILON 0.00001 // Precision parameter, used to avoid numerical instabilities
 
 //using namespace std;
 

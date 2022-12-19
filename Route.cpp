@@ -17,7 +17,7 @@ int Route::caculateDis() {
 Route::~Route(void) {        
     isNodeTested.clear();
 }               
-void Route::updateRoute() {    
+void Route::updateRoute() {        
     length = 0;
     Node* val = depot;
     val->posInRoute = 0;
@@ -75,7 +75,21 @@ void Route::updateRoute() {
         curNode = curNode->suc;
     }
     //reset nodes tested:
-    for (int i = 1; i < pr->numClient; ++i)isNodeTested[i] = false;
+    for (int i = 1; i < pr->numClient; ++i)isNodeTested[i] = false;        
+}
+
+int Route::getCliInRou(int* arr, int* arrLoc)
+{
+    Node* val = this->depot;
+    int numCus = 0;
+    do {
+        if (val->idxClient) {
+            arr[++numCus] = val->idxClient;            
+            arrLoc[numCus] = val->idxLoc;
+        }
+        val = val->suc;
+    } while (val != this->depot);
+    return numCus;
 }
 
 int Route::getCliInRou(int* arr, int* arrLoc)
@@ -191,11 +205,11 @@ void Route::ckRoute()
     int load = 0;
     Node* val = this->depot;
     Node* valSuc = this->depot->suc;
-    int u, v;
+    int u, v;    
     do
     {
         u = val->idxLoc;
-        v = valSuc->idxLoc;
+        v = valSuc->idxLoc;                
         cost += pr->costs[u][v];        
         time += pr->times[u][v];        
         time = max(time, pr->listLoc[v].stTime);        
