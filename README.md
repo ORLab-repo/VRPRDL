@@ -1,1 +1,1 @@
-# VRPRDL-Reborn
+The code of the hybrid genetic algorithm with set covering component implemented in the paper "A Hybrid Genetic Algorithm for the Vehicle Routing Problem with Roaming Delivery Locations" at ICAPS 2022. 
